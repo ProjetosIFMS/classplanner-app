@@ -1,9 +1,6 @@
 import Image from "next/image";
 import {Login} from '../components/ui/login'
 
-
-
-
 export default function Home() {
 
   return (
@@ -20,10 +17,10 @@ export default function Home() {
         rel="noopener noreferrer">
           <Image
             aria-hidden
-            src={"/if.svg"}
+            src={"/if.png"}
             alt="Instituto Federal icon"
-            width={16}
-            height={16}
+            width={40}
+            height={40}
           />
           IFMS - Câmpus Três Lagoas
         </a>
