@@ -1,49 +1,40 @@
-import NextAuth, { NextAuthOptions, User, Account, Session } from "next-auth";
-import { JWT } from "next-auth/jwt";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import axios, { AxiosError } from "axios";
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error("Missing environment variables for Google OAuth");
 }
 
-
 // Auth configuration
 export const authOptions: NextAuthOptions = {
-
-  providers:[
+  providers: [
     GoogleProvider({
+      id: "google",
+      name: "Backend API Google Auth",
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      authorization:{
-        params:{
-          access_type: "offline",
-          prompt: "consent",
-          response_type: "code"
-        }
-      }
-    })
+    }),
   ],
-   callbacks:{   
-    async jwt({token, user, account, profile, trigger}) {
-      if (account && user){
-        return {
-          ...token,
-          backendToken: sessionStorage.getItem("backendToken")
-        }
+  callbacks: {
+    async jwt({ token, user, account }) {
+      if (account && user) {
+        token.accessToken = account.accessToken;
+        token.name = user.name;
+        token.email = user.email;
+        token.image = user.image;
       }
-      return token
-   },
-   async redirect({url, baseUrl}){
-    return `${baseUrl}/dashboard`
-  },
-    async session({session, token, user}) {
-      if (token){
-        session.user = token
-        return session
+      return token;
+    },
+    async redirect({ baseUrl }) {
+      return `${baseUrl}/dashboard`;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user = token;
+        return session;
       }
-      return session
-    }
+      return session;
+    },
   },
 };
 
