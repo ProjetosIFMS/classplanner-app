@@ -8,5 +8,5 @@ export default function Dashboard() {
   useEffect(() => {
     localStorage.getItem('jwtToken');
   }, [router]);
-  return <h1>Bem vindo ao Classplaner</h1>;
+  return <h1>Bem vindo ao Classplanner</h1>;
 }
