@@ -1,16 +1,15 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import NextAuth, { NextAuthOptions } from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-  throw new Error("Missing environment variables for Google OAuth");
+  throw new Error('Missing environment variables for Google OAuth');
 }
 
-// Auth configuration
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      id: "google",
-      name: "Backend API Google Auth",
+      id: 'google',
+      name: 'Sign Up with IFMS Account',
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
