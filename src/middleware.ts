@@ -2,10 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  // Only run middleware on callback route
   if (request.nextUrl.pathname === "/auth/callback") {
     try {
-      // Get URL search params
       const access_token = request.nextUrl.searchParams.get("access_token");
       if (!access_token) {
         throw new Error("Access token not found");
