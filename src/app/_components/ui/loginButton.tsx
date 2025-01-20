@@ -12,7 +12,7 @@ export const LoginButton = () => {
 
   return (
     <section className="flex flex-col">
-      <h1 className="text-center mb-4 font-semibold">
+      <h1 className="text-center justify-self-center mb-4 font-semibold">
         Bem-vindo ao Class Planner!
       </h1>
 
