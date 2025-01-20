@@ -1,18 +1,5 @@
-"use client";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Header } from "../_components/header";
-
-const Dashboard = () => {
-  const router = useRouter();
-
-  useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    if (!token) {
-      router.push("/");
-    }
-  }, [router]);
-
+const Dashboard = async () => {
   return (
     <section>
       <Header />
