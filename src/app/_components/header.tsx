@@ -6,18 +6,20 @@ import { UserAvatar } from "./ui/userAvatar";
 import { cookies } from "next/headers";
 import api from "@/utils/axios-instance";
 import { User } from "@/types/user";
+import { redirect } from "next/navigation";
 
 export const Header = async () => {
-  const fetchData = async (): Promise<User> => {
+  const fetchUserData = async (): Promise<User> => {
     const cookieStore = await cookies();
     const access_token = cookieStore.get("access_token");
     if (!access_token) {
-      throw new Error("Access token not found!");
+      redirect("/");
     }
+
     try {
       const response = await api.get("/google/me", {
         headers: {
-          Authorization: `Bearer ${access_token?.value}`,
+          Authorization: `Bearer ${access_token.value}`,
         },
       });
       return response.data;
@@ -25,7 +27,7 @@ export const Header = async () => {
       throw error;
     }
   };
-  const data = await fetchData();
+  const data = await fetchUserData();
 
   return (
     <header className="w-full bg-white">

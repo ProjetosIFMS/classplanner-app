@@ -2,7 +2,7 @@ import React from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "./avatar";
 import { User } from "@/types/user";
 
-export const UserAvatar = ({ email, firstName, lastName, picture }: User) => {
+export const UserAvatar = ({ firstName, lastName, picture, role }: User) => {
   return (
     <div className="flex flex-row items-center p-1 rounded-full">
       <button>
@@ -18,7 +18,7 @@ export const UserAvatar = ({ email, firstName, lastName, picture }: User) => {
         <p className="text-sm">
           {firstName ? firstName + " " + lastName : "Usuário"}
         </p>
-        <p className="text-sm text-muted-foreground">{email}</p>
+        <p className="text-sm text-muted-foreground">{role}</p>
       </div>
     </div>
   );
