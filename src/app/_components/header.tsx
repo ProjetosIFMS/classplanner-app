@@ -1,49 +1,28 @@
-import React from "react";
-import Image from "next/image";
-import { Card } from "./ui/card";
-import { ToggleStyle } from "./ui/toggleStyle";
-import { UserAvatar } from "./ui/userAvatar";
-import { cookies } from "next/headers";
-import api from "@/utils/axios-instance";
-import { User } from "@/types/user";
-import { redirect } from "next/navigation";
+import React from 'react';
+import Image from 'next/image';
+import { Card } from './ui/card';
+import { ToggleStyle } from './ui/toggleStyle';
+import { getUserData } from '../_actions/getUserData';
+import LogoutButton from './ui/LogoutButton';
 
 export const Header = async () => {
-  const fetchUserData = async (): Promise<User> => {
-    const cookieStore = await cookies();
-    const access_token = cookieStore.get("access_token");
-    if (!access_token) {
-      redirect("/");
-    }
-
-    try {
-      const response = await api.get("/google/me", {
-        headers: {
-          Authorization: `Bearer ${access_token.value}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  };
-  const data = await fetchUserData();
+  const data = await getUserData();
 
   return (
-    <header className="w-full bg-white">
-      <Card className="flex justify-between items-center px-3 py-3">
+    <header className='w-full bg-white'>
+      <Card className='flex justify-between items-center px-3 py-3'>
         <Image
           aria-hidden
-          src="/logo.png"
-          alt="Class Planner icon"
-          rel="icon"
-          className="object-contain"
+          src='/logo.png'
+          alt='Class Planner icon'
+          rel='icon'
+          className='object-contain'
           width={60}
           height={60}
         />
-        <div className="flex items-center">
+        <div className='flex items-center'>
           <ToggleStyle />
-          <UserAvatar {...data} />
+          <LogoutButton data={data} />
         </div>
       </Card>
     </header>
