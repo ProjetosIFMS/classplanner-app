@@ -1,12 +1,9 @@
-"use client"
+"use client";
 import React from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "./avatar";
 import { User } from "@/types/user";
 
-
-
 export const UserAvatar = ({ firstName, lastName, picture, role }: User) => {
-
   return (
     <div className="flex flex-row items-center p-1 rounded-full">
       <Avatar className="on-hover:bg-black">
