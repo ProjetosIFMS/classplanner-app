@@ -34,7 +34,6 @@ import {
 } from "@/app/_components/ui/form";
 
 export const PPCForm = () => {
-  // Initialize useForm with the Zod resolver
   const form = useForm<PPCSchema>({
     resolver: zodResolver(ppcSchema),
     defaultValues: {
