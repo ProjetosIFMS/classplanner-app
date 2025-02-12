@@ -1,6 +1,5 @@
-"use client";
+"use server";
 
-import { Header } from "../_components/header";
 import {
   Card,
   CardContent,
@@ -22,7 +21,6 @@ import { Button } from "../_components/ui/button";
 const SelectArea = () => {
   return (
     <section className="flex flex-col h-screen">
-      <Header />
       <Card className="w-[350px] self-center m-auto">
         <CardHeader>
           <CardTitle>Selecione sua área</CardTitle>

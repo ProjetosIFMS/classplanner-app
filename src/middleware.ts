@@ -5,6 +5,7 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname === "/auth/callback") {
     try {
       const access_token = request.nextUrl.searchParams.get("access_token");
+
       if (!access_token) {
         throw new Error("Access token not found");
       }
