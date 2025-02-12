@@ -6,4 +6,5 @@ export type User = {
   lastName: string;
   role: Role;
   picture: string;
+  area_id: string;
 };
