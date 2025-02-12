@@ -34,4 +34,9 @@ export const ppcSchema = z.object({
     .or(z.literal("")),
 });
 
+export const areaSchema = z.object({
+  area: z.string().min(1, "Por favor selecione uma opção."),
+});
+
 export type PPCSchema = z.infer<typeof ppcSchema>;
+export type AreaSchema = z.infer<typeof areaSchema>;
