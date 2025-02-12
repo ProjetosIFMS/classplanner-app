@@ -1,5 +1,5 @@
-"use server";
 
+import { Header } from "../_components/header";
 import {
   Card,
   CardContent,
