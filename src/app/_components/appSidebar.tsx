@@ -16,7 +16,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Itens</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenuItem>
-              <Label>Oi</Label>
+              <Label>Default Label</Label>
             </SidebarMenuItem>
           </SidebarGroupContent>
         </SidebarGroup>
