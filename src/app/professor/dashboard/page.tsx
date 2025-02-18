@@ -3,7 +3,9 @@ const Dashboard = async () => {
   return (
     <section>
       <Header />
-      <main className="flex flex-col items-center justify-center"></main>
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-lg">Dashboard</h1>
+      </div>
     </section>
   );
 };
