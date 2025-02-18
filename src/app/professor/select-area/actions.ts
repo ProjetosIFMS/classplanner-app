@@ -35,5 +35,5 @@ export const updateArea = async (area_id: string) => {
       Authorization: `Bearer ${access_token.value}`,
     },
   });
-  if (res.status == 200) redirect("/dashboard-professor");
+  if (res.status == 200) redirect("/professor/dashboard");
 };

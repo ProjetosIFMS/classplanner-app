@@ -7,15 +7,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../_components/ui/card";
+} from "../../_components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../_components/ui/select";
-import { Button } from "../_components/ui/button";
+} from "../../_components/ui/select";
+import { Button } from "../../_components/ui/button";
 import { Area } from "@/types/area";
 import { updateArea } from "./actions";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -27,7 +27,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from "../_components/ui/form";
+} from "../../_components/ui/form";
 import { MdCheck } from "react-icons/md";
 
 interface areaFormProps {

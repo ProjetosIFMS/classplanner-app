@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
       }
 
       const response = NextResponse.redirect(
-        new URL("/dashboard-professor", request.url),
+        new URL("/professor/dashboard", request.url),
       );
 
       response.cookies.set("access_token", access_token, {
