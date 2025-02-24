@@ -22,7 +22,7 @@ export const getUserData = async (): Promise<User> => {
     });
 
     if (!response.data.area_id && response.data.role == "PROFESSOR") {
-      redirect("/select-area");
+      redirect("/professor/select-area");
     }
 
     return response.data;
