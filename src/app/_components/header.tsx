@@ -10,7 +10,7 @@ export const Header = async () => {
 
   return (
     <header className="w-full bg-white">
-      <Card className="flex justify-between items-center px-3 py-3">
+      <Card className="flex justify-between items-center px-3 py-1">
         <Image
           aria-hidden
           src="/logo.png"
