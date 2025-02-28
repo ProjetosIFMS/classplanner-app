@@ -1,12 +1,13 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import { Card } from "./ui/card";
 import { ToggleStyle } from "./ui/toggleStyle";
-import { getUserData } from "../_actions/getUserData";
 import LogoutButton from "./ui/LogoutButton";
+import { useAuth } from "./auth/AuthContext";
 
-export const Header = async () => {
-  const data = await getUserData();
+export const Header = () => {
+  const { user, logout } = useAuth();
 
   return (
     <header className="w-full bg-white">
@@ -22,7 +23,7 @@ export const Header = async () => {
         />
         <div className="flex items-center">
           <ToggleStyle />
-          <LogoutButton data={data} />
+          {user && <LogoutButton data={user} logout={logout} />}
         </div>
       </Card>
     </header>

@@ -29,18 +29,24 @@ import {
   FormLabel,
 } from "../../_components/ui/form";
 import { MdCheck } from "react-icons/md";
+import { useAuth } from "@/app/_components/auth/AuthContext";
+import { deleteUserToken } from "@/app/_actions/deleteUserToken";
 
 interface areaFormProps {
-  data: Area[];
+  data: Area[] | undefined;
 }
 
 export const AreaForm = ({ data }: areaFormProps) => {
   const form = useForm<AreaSchema>({
     resolver: zodResolver(areaSchema.pick({ area: true })),
   });
+  const { session } = useAuth();
 
   const onSubmitArea: SubmitHandler<AreaSchema> = async (data) => {
-    await updateArea(data.area);
+    if (session) {
+      await updateArea(data.area, session);
+    }
+    deleteUserToken();
   };
 
   return (
@@ -71,11 +77,12 @@ export const AreaForm = ({ data }: areaFormProps) => {
                             <SelectValue placeholder="Selecione" />
                           </SelectTrigger>
                           <SelectContent position="popper">
-                            {data.map((area) => (
-                              <SelectItem key={area.id} value={area.id}>
-                                {area.name}
-                              </SelectItem>
-                            ))}
+                            {data &&
+                              data.map((area) => (
+                                <SelectItem key={area.id} value={area.id}>
+                                  {area.name}
+                                </SelectItem>
+                              ))}
                           </SelectContent>
                         </Select>
                       </FormControl>

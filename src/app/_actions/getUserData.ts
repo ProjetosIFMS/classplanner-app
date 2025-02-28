@@ -1,23 +1,21 @@
 "use server";
 
 import { User } from "@/types/user";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import api from "@/utils/axios-instance";
 import { AxiosResponse } from "axios";
 
-export const getUserData = async (): Promise<User> => {
-  const cookieStore = await cookies();
-  const access_token = cookieStore.get("access_token");
-
+export const getUserData = async (
+  access_token: string | undefined,
+): Promise<User | null> => {
   if (!access_token) {
-    redirect("/");
+    return null;
   }
 
   try {
     const response: AxiosResponse<User> = await api.get("/google/me", {
       headers: {
-        Authorization: `Bearer ${access_token.value}`,
+        Authorization: `Bearer ${access_token}`,
       },
     });
 

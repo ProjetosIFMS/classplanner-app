@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { setSession } from "./lib/setSession";
+import { cookies } from "next/headers";
 
 export async function middleware(request: NextRequest) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("session")?.value;
+  const pathname = request.nextUrl.pathname;
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-url", request.url);
+
   if (request.nextUrl.pathname === "/auth/callback") {
     try {
       const access_token = request.nextUrl.searchParams.get("access_token");
@@ -14,16 +22,13 @@ export async function middleware(request: NextRequest) {
         new URL("/professor/dashboard", request.url),
       );
 
-      response.cookies.set("access_token", access_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24,
-      });
+      setSession(response, access_token);
 
       return response;
     } catch (error) {
-      const response = NextResponse.redirect(new URL("/", request.url));
+      const response = NextResponse.redirect(
+        new URL("/auth/login", request.url),
+      );
       response.headers.set(
         "X-Error-Message",
         encodeURIComponent(String(error)),
@@ -32,9 +37,21 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  if (pathname.startsWith("/auth/login")) {
+    return NextResponse.next();
+  }
+
+  if (!token) {
+    return NextResponse.redirect(new URL("/auth/login", request.url));
+  }
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
 export const config = {
-  matcher: "/auth/callback",
+  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$|.*\\.jpg$).*)"],
 };

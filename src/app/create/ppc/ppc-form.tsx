@@ -37,14 +37,14 @@ export const PPCForm = () => {
   const form = useForm<PPCSchema>({
     resolver: zodResolver(ppcSchema),
     defaultValues: {
-      hasTCC: 0,
+      hasTCC: "true",
       PPCYear: 2025,
       additionalHours: undefined,
       semesterQuantity: 5,
       workload: undefined,
       extensionCourses: undefined,
       internshipHours: undefined,
-      description: undefined,
+      description: "",
     },
   });
 
@@ -160,7 +160,7 @@ export const PPCForm = () => {
                           <Select
                             name="hasTCC"
                             required
-                            defaultValue="0"
+                            defaultValue="true"
                             onValueChange={field.onChange}
                           >
                             <SelectTrigger
@@ -172,8 +172,8 @@ export const PPCForm = () => {
                             </SelectTrigger>
                             <SelectContent position="popper">
                               <SelectGroup>
-                                <SelectItem value="0">Sim</SelectItem>
-                                <SelectItem value="1">Não</SelectItem>
+                                <SelectItem value="true">Sim</SelectItem>
+                                <SelectItem value="false">Não</SelectItem>
                               </SelectGroup>
                             </SelectContent>
                           </Select>

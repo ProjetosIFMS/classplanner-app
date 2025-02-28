@@ -1,19 +1,15 @@
-'use client';
-import { User } from '../../../types/user';
-import { deleteUserToken } from '../../_actions/deleteUserToken';
-import { UserAvatar } from './userAvatar';
+"use client";
+import { User } from "../../../types/user";
+import { UserAvatar } from "./userAvatar";
 
 interface LogoutButtonProps {
   data: User;
+  logout: () => void;
 }
 
-export const LogoutButton = ({ data }: LogoutButtonProps) => {
-  const handleLogout = () => {
-    deleteUserToken();
-  };
-
+export const LogoutButton = ({ data, logout }: LogoutButtonProps) => {
   return (
-    <button onClick={handleLogout}>
+    <button onClick={logout}>
       <UserAvatar {...data} />
     </button>
   );
