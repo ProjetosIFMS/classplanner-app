@@ -11,7 +11,7 @@ export const ppcSchema = z.object({
     .number({ message: "A quantidade de semestres é necessária" })
     .min(1, "A quantidade de semestres não pode ser menor que 1")
     .max(12, "A quantidade de semestres deve ser menor que 12"),
-  hasTCC: z.coerce.number().min(0).max(1).default(1),
+  hasTCC: z.coerce.string().default("true"),
   extensionCourses: z.coerce
     .number()
     .min(0, "Número de aulas de extensão não pode ser menor que 0")
