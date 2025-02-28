@@ -1,47 +1,32 @@
 "use server";
-
 import api from "@/utils/axios-instance";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
-export const getAreas = async () => {
+export const getAreas = async (session: string | undefined) => {
   try {
-    const cookieStore = await cookies();
-    const access_token = cookieStore.get("access_token");
-    if (!access_token) {
-      redirect("/");
-    }
-
     const res = await api.get("/area", {
       headers: {
-        Authorization: `Bearer ${access_token.value}`,
+        Authorization: `Bearer ${session}`,
       },
     });
     return res.data;
   } catch (error) {
-    throw new Error(`Error retrieving areas: ${error}`);
+    throw new Error(`${error}`);
   }
 };
 
-export const updateArea = async (area_id: string) => {
+export const updateArea = async (area_id: string, session: string) => {
   try {
-    const cookieStore = await cookies();
-    const access_token = cookieStore.get("access_token");
-    if (!access_token) {
-      redirect("/");
-    }
-
     const bodyData = {
       area_id: area_id,
     };
 
     const res = await api.patch("/user/select-area", bodyData, {
       headers: {
-        Authorization: `Bearer ${access_token.value}`,
+        Authorization: `Bearer ${session}`,
       },
     });
-    if (res.status == 200) redirect("/professor/dashboard");
+    return res.data;
   } catch (error) {
-    throw new Error(`Error updating user area: ${error}`);
+    throw new Error(`${error}`);
   }
 };
