@@ -8,7 +8,6 @@ import { useAuth } from "./auth/AuthContext";
 
 export const Header = () => {
   const { user, logout } = useAuth();
-
   return (
     <header className="w-full bg-white">
       <Card className="flex justify-between items-center px-3 py-1">
@@ -21,6 +20,7 @@ export const Header = () => {
           width={60}
           height={60}
         />
+
         <div className="flex items-center">
           <ToggleStyle />
           {user && <LogoutButton data={user} logout={logout} />}
