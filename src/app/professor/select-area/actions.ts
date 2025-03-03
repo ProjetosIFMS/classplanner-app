@@ -10,11 +10,14 @@ export const getAreas = async (session: string | undefined) => {
     });
     return res.data;
   } catch (error) {
-    throw new Error(`${error}`);
+    throw error;
   }
 };
 
-export const updateArea = async (area_id: string, session: string) => {
+export const updateArea = async (
+  area_id: string,
+  session: string | undefined,
+) => {
   try {
     const bodyData = {
       area_id: area_id,
@@ -27,6 +30,6 @@ export const updateArea = async (area_id: string, session: string) => {
     });
     return res.data;
   } catch (error) {
-    throw new Error(`${error}`);
+    throw error;
   }
 };

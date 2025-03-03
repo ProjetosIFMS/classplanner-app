@@ -3,6 +3,7 @@
 import { deleteUserToken } from "@/app/_actions/deleteUserToken";
 import { getUserData } from "@/app/_actions/getUserData";
 import { User } from "@/types/user";
+import { useRouter } from "next/navigation";
 import {
   useState,
   createContext,
@@ -28,19 +29,26 @@ export const AuthProvider = ({
 }) => {
   const session = referentialAccessToken;
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const getData = async (session: string) => {
       try {
         const data = await getUserData(session);
         setUser(data);
+        if (!data) {
+          throw new Error("Access token not found");
+        }
+        if (!data.area_id && data.role == "PROFESSOR") {
+          router.push("/professor/select-area");
+        }
       } catch (error) {
-        throw new Error(String(error));
+        throw error;
       }
     };
 
     if (session) getData(session);
-  }, [session]);
+  }, [session, router]);
 
   const logout = () => {
     deleteUserToken();

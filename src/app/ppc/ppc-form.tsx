@@ -20,7 +20,6 @@ import {
 } from "@/app/_components/ui/select";
 import { Textarea } from "@/app/_components/ui/textarea";
 import { MdCheck, MdOutlineClose } from "react-icons/md";
-import { submitPPC } from "./actions";
 import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { ppcSchema, PPCSchema } from "@/types/validation/forms";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,43 +31,83 @@ import {
   FormLabel,
   FormMessage,
 } from "@/app/_components/ui/form";
+import { useAuth } from "@/app/_components/auth/AuthContext";
+import { useEffect, useState } from "react";
+import { getCourses } from "@/app/_actions/getCourses";
+import { Course } from "@/types/course";
+import { useRouter } from "next/navigation";
+import { PPC } from "@/types/ppc";
+import { createPpc, updatePpc } from "./actions";
 
-export const PPCForm = () => {
+interface PPCFormProps {
+  title: string;
+  data?: PPC;
+}
+
+export const PPCForm = ({ title, data }: PPCFormProps) => {
+  const [courses, setCourses] = useState<Course[] | null>(null);
+  const isUpdate = Boolean(data?.id);
+  const { session } = useAuth();
+  const router = useRouter();
   const form = useForm<PPCSchema>({
     resolver: zodResolver(ppcSchema),
     defaultValues: {
-      hasTCC: "true",
-      PPCYear: 2025,
-      additionalHours: undefined,
-      semesterQuantity: 5,
-      workload: undefined,
-      extensionCourses: undefined,
-      internshipHours: undefined,
-      description: "",
+      hasTCC: data?.hasTCC ? data.hasTCC : false,
+      status: data?.status ? data.status : true,
+      year: data?.year ? data.year : 2025,
+      complementaryHours: data?.complementaryHours
+        ? data.complementaryHours
+        : 0,
+      workload: data?.workload ? data.workload : 0,
+      extensionCourses: data?.extensionCourses ? data.extensionCourses : 0,
+      stageHours: data?.stageHours ? data.stageHours : 0,
+      description: data?.description ? data.description : "",
+      course_id: data?.course_id ? data.course_id : "",
     },
   });
-
   const {
     handleSubmit,
     formState: { isSubmitting },
   } = form;
 
-  const semesters = Array.from({ length: 10 }, (_, i) => i + 1).map((val) =>
-    val.toString(),
-  );
+  useEffect(() => {
+    const fetchCourses = async (session: string) => {
+      const res = await getCourses(session);
+      setCourses(res);
+    };
 
-  const onSubmitForm: SubmitHandler<PPCSchema> = async (data) => {
-    await submitPPC(data);
+    if (!session) {
+      return;
+    }
+    fetchCourses(session);
+  }, [session]);
+
+  const onSubmitForm: SubmitHandler<PPCSchema> = async (formData) => {
+    if (isUpdate && data?.id) {
+      updatePpc(data.id, formData, session);
+    } else {
+      createPpc(formData, session);
+    }
+    form.reset();
+    router.push("/");
   };
 
   const onErrorForm: SubmitErrorHandler<PPCSchema> = (data) => {
     console.log(data);
   };
 
+  const stringToBoolean = (value: string): boolean => {
+    return value === "true";
+  };
+
+  const booleanToString = (value: boolean): string => {
+    return value ? "true" : "false";
+  };
+
   return (
-    <Card className="w-[450px]">
+    <Card className="w-[450px] max-h-[800px]">
       <CardHeader>
-        <CardTitle> Criar PPC </CardTitle>
+        <CardTitle> {title}</CardTitle>
         <CardDescription>
           Preencha os detalhes do Projeto Pedagógico de Curso
         </CardDescription>
@@ -77,76 +116,86 @@ export const PPCForm = () => {
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmitForm, onErrorForm)}>
             <div className="grid w-full items-center gap-6 mb-4">
-              <FormField
-                control={form.control}
-                name="PPCYear"
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel className="font-semibold text-sm">
-                        Ano de Criação
-                      </FormLabel>
-                      <FormControl>
-                        <Select
-                          name="PPCYear"
-                          onValueChange={field.onChange}
-                          required
-                          defaultValue="2025"
-                        >
-                          <SelectTrigger {...field} id="PPCyear">
-                            <SelectValue placeholder="Selecione o ano" />
-                          </SelectTrigger>
-                          <SelectContent position="popper">
-                            <SelectGroup>
-                              <SelectItem value="2025"> 2025</SelectItem>
-                              <SelectItem value="2021"> 2021</SelectItem>
-                              <SelectItem value="2016"> 2016</SelectItem>
-                              <SelectItem value="2011"> 2011</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                    </FormItem>
-                  );
-                }}
-              />
-            </div>
-            <div className="grid w-full items-center gap-6">
-              <div className="flex flex-row justify-between">
+              <div className="flex flex-row justify-center w-full">
                 <FormField
                   control={form.control}
-                  name="semesterQuantity"
+                  name="course_id"
                   render={({ field }) => {
                     return (
                       <FormItem>
                         <FormLabel className="font-semibold text-sm">
-                          Quantidade de semestres
+                          Curso
                         </FormLabel>
                         <FormControl>
                           <Select
-                            name="semesterQuantity"
-                            required
-                            defaultValue="5"
+                            name="course_id"
                             onValueChange={field.onChange}
+                            defaultValue={
+                              form.formState.defaultValues?.course_id
+                            }
+                            required
                           >
-                            <SelectTrigger {...field} id="semesterQuantity">
-                              <SelectValue placeholder="Selecione..." />
-                            </SelectTrigger>
-                            <SelectContent position="popper">
-                              <SelectGroup>
-                                {semesters.map((number) => (
-                                  <SelectItem key={number} value={number}>
-                                    {number}
+                            <SelectTrigger className="w-[400px] min-w-[150px]">
+                              <SelectValue placeholder="Selecione um curso" />
+                              <SelectContent>
+                                {courses?.map((values, index) => (
+                                  <SelectItem key={index} value={values.id}>
+                                    {values.name}
                                   </SelectItem>
                                 ))}
-                              </SelectGroup>
-                            </SelectContent>
+                              </SelectContent>
+                            </SelectTrigger>
                           </Select>
                         </FormControl>
+                        <FormMessage className="text-[10px]" />
                       </FormItem>
                     );
                   }}
                 />
+              </div>
+              <div className="flex flex-row justify-center w-full">
+                <FormField
+                  control={form.control}
+                  name="year"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel className="font-semibold text-sm">
+                          Ano de Criação
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            name="year"
+                            onValueChange={field.onChange}
+                            required
+                            defaultValue={form.formState.defaultValues?.year?.toString()}
+                          >
+                            <SelectTrigger
+                              {...field}
+                              className="w-[400px]"
+                              id="year"
+                            >
+                              <SelectValue placeholder="Selecione o ano" />
+                            </SelectTrigger>
+                            <SelectContent position="popper">
+                              <SelectGroup>
+                                <SelectItem value="2025"> 2025</SelectItem>
+                                <SelectItem value="2021"> 2021</SelectItem>
+                                <SelectItem value="2016"> 2016</SelectItem>
+                                <SelectItem value="2011"> 2011</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage className="text-[10px]" />
+                      </FormItem>
+                    );
+                  }}
+                />
+              </div>
+            </div>
+            <div className="grid w-full items-center gap-6">
+              <div className="flex flex-row justify-between">
                 <FormField
                   control={form.control}
                   name="hasTCC"
@@ -160,24 +209,67 @@ export const PPCForm = () => {
                           <Select
                             name="hasTCC"
                             required
-                            defaultValue="true"
-                            onValueChange={field.onChange}
+                            defaultValue="false"
+                            onValueChange={(value) =>
+                              field.onChange(stringToBoolean(value))
+                            }
                           >
                             <SelectTrigger
                               {...field}
                               className="w-[170px]"
                               id="hasTCC"
+                              value={booleanToString(field.value)}
                             >
                               <SelectValue placeholder="Selecione..." />
                             </SelectTrigger>
                             <SelectContent position="popper">
                               <SelectGroup>
-                                <SelectItem value="true">Sim</SelectItem>
-                                <SelectItem value="false">Não</SelectItem>
+                                <SelectItem value={"true"}>Sim</SelectItem>
+                                <SelectItem value={"false"}>Não</SelectItem>
                               </SelectGroup>
                             </SelectContent>
                           </Select>
                         </FormControl>
+                        <FormMessage className="text-[10px]" />
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel className="font-semibold text-sm">
+                          Ativo
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            name="hasTCC"
+                            required
+                            defaultValue="true"
+                            onValueChange={(value) =>
+                              field.onChange(stringToBoolean(value))
+                            }
+                          >
+                            <SelectTrigger
+                              {...field}
+                              className="w-[170px]"
+                              id="hasTCC"
+                              value={booleanToString(field.value)}
+                            >
+                              <SelectValue placeholder="Selecione..." />
+                            </SelectTrigger>
+                            <SelectContent position="popper">
+                              <SelectGroup>
+                                <SelectItem value={"true"}>Sim</SelectItem>
+                                <SelectItem value={"false"}>Não</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage className="text-[10px]" />
                       </FormItem>
                     );
                   }}
@@ -202,6 +294,7 @@ export const PPCForm = () => {
                             {...field}
                           />
                         </FormControl>
+                        <FormMessage className="text-[10px]" />
                       </FormItem>
                     );
                   }}
@@ -222,8 +315,12 @@ export const PPCForm = () => {
                             id="workload"
                             className="w-[170px]"
                             {...field}
+                            onChange={(event) =>
+                              field.onChange(event.target.value)
+                            }
                           />
                         </FormControl>
+                        <FormMessage className="text-[10px] absolute" />
                       </FormItem>
                     );
                   }}
@@ -232,7 +329,7 @@ export const PPCForm = () => {
               <div className="flex flex-row justify-between">
                 <FormField
                   control={form.control}
-                  name="additionalHours"
+                  name="complementaryHours"
                   render={({ field }) => {
                     return (
                       <FormItem>
@@ -242,19 +339,23 @@ export const PPCForm = () => {
                         <FormControl>
                           <Input
                             type="number"
-                            placeholder="Número de aulas"
-                            id="additionalHours"
+                            placeholder="Número total de horas"
+                            id="complementaryHours"
                             className="w-[165px]"
                             {...field}
+                            onChange={(event) =>
+                              field.onChange(event.target.value)
+                            }
                           />
                         </FormControl>
+                        <FormMessage className="text-[10px]" />
                       </FormItem>
                     );
                   }}
                 />
                 <FormField
                   control={form.control}
-                  name="internshipHours"
+                  name="stageHours"
                   render={({ field }) => {
                     return (
                       <FormItem>
@@ -265,11 +366,15 @@ export const PPCForm = () => {
                           <Input
                             type="number"
                             placeholder="Total de horas"
-                            id="internshipHours"
+                            id="stageHours"
                             className="w-[170px]"
                             {...field}
+                            onChange={(event) =>
+                              field.onChange(event.target.value)
+                            }
                           />
                         </FormControl>
+                        <FormMessage className="text-[10px] absolute" />
                       </FormItem>
                     );
                   }}
@@ -291,9 +396,12 @@ export const PPCForm = () => {
                             name="description"
                             id="description"
                             className="resize-none h-[130px]"
+                            onChange={(event) =>
+                              field.onChange(event.target.value)
+                            }
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-[10px]" />
                       </FormItem>
                     );
                   }}
@@ -301,7 +409,11 @@ export const PPCForm = () => {
               </div>
             </div>
             <CardFooter className="flex justify-between mt-8">
-              <Button type="reset" variant={"outline"}>
+              <Button
+                type="reset"
+                onClick={() => form.reset()}
+                variant={"outline"}
+              >
                 Cancelar
                 <MdOutlineClose />
               </Button>

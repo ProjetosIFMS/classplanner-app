@@ -1,37 +1,38 @@
 import { z } from "zod";
 
 export const ppcSchema = z.object({
-  PPCYear: z.coerce
+  year: z.coerce
     .number({
-      message: "O ano de criação é necessário",
+      message: "É necessário",
       invalid_type_error: "Campo deve ser composto de números",
     })
     .min(2000, { message: "O ano de criação deve ser maior que o de 2000" }),
-  semesterQuantity: z.coerce
-    .number({ message: "A quantidade de semestres é necessária" })
-    .min(1, "A quantidade de semestres não pode ser menor que 1")
-    .max(12, "A quantidade de semestres deve ser menor que 12"),
-  hasTCC: z.coerce.string().default("true"),
+  hasTCC: z.coerce.boolean({ message: "É necessário" }).default(false),
+  status: z.coerce.boolean({ message: "Necessário" }).default(true),
   extensionCourses: z.coerce
     .number()
-    .min(0, "Número de aulas de extensão não pode ser menor que 0")
-    .max(5, "Número de aulas de extensão não pode ser maior que 5")
-    .optional()
+    .min(0, "Total de aulas deve ser maior que 0")
     .or(z.literal(0)),
   workload: z.coerce
     .number({
-      message: "A carga horária é necessária",
+      message: "É necessário",
       invalid_type_error: "Carga horária deve ser um número",
     })
-    .min(1000, "A carga horária não pode ser menor que 1000")
-    .max(4000, "A carga horária não pode ser maior que 4000"),
-  additionalHours: z.coerce.number().optional().or(z.literal(0)),
-  internshipHours: z.coerce.number().optional().or(z.literal(0)),
+    .min(1000, "Horas totais deve ser maior que 1000")
+    .max(4000, "Horas totais deve ser maior que 4000"),
+  complementaryHours: z.coerce
+    .number()
+    .min(0, "Total de horas deve ser menor que 0")
+    .or(z.literal(0)),
+  stageHours: z.coerce
+    .number()
+    .min(0, "Total de horas deve ser menor que 0")
+    .or(z.literal(0)),
   description: z
     .string()
     .min(10, "A descrição deve conter mais que 10 caracteres")
-    .optional()
     .or(z.literal("")),
+  course_id: z.string({ message: "Necessário selecionar um curso" }),
 });
 
 export const areaSchema = z.object({
