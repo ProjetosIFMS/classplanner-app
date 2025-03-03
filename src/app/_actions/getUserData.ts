@@ -1,7 +1,6 @@
 "use server";
 
 import { User } from "@/types/user";
-import { redirect } from "next/navigation";
 import api from "@/utils/axios-instance";
 import { AxiosResponse } from "axios";
 
@@ -18,10 +17,6 @@ export const getUserData = async (
         Authorization: `Bearer ${access_token}`,
       },
     });
-
-    if (!response.data.area_id && response.data.role == "PROFESSOR") {
-      redirect("/professor/select-area");
-    }
 
     return response.data;
   } catch (error) {
