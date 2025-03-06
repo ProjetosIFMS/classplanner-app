@@ -60,7 +60,7 @@ export async function updatePpc(
         Authorization: `Bearer ${session}`,
       },
     });
-    return res;
+    return res.data;
   } catch (err) {
     throw err;
   }

@@ -15,6 +15,7 @@ import {
   ReactNode,
   useContext,
   useEffect,
+  useCallback,
 } from "react";
 
 interface AuthContextType {
@@ -53,66 +54,41 @@ export const AuthProvider = ({
   });
   const router = useRouter();
 
-  useEffect(() => {
-    const getData = async (session: string) => {
-      try {
-        const data = await getUserData(session);
-        setUser(data);
-        if (!data) {
-          throw new Error("Access token not found");
-        }
-        if (!data.area_id && data.role == "PROFESSOR") {
-          router.push("/professor/select-area");
-        }
-        const fetchCourses = async (session: string) => {
-          const res = await getCourses(session);
-          setData((prev) => ({
-            ...prev,
-            courses: res,
-          }));
-        };
+  const fetchUserData = useCallback(
+    async (session: string) => {
+      const userData = await getUserData(session);
+      setUser(userData);
 
-        const fetchAreas = async (session: string) => {
-          const res = await getAreas(session);
-          setData((prev) => ({
-            ...prev,
-            areas: res,
-          }));
-        };
-
-        const fetchPedagogicalProjects = async (session: string) => {
-          const res = await getPpc(session);
-          setData((prev) => ({
-            ...prev,
-            pedagogicalProjects: res,
-          }));
-        };
-
-        const fetchModalities = async (session: string) => {
-          const res = await getModalities(session);
-          setData((prev) => ({
-            ...prev,
-            modalities: res,
-          }));
-        };
-
-        if (!session) {
-          return;
-        }
-        fetchCourses(session);
-
-        fetchAreas(session);
-
-        fetchPedagogicalProjects(session);
-
-        fetchModalities(session);
-      } catch (error) {
-        throw error;
+      if (!userData) {
+        throw new Error("Access token not found");
       }
-    };
+      if (!userData.area_id && userData.role == "PROFESSOR") {
+        router.push("/professor/select-area");
+      }
+    },
+    [router],
+  );
 
-    if (session) getData(session);
-  }, [session, router]);
+  const fetchCommonData = useCallback(async (session: string) => {
+    try {
+      const [courses, areas, pedagogicalProjects, modalities] =
+        await Promise.all([
+          getCourses(session),
+          getAreas(session),
+          getPpc(session),
+          getModalities(session),
+        ]);
+      setData({ courses, areas, pedagogicalProjects, modalities });
+    } catch (err) {
+      throw err;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!session) return;
+    fetchUserData(session);
+    fetchCommonData(session);
+  }, [session, fetchUserData, fetchCommonData]);
 
   const logout = () => {
     deleteUserToken();
