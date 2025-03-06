@@ -1,16 +1,15 @@
-"use server";
 import { Header } from "@/app/_components/header";
-import { PPCForm } from "../Ppc-form";
+import DisciplineForm from "../Discipline-form";
 
-const CreatePPC = async () => {
+const CreateDiscipline = () => {
   return (
     <section className="min-h-screen flex flex-col">
       <Header />
       <div className="flex-1 flex items-center justify-center">
-        <PPCForm title="Criar PPC" />
+        <DisciplineForm title="Dados da disciplina" />
       </div>
     </section>
   );
 };
 
-export default CreatePPC;
+export default CreateDiscipline;

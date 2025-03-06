@@ -19,7 +19,7 @@ import { Button } from "../../_components/ui/button";
 import { Area } from "@/types/area";
 import { updateArea } from "./actions";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { areaSchema, AreaSchema } from "@/types/validation/forms";
+import { areaSchema, AreaSchema } from "@/types/validation/ppc_form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,

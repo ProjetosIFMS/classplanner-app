@@ -1,165 +1,79 @@
 "use client";
 import { Header } from "@/app/_components/header";
-import { Card, CardContent } from "@/app/_components/ui/card";
-import { useEffect, useState } from "react";
+
+import { useCallback, useEffect, useState } from "react";
 import { deletePpc, getPpc } from "../actions";
 import { useAuth } from "@/app/_components/auth/AuthContext";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionTrigger,
-} from "@/app/_components/ui/accordion";
-import { AccordionItem } from "@radix-ui/react-accordion";
-import { MdEdit } from "react-icons/md";
-import { MdDelete } from "react-icons/md";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/app/_components/ui/dialog";
-import { PPCForm } from "@/app/ppc/ppc-form";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/app/_components/ui/alert-dialog";
+
 import { PPC } from "@/types/ppc";
+import { Button } from "@/app/_components/ui/button";
+import Link from "next/link";
+import { Plus } from "lucide-react";
+import { ListCardPpc } from "./components/list-card";
 
 export default function ListPpc() {
-  const [ppc, setPpc] = useState<PPC[] | null>(null);
+  const [ppc, setPpc] = useState<PPC[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { session } = useAuth();
 
-  useEffect(() => {
-    const fetchPpc = async () => {
-      try {
-        const res = await getPpc(session);
-        if (res) setPpc(res);
-      } catch (err) {
-        throw err;
-      }
-    };
-    fetchPpc();
+  // Use useCallback to memoize the fetch function
+  const fetchPpc = useCallback(async () => {
+    if (!session) return;
+
+    setIsLoading(true);
+    try {
+      const res = await getPpc(session);
+      if (res) setPpc(res);
+    } catch (err) {
+      console.error("Error fetching PPC data:", err);
+    } finally {
+      setIsLoading(false);
+    }
   }, [session]);
 
-  const handleDeletePPC = async (
-    session: string | undefined,
-    ppc_id: string,
-  ) => {
-    await deletePpc(session, ppc_id);
-  };
+  useEffect(() => {
+    fetchPpc();
+  }, [fetchPpc]); // Dependency is now the memoized function
+
+  // Memoize the delete handler to prevent recreating on each render
+  const handleDeletePPC = useCallback(
+    async (sessionToken: string | undefined, ppc_id: string) => {
+      if (!sessionToken) return false;
+
+      try {
+        const success = await deletePpc(sessionToken, ppc_id);
+        if (success) {
+          setPpc((prevData) => prevData.filter((ppc) => ppc.id !== ppc_id));
+        }
+        return success;
+      } catch (error) {
+        console.error("Error deleting PPC:", error);
+        return false;
+      }
+    },
+    [],
+  );
 
   return (
-    <section className="flex flex-col items-center justify-center ">
+    <section className="flex flex-col items-center justify-center">
       <Header />
-      <h1 className="mt-8"></h1>
-      <Card className="w-[900px]">
-        <CardContent className="grid grid-flow-col grid-rows-2 gap-x-16 gap-y-5">
-          {ppc &&
-            ppc.map((ppc, key) => (
-              <div key={key}>
-                <Accordion collapsible type="single">
-                  <AccordionItem value={`item-${key}`}>
-                    <AccordionTrigger className="font-bold">
-                      Projeto Pedagógico de curso {ppc.year}
-                    </AccordionTrigger>
-                    <AccordionContent className="flex flex-row mt-8 justify-between">
-                      <div className="flex flex-col gap-2">
-                        <p className="underline cursor-pointer">
-                          Visualizar documento
-                        </p>
-                        <div>
-                          <p className="text-xs text-muted-foreground">
-                            Última Modificação:
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            data_modificacao
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <div className="flex flex-row gap self-end gap-5">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <MdEdit
-                                size={25}
-                                color="#3A4F95"
-                                className="cursor-pointer"
-                              />
-                            </DialogTrigger>
-                            <DialogContent
-                              aria-describedby={undefined}
-                              className="sm:max-w-[500px] sm:max-h-[850px]"
-                            >
-                              <DialogHeader>
-                                <DialogTitle></DialogTitle>
-                              </DialogHeader>
-                              <PPCForm
-                                title="Editar PPC"
-                                key={key}
-                                data={ppc}
-                              ></PPCForm>
-                              <div className="grid gap-4 py-4"></div>
-                            </DialogContent>
-                          </Dialog>
-
-                          <AlertDialog>
-                            <AlertDialogTrigger>
-                              <MdDelete
-                                size={25}
-                                color="#F96161"
-                                className="cursor-pointer"
-                              />
-                            </AlertDialogTrigger>
-                            <AlertDialogContent
-                              aria-describedby={undefined}
-                              className="sm:max-w-[500px]"
-                            >
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Você tem certeza?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Essa ação não pode ser desfeita. Deseja
-                                  deletar mesmo assim o PPC {ppc.year}?
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() =>
-                                    handleDeletePPC(session, ppc.id)
-                                  }
-                                >
-                                  Deletar
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">
-                            Data de inserção:
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            data_insercao
-                          </p>
-                        </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </div>
-            ))}
-        </CardContent>
-      </Card>
+      <div className="flex-1 p-6 max-w-7xl mx-auto w-full">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">Projetos Pedagógicos</h1>
+          <Button asChild className="shadow-lg">
+            <Link href="/ppc/create">
+              <Plus className="mr-2 h-4 w-4" />
+              Novo PPC
+            </Link>
+          </Button>
+        </div>
+        <ListCardPpc
+          data={ppc}
+          deletePpcFn={handleDeletePPC}
+          session={session}
+          isLoading={isLoading}
+        />
+      </div>
     </section>
   );
 }
