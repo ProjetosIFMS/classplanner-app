@@ -1,6 +1,9 @@
+"use server";
+
 import { PPC } from "@/types/ppc";
-import { PPCSchema } from "@/types/validation/forms";
+import { PPCSchema } from "@/types/validation/ppc_form";
 import api from "@/utils/axios-instance";
+import { revalidatePath } from "next/cache";
 
 export async function getPpc(session: string | undefined): Promise<PPC[]> {
   try {
@@ -17,14 +20,16 @@ export async function getPpc(session: string | undefined): Promise<PPC[]> {
 
 export async function deletePpc(session: string | undefined, id: string) {
   try {
-    const res = await api.delete(`/pedagogical-project/${id}`, {
+    await api.delete(`/pedagogical-project/${id}`, {
       headers: {
         Authorization: `Bearer ${session}`,
       },
     });
-    return res.data;
-  } catch (err) {
-    throw err;
+    revalidatePath("/ppc/list");
+
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -33,12 +38,12 @@ export async function createPpc(
   session: string | undefined,
 ) {
   try {
-    const res = await api.post("/pedagogical-project", formData, {
+    await api.post("/pedagogical-project", formData, {
       headers: {
         Authorization: `Bearer ${session}`,
       },
     });
-    return res.data;
+    return true;
   } catch (err) {
     throw err;
   }

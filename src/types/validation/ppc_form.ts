@@ -22,22 +22,15 @@ export const ppcSchema = z.object({
     .max(4000, "Horas totais deve ser maior que 4000"),
   complementaryHours: z.coerce
     .number()
-    .min(0, "Total de horas deve ser menor que 0")
-    .or(z.literal(0)),
-  stageHours: z.coerce
-    .number()
-    .min(0, "Total de horas deve ser menor que 0")
-    .or(z.literal(0)),
+    .min(0, "Total de horas deve ser menor que 0"),
+  stageHours: z.coerce.number().min(0, "Total de horas deve ser menor que 0"),
   description: z
     .string()
     .min(10, "A descrição deve conter mais que 10 caracteres")
     .or(z.literal("")),
-  course_id: z.string({ message: "Necessário selecionar um curso" }),
-});
-
-export const areaSchema = z.object({
-  area: z.string().min(1, "Por favor selecione uma opção."),
+  course_id: z
+    .string({ message: "Necessário selecionar um curso" })
+    .uuid({ message: "Valor inválido" }),
 });
 
 export type PPCSchema = z.infer<typeof ppcSchema>;
-export type AreaSchema = z.infer<typeof areaSchema>;
