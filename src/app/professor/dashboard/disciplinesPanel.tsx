@@ -5,13 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/_components/ui/card";
-
-export type Discipline = {
-  name: string;
-  workload: string;
-  semester: string;
-  shift?: string;
-};
+import { Discipline } from "@/types/discipline";
 
 export interface DisciplinesPanelProps {
   course: string;
@@ -36,17 +30,12 @@ export const DisciplinesPanel = ({
               <div className="flex flex-column gap-2 items-center self-start">
                 <p className="font-bold text-sm">{discipline.name}</p>
                 <p className="text-sky-400 text-sm">
-                  (C.H {discipline.workload}hs)
+                  (C.H {discipline.extensionHours}hs)
                 </p>
               </div>
               <p className="text-[10px] text-muted-foreground">
                 {course} {discipline.semester}
               </p>
-              {discipline.shift && (
-                <p className="text-[10px] text-muted-foreground">
-                  {discipline.shift}
-                </p>
-              )}
             </div>
           ))}
         </CardContent>
