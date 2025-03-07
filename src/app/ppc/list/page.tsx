@@ -16,16 +16,14 @@ export default function ListPpc() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { session } = useAuth();
 
-  // Use useCallback to memoize the fetch function
   const fetchPpc = useCallback(async () => {
     if (!session) return;
-
     setIsLoading(true);
     try {
       const res = await getPpc(session);
       if (res) setPpc(res);
     } catch (err) {
-      console.error("Error fetching PPC data:", err);
+      throw err;
     } finally {
       setIsLoading(false);
     }
@@ -33,9 +31,8 @@ export default function ListPpc() {
 
   useEffect(() => {
     fetchPpc();
-  }, [fetchPpc]); // Dependency is now the memoized function
+  }, [fetchPpc]);
 
-  // Memoize the delete handler to prevent recreating on each render
   const handleDeletePPC = useCallback(
     async (sessionToken: string | undefined, ppc_id: string) => {
       if (!sessionToken) return false;

@@ -35,34 +35,38 @@ import type { PPC } from "@/types/ppc";
 import { createPpc, updatePpc } from "./actions";
 import { useAuth } from "../_components/auth/AuthContext";
 import { useCourses } from "@/hooks/useCourses";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { MessageBox } from "../_components/ui/messageBox";
+import { useRouter } from "next/navigation";
 
 interface PPCFormProps {
   title?: string;
   data?: PPC;
+  isUpdate?: boolean;
 }
 
-export const PPCForm = ({ title, data }: PPCFormProps) => {
-  const isUpdate = Boolean(data?.id);
+export const PPCForm = ({ title, data, isUpdate }: PPCFormProps) => {
   const { session } = useAuth();
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const courses = useCourses();
   const currentYear = new Date().getFullYear();
   const yearOptions = Array.from({ length: 20 }, (_, i) => currentYear - i);
+  const router = useRouter();
 
-  // Memoize form default values to prevent unnecessary re-renders
-  const defaultValues = {
-    hasTCC: data?.hasTCC ?? false,
-    status: data?.status ?? true,
-    year: data?.year ?? currentYear,
-    complementaryHours: data?.complementaryHours ?? 0,
-    workload: data?.workload ?? 0,
-    extensionCourses: data?.extensionCourses ?? 0,
-    stageHours: data?.stageHours ?? 0,
-    description: data?.description ?? "",
-    course_id: data?.course_id ?? "",
-  };
+  const defaultValues = useMemo(
+    () => ({
+      hasTCC: data?.hasTCC ?? false,
+      status: data?.status ?? true,
+      year: data?.year ?? currentYear,
+      complementaryHours: data?.complementaryHours ?? 0,
+      workload: data?.workload ?? 0,
+      extensionCourses: data?.extensionCourses ?? 0,
+      stageHours: data?.stageHours ?? 0,
+      description: data?.description ?? "",
+      course_id: data?.course_id ?? "",
+    }),
+    [data, currentYear],
+  );
 
   const form = useForm<PPCSchema>({
     resolver: zodResolver(ppcSchema),
@@ -71,27 +75,26 @@ export const PPCForm = ({ title, data }: PPCFormProps) => {
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
     reset,
   } = form;
 
-  // Use useCallback to prevent recreation of handlers on each render
-  const onSubmitForm: SubmitHandler<PPCSchema> = useCallback(
-    async (formData) => {
-      try {
-        if (isUpdate && data?.id) {
-          await updatePpc(data.id, formData, session);
-        } else {
-          await createPpc(formData, session);
-          reset(defaultValues);
-        }
-        setShowMessage(true);
-      } catch (err) {
-        console.error("Form submission error:", err);
+  const onSubmitForm: SubmitHandler<PPCSchema> = async (formData) => {
+    try {
+      if (isUpdate && data?.id) {
+        await updatePpc(data.id, formData, session);
+        form.reset(defaultValues);
+        router.refresh();
+      } else {
+        await createPpc(formData, session);
+        form.reset(defaultValues);
+        router.refresh();
       }
-    },
-    [isUpdate, data?.id, session, reset, defaultValues],
-  );
+      setShowMessage(true);
+    } catch (err) {
+      throw err;
+    }
+  };
 
   const handleReset = useCallback(() => {
     reset(defaultValues);
@@ -115,7 +118,6 @@ export const PPCForm = ({ title, data }: PPCFormProps) => {
       <CardContent className="pt-4 px-4">
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
-            {/* Course and Year */}
             <div className="space-y-3">
               <FormField
                 control={form.control}
@@ -159,9 +161,7 @@ export const PPCForm = ({ title, data }: PPCFormProps) => {
                       <FormControl>
                         <Select
                           value={field.value.toString()}
-                          onValueChange={(value) =>
-                            field.onChange(parseInt(value, 10))
-                          }
+                          onValueChange={(value) => value.toString()}
                         >
                           <SelectTrigger id="year" className="h-8 text-sm">
                             <SelectValue placeholder="Ano" />
@@ -270,10 +270,8 @@ export const PPCForm = ({ title, data }: PPCFormProps) => {
                           id="workload"
                           className="h-8 text-sm"
                           value={field.value}
-                          onChange={(event) =>
-                            field.onChange(
-                              parseInt(event.target.value || "0", 10),
-                            )
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value, 10) || 0)
                           }
                         />
                       </FormControl>
@@ -297,10 +295,8 @@ export const PPCForm = ({ title, data }: PPCFormProps) => {
                           id="extensionCourses"
                           className="h-8 text-sm"
                           value={field.value}
-                          onChange={(event) =>
-                            field.onChange(
-                              parseInt(event.target.value || "0", 10),
-                            )
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value, 10) || 0)
                           }
                         />
                       </FormControl>
@@ -324,10 +320,8 @@ export const PPCForm = ({ title, data }: PPCFormProps) => {
                           id="complementaryHours"
                           className="h-8 text-sm"
                           value={field.value}
-                          onChange={(event) =>
-                            field.onChange(
-                              parseInt(event.target.value || "0", 10),
-                            )
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value, 10) || 0)
                           }
                         />
                       </FormControl>
@@ -351,10 +345,8 @@ export const PPCForm = ({ title, data }: PPCFormProps) => {
                           id="stageHours"
                           className="h-8 text-sm"
                           value={field.value}
-                          onChange={(event) =>
-                            field.onChange(
-                              parseInt(event.target.value || "0", 10),
-                            )
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value, 10) || 0)
                           }
                         />
                       </FormControl>
@@ -402,7 +394,7 @@ export const PPCForm = ({ title, data }: PPCFormProps) => {
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || (!isDirty && isUpdate)}
                 variant="default"
                 size="sm"
                 className="h-8"
@@ -416,7 +408,7 @@ export const PPCForm = ({ title, data }: PPCFormProps) => {
         {!data && (
           <MessageBox
             title="Ação bem sucedida"
-            description="A criação do PPC foi bem sucedida."
+            description={"A criação do PPC foi bem sucedida."}
             state={showMessage}
             onClose={handleCloseMessage}
           />

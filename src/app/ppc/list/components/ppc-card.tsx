@@ -103,11 +103,14 @@ export const PPCCard = memo(
                         <MdEdit size={18} />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[500px] sm:max-h-[850px]">
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="sm:max-w-[500px] sm:max-h-[850px]"
+                    >
                       <DialogHeader>
                         <DialogTitle>Editar PPC</DialogTitle>
                       </DialogHeader>
-                      <PPCForm data={ppc} />
+                      <PPCForm isUpdate data={ppc} />
                     </DialogContent>
                   </Dialog>
 
