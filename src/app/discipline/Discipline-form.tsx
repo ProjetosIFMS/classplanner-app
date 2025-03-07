@@ -32,47 +32,70 @@ import { useAuth } from "../_components/auth/AuthContext";
 import { Input } from "../_components/ui/input";
 import { Button } from "../_components/ui/button";
 import { MdCheck, MdOutlineClose } from "react-icons/md";
-import { createDiscipline } from "./actions";
+import { createDiscipline, updateDiscipline } from "./actions";
+import { useMemo, useState } from "react";
+import { MessageBox } from "../_components/ui/messageBox";
+import { Discipline } from "@/types/discipline";
+import { useRouter } from "next/navigation";
 
 interface DisciplineFormProps {
   title: string;
-  // data?: Discipline;
+  data?: Discipline;
+  isUpdate?: boolean;
 }
 
-const DisciplineForm = ({ title }: DisciplineFormProps) => {
+const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
   const {
     session,
     commonData: { courses, pedagogicalProjects, areas, modalities },
   } = useAuth();
+  const [showMessage, setShowMessage] = useState<boolean>(false);
+  const router = useRouter();
+
+  const defaultValues = useMemo<DisciplineSchema>(
+    () => ({
+      semester: data?.semester ?? 0,
+      practicalHours: data?.practicalHours ?? 0,
+      extensionHours: data?.extensionHours ?? 0,
+      theoreticalHours: data?.theoreticalHours ?? 0,
+      code: data?.code ?? "",
+      name: data?.name ?? "",
+      area_id: data?.area_id ?? "",
+      course_id: data?.course_id ?? "",
+      modality_id: data?.modality_id ?? "",
+      pedagogical_project_id: data?.pedagogical_project_id ?? "",
+    }),
+    [data],
+  );
 
   const form = useForm<DisciplineSchema>({
     resolver: zodResolver(disciplineSchema),
-    defaultValues: {
-      area_id: "",
-      code: "",
-      course_id: "",
-      extensionHours: 0,
-      theoreticalHours: 0,
-      practicalHours: 0,
-      modality_id: "",
-      name: "",
-      pedagogical_project_id: "",
-      semester: 0,
-    },
+    defaultValues,
   });
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
   } = form;
 
   const onSubmitForm: SubmitHandler<DisciplineSchema> = async (formData) => {
-    const res = await createDiscipline(formData, session);
-    form.reset();
-    console.log(res);
+    if (isUpdate && data?.id) {
+      await updateDiscipline(formData, session, data.id);
+      form.reset(defaultValues);
+      router.refresh();
+    } else {
+      await createDiscipline(formData, session);
+      setShowMessage(true);
+      form.reset();
+      router.refresh();
+    }
   };
 
-  if (!courses || !pedagogicalProjects || !areas)
+  const handleCloseMessage = () => {
+    setShowMessage(false);
+  };
+
+  if (!courses || !pedagogicalProjects || !areas || !modalities)
     return <p className="text-muted-foreground text-md">Carregando...</p>;
 
   return (
@@ -125,7 +148,6 @@ const DisciplineForm = ({ title }: DisciplineFormProps) => {
               </div>
             </div>
 
-            {/* Course Information Section */}
             <div className="space-y-4">
               <h3 className="text-md font-medium">Informações do Curso</h3>
 
@@ -140,16 +162,16 @@ const DisciplineForm = ({ title }: DisciplineFormProps) => {
                       </FormLabel>
                       <FormControl>
                         <Select
-                          name="course_id"
                           onValueChange={field.onChange}
+                          value={field.value}
                           required
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione um curso" />
                           </SelectTrigger>
                           <SelectContent>
-                            {courses?.map((values, index) => (
-                              <SelectItem key={index} value={values.id}>
+                            {courses?.map((values) => (
+                              <SelectItem key={values.id} value={values.id}>
                                 {values.name}
                               </SelectItem>
                             ))}
@@ -171,16 +193,16 @@ const DisciplineForm = ({ title }: DisciplineFormProps) => {
                       </FormLabel>
                       <FormControl>
                         <Select
-                          name="pedagogical_project_id"
                           onValueChange={field.onChange}
+                          value={field.value}
                           required
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione um projeto" />
                           </SelectTrigger>
                           <SelectContent>
-                            {pedagogicalProjects?.map((values, index) => (
-                              <SelectItem key={index} value={values.id}>
+                            {pedagogicalProjects?.map((values) => (
+                              <SelectItem key={values.id} value={values.id}>
                                 {values.year}
                               </SelectItem>
                             ))}
@@ -204,16 +226,16 @@ const DisciplineForm = ({ title }: DisciplineFormProps) => {
                       </FormLabel>
                       <FormControl>
                         <Select
-                          name="area_id"
                           onValueChange={field.onChange}
+                          value={field.value}
                           required
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione uma área" />
                           </SelectTrigger>
                           <SelectContent>
-                            {areas?.map((values, index) => (
-                              <SelectItem key={index} value={values.id}>
+                            {areas?.map((values) => (
+                              <SelectItem key={values.id} value={values.id}>
                                 {values.name}
                               </SelectItem>
                             ))}
@@ -235,16 +257,16 @@ const DisciplineForm = ({ title }: DisciplineFormProps) => {
                       </FormLabel>
                       <FormControl>
                         <Select
-                          name="modality_id"
                           onValueChange={field.onChange}
+                          value={field.value}
                           required
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione uma modalidade" />
                           </SelectTrigger>
                           <SelectContent>
-                            {modalities?.map((values, index) => (
-                              <SelectItem key={index} value={values.id}>
+                            {modalities?.map((values) => (
+                              <SelectItem key={values.id} value={values.id}>
                                 {values.name}
                               </SelectItem>
                             ))}
@@ -267,8 +289,11 @@ const DisciplineForm = ({ title }: DisciplineFormProps) => {
                       <FormControl>
                         <Select
                           name="semester"
-                          onValueChange={field.onChange}
                           required
+                          onValueChange={(value) =>
+                            field.onChange(Number.parseInt(value, 10))
+                          }
+                          value={field.value?.toString()}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione um semestre" />
@@ -292,7 +317,6 @@ const DisciplineForm = ({ title }: DisciplineFormProps) => {
               </div>
             </div>
 
-            {/* Hours Section */}
             <div className="space-y-4">
               <h3 className="text-md font-medium">Carga Horária</h3>
 
@@ -310,7 +334,12 @@ const DisciplineForm = ({ title }: DisciplineFormProps) => {
                           type="number"
                           placeholder="Horas teóricas"
                           id="theoricalHours"
-                          {...field}
+                          value={field.value}
+                          onChange={(e) =>
+                            field.onChange(
+                              Number.parseInt(e.target.value, 10) || 0,
+                            )
+                          }
                         />
                       </FormControl>
                       <FormMessage className="text-[10px]" />
@@ -331,7 +360,12 @@ const DisciplineForm = ({ title }: DisciplineFormProps) => {
                           type="number"
                           placeholder="Horas práticas"
                           id="practicalHours"
-                          {...field}
+                          value={field.value}
+                          onChange={(e) =>
+                            field.onChange(
+                              Number.parseInt(e.target.value, 10) || 0,
+                            )
+                          }
                         />
                       </FormControl>
                       <FormMessage className="text-[10px]" />
@@ -344,7 +378,7 @@ const DisciplineForm = ({ title }: DisciplineFormProps) => {
                   name="extensionHours"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-semibold text-sm">
+                      <FormLabel className="font-semibold text-nowrap">
                         Horas de Extensão
                       </FormLabel>
                       <FormControl>
@@ -352,7 +386,12 @@ const DisciplineForm = ({ title }: DisciplineFormProps) => {
                           type="number"
                           placeholder="Horas de extensão"
                           id="extensionHours"
-                          {...field}
+                          value={field.value}
+                          onChange={(e) =>
+                            field.onChange(
+                              Number.parseInt(e.target.value, 10) || 0,
+                            )
+                          }
                         />
                       </FormControl>
                       <FormMessage className="text-[10px]" />
@@ -364,20 +403,32 @@ const DisciplineForm = ({ title }: DisciplineFormProps) => {
 
             <div className="flex justify-end gap-5">
               <Button
-                type="reset"
-                onClick={() => form.reset()}
+                type="button"
+                onClick={() => {
+                  form.reset();
+                }}
                 variant={"outline"}
               >
                 Cancelar
-                <MdOutlineClose />
+                <MdOutlineClose className="ml-2" />
               </Button>
-              <Button type="submit" disabled={isSubmitting} variant={"default"}>
-                Salvar
-                <MdCheck />
+              <Button
+                type="submit"
+                disabled={isSubmitting || (!isDirty && isUpdate)}
+                variant={"default"}
+              >
+                {isSubmitting ? "Salvando..." : "Salvar"}
+                <MdCheck className="ml-2" />
               </Button>
             </div>
           </form>
         </Form>
+        <MessageBox
+          title={"Ação bem sucedida"}
+          description={"A disciplina foi registrada."}
+          state={showMessage}
+          onClose={handleCloseMessage}
+        />
       </CardContent>
     </Card>
   );
