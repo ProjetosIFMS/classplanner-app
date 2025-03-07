@@ -49,3 +49,20 @@ export async function deleteDiscipline(
     throw err;
   }
 }
+
+export async function updateDiscipline(
+  formData: DisciplineSchema,
+  session: string | undefined,
+  discipline_id: string,
+) {
+  try {
+    const res = await api.patch(`/discipline/${discipline_id}`, formData, {
+      headers: {
+        Authorization: `Bearer ${session}`,
+      },
+    });
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+}

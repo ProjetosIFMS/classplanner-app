@@ -3,20 +3,22 @@
 import { Button } from "@/app/_components/ui/button";
 import type { Discipline } from "@/types/discipline";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Edit, Eye, Trash2 } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/app/_components/ui/tooltip";
-import Link from "next/link";
+import { ArrowUpDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/app/_components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/app/_components/ui/dialog";
+import { MdDelete, MdEdit } from "react-icons/md";
+import DisciplineForm from "../../Discipline-form";
 
 // Define a type for the delete function
 type DeleteDisciplineFunction = (
@@ -103,12 +105,11 @@ export const createColumns = (
         );
       },
       cell: ({ row }) => {
-        // Calculate the sum of all hours
         const discipline = row.original;
         const totalHours =
-          discipline.practicalHours +
-          discipline.theoreticalHours +
-          discipline.extensionHours;
+          discipline?.practicalHours +
+          discipline?.theoreticalHours +
+          discipline?.extensionHours;
 
         return <div className="text-center font-medium">{totalHours}h</div>;
       },
@@ -159,48 +160,35 @@ export const createColumns = (
 
         return (
           <div className="flex items-center justify-center space-x-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" asChild>
-                    <Link href={`/discipline/${discipline.id}/view`}>
-                      <Eye className="h-4 w-4" />
-                      <span className="sr-only">Visualizar</span>
-                    </Link>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Visualizar</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" asChild>
-                    <Link href={`/discipline/${discipline.id}/edit`}>
-                      <Edit className="h-4 w-4" />
-                      <span className="sr-only">Editar</span>
-                    </Link>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Editar</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ghost" className="text-blue-600" size="icon">
+                  <MdEdit />
+                </Button>
+              </DialogTrigger>
+              <DialogContent
+                aria-describedby={undefined}
+                className=" sm-max-w-[950px] sm:max-h-[720px]"
+              >
+                <DialogHeader>
+                  <DialogTitle></DialogTitle>
+                </DialogHeader>
+                <DisciplineForm
+                  data={discipline}
+                  isUpdate
+                  title="Editar Disciplina"
+                />
+              </DialogContent>
+            </Dialog>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="ghost"
                   size="icon"
+                  variant="ghost"
                   className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
                 >
-                  <Trash2 className="h-4 w-4" />
-
-                  <span className="sr-only">Excluir</span>
+                  <MdDelete />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
