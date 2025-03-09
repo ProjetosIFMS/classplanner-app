@@ -2,7 +2,7 @@
 
 import { deleteUserToken } from "@/app/_actions/deleteUserToken";
 import { getCourses } from "@/app/_actions/getCourses";
-import { getModalities } from "@/app/_actions/getModalities";
+import { getModalities } from "@/app/_actions/modality/getModalities";
 import { getUserData } from "@/app/_actions/getUserData";
 import { getPpc } from "@/app/ppc/actions";
 import { getAreas } from "@/app/professor/select-area/actions";
