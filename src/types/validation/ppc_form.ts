@@ -33,4 +33,4 @@ export const ppcSchema = z.object({
     .uuid({ message: "Valor inválido" }),
 });
 
-export type PPCSchema = z.infer<typeof ppcSchema>;
+export type PPCValues = z.infer<typeof ppcSchema>;

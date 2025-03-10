@@ -1,5 +1,5 @@
-import { PPCSchema } from "./validation/ppc_form";
+import { PPCValues } from "./validation/ppc_form";
 
-export interface PPC extends PPCSchema {
+export interface PPC extends PPCValues {
   id: string;
 }

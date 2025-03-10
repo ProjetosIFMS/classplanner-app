@@ -1,6 +1,5 @@
 "use client";
 
-import { Header } from "@/app/_components/header";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/_components/auth/AuthContext";
 import { Button } from "@/app/_components/ui/button";
@@ -49,7 +48,6 @@ const ListModalities = () => {
 
   return (
     <section className="min-h-screen flex flex-col">
-      <Header />
       <div className="flex-1 p-6 max-w-7xl mx-auto w-full">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Modalidades</h1>

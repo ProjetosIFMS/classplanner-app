@@ -1,12 +1,13 @@
-import { Course } from "@/types/course";
+"use server";
+import { DisciplineValues } from "@/types/validation/discipline_form";
 import api from "@/utils/axios-instance";
-import { AxiosResponse } from "axios";
 
-export async function getCourses(
+export async function createDiscipline(
+  formData: DisciplineValues,
   session: string | undefined,
-): Promise<Course[]> {
+) {
   try {
-    const res: AxiosResponse<Course[]> = await api.get("/course", {
+    const res = await api.post("/discipline", formData, {
       headers: {
         Authorization: `Bearer ${session}`,
       },

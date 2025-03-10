@@ -7,10 +7,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../_components/ui/card";
+} from "@/app/_components/ui/card";
 import {
   disciplineSchema,
-  type DisciplineSchema,
+  type DisciplineValues,
 } from "@/types/validation/discipline_form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -20,23 +20,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../_components/ui/form";
+} from "@/app/_components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../_components/ui/select";
-import { useAuth } from "../_components/auth/AuthContext";
-import { Input } from "../_components/ui/input";
-import { Button } from "../_components/ui/button";
+} from "@/app/_components/ui/select";
+import { useAuth } from "@/app/_components/auth/AuthContext";
+import { Input } from "@/app/_components/ui/input";
+import { Button } from "@/app/_components/ui/button";
 import { MdCheck, MdOutlineClose } from "react-icons/md";
-import { createDiscipline, updateDiscipline } from "./actions";
+import { createDiscipline } from "@/app/_actions/discipline/createDiscipline";
 import { useMemo, useState } from "react";
-import { MessageBox } from "../_components/ui/messageBox";
+import { MessageBox } from "@/app/_components/ui/messageBox";
 import { Discipline } from "@/types/discipline";
 import { useRouter } from "next/navigation";
+import { updateDiscipline } from "@/app/_actions/discipline/updateDiscipline";
 
 interface DisciplineFormProps {
   title: string;
@@ -52,7 +53,7 @@ const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const router = useRouter();
 
-  const defaultValues = useMemo<DisciplineSchema>(
+  const defaultValues = useMemo<DisciplineValues>(
     () => ({
       semester: data?.semester ?? 0,
       practicalHours: data?.practicalHours ?? 0,
@@ -68,7 +69,7 @@ const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
     [data],
   );
 
-  const form = useForm<DisciplineSchema>({
+  const form = useForm<DisciplineValues>({
     resolver: zodResolver(disciplineSchema),
     defaultValues,
   });
@@ -78,7 +79,7 @@ const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
     formState: { isSubmitting, isDirty },
   } = form;
 
-  const onSubmitForm: SubmitHandler<DisciplineSchema> = async (formData) => {
+  const onSubmitForm: SubmitHandler<DisciplineValues> = async (formData) => {
     if (isUpdate && data?.id) {
       await updateDiscipline(formData, session, data.id);
       form.reset(defaultValues);
