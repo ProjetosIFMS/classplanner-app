@@ -4,7 +4,7 @@ import { deleteUserToken } from "@/app/_actions/deleteUserToken";
 import { getCourses } from "@/app/_actions/getCourses";
 import { getModalities } from "@/app/_actions/modality/getModalities";
 import { getUserData } from "@/app/_actions/getUserData";
-import { getPpc } from "@/app/ppc/actions";
+import { getPpc } from "@/app/_actions/pedagogical-project/getPpc";
 import { getAreas } from "@/app/professor/select-area/actions";
 import { CommonData } from "@/types/common-data";
 import { User } from "@/types/user";
@@ -55,7 +55,7 @@ export const AuthProvider = ({
   const router = useRouter();
 
   const fetchUserData = useCallback(
-    async (session: string) => {
+    async (session: string | undefined) => {
       const userData = await getUserData(session);
       setUser(userData);
 
@@ -69,7 +69,7 @@ export const AuthProvider = ({
     [router],
   );
 
-  const fetchCommonData = useCallback(async (session: string) => {
+  const fetchCommonData = useCallback(async (session: string | undefined) => {
     try {
       const [courses, areas, pedagogicalProjects, modalities] =
         await Promise.all([
@@ -85,9 +85,10 @@ export const AuthProvider = ({
   }, []);
 
   useEffect(() => {
-    if (!session) return;
-    fetchUserData(session);
-    fetchCommonData(session);
+    if (session) {
+      fetchUserData(session);
+      fetchCommonData(session);
+    }
   }, [session, fetchUserData, fetchCommonData]);
 
   const logout = () => {

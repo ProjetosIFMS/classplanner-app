@@ -5,9 +5,14 @@ import { Card } from "./ui/card";
 import { ToggleStyle } from "./ui/toggleStyle";
 import LogoutButton from "./ui/LogoutButton";
 import { useAuth } from "./auth/AuthContext";
+import { usePathname } from "next/navigation";
 
 export const Header = () => {
   const { user, logout } = useAuth();
+  const path = usePathname();
+
+  if (path === "/professor/select-area") return <></>;
+
   return (
     <header className="w-full bg-white">
       <Card className="flex justify-between items-center px-3 py-1">
