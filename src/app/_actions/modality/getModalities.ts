@@ -2,7 +2,9 @@ import { Modality } from "@/types/modality";
 import api from "@/utils/axios-instance";
 import { AxiosResponse } from "axios";
 
-export async function getModalities(session: string | undefined): Promise<Modality[]> {
+export async function getModalities(
+  session: string | undefined | undefined,
+): Promise<Modality[]> {
   try {
     const res: AxiosResponse<Modality[]> = await api.get("/modality", {
       headers: {

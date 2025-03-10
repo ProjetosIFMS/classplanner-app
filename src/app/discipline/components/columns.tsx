@@ -18,7 +18,7 @@ import {
   DialogTrigger,
 } from "@/app/_components/ui/dialog";
 import { MdDelete, MdEdit } from "react-icons/md";
-import DisciplineForm from "../../Discipline-form";
+import DisciplineForm from "../components/Discipline-form";
 
 // Define a type for the delete function
 type DeleteDisciplineFunction = (

@@ -1,5 +1,5 @@
-import { Header } from "../../_components/header";
-import { Discipline, DisciplinesPanel } from "./disciplinesPanel";
+import { Discipline } from "@/types/discipline";
+import { DisciplinesPanel } from "./disciplinesPanel";
 import { Panel } from "./panel";
 
 const Dashboard = async () => {
@@ -50,29 +50,10 @@ const Dashboard = async () => {
     },
   ];
 
-  const disciplines: Discipline[] = [
-    {
-      name: "Algoritmos I",
-      workload: "4",
-      semester: "I",
-      shift: "Matutino",
-    },
-    {
-      name: "Algoritmos I",
-      workload: "4",
-      semester: "I",
-      shift: "Vespertino",
-    },
-    {
-      name: "Algoritmos I",
-      workload: "4",
-      semester: "I",
-    },
-  ];
+  const disciplines: Discipline[] = [];
 
   return (
     <section>
-      <Header />
       <div className="flex flex-col items-center justify-center ">
         <div>
           <h1 className="text-lg font-extrabold py-6">Dashboard</h1>

@@ -1,12 +1,12 @@
 "use client";
 
-import { Header } from "@/app/_components/header";
-import { DataTable } from "@/app/discipline/list/components/data-table";
-import { createColumns } from "./components/columns";
+import { DataTable } from "../components/data-table";
+import { createColumns } from "../components/columns";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/_components/auth/AuthContext";
 import type { Discipline } from "@/types/discipline";
-import { deleteDiscipline, getDisciplines } from "../actions";
+import { deleteDiscipline } from "@/app/_actions/discipline/deleteDiscipline";
+import { getDisciplines } from "@/app/_actions/discipline/getDisciplines";
 import { Button } from "@/app/_components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
@@ -48,7 +48,6 @@ const ListDisciplines = () => {
 
   return (
     <section className="min-h-screen flex flex-col">
-      <Header />
       <div className="flex-1 p-6 max-w-7xl mx-auto w-full">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Disciplinas</h1>

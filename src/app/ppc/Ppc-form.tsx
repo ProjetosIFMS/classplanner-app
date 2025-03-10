@@ -21,7 +21,7 @@ import {
 import { Textarea } from "@/app/_components/ui/textarea";
 import { MdCheck, MdOutlineClose } from "react-icons/md";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { ppcSchema, type PPCSchema } from "@/types/validation/ppc_form";
+import { ppcSchema, type PPCValues } from "@/types/validation/ppc_form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -31,13 +31,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/app/_components/ui/form";
-import type { PPC } from "@/types/ppc";
-import { createPpc, updatePpc } from "./actions";
 import { useAuth } from "../_components/auth/AuthContext";
 import { useCourses } from "@/hooks/useCourses";
 import { useState, useCallback, useMemo } from "react";
 import { MessageBox } from "../_components/ui/messageBox";
 import { useRouter } from "next/navigation";
+import { createPpc } from "../_actions/pedagogical-project/createPpc";
+import { updatePpc } from "../_actions/pedagogical-project/updatePpc";
+import { PPC } from "@/types/ppc";
 
 interface PPCFormProps {
   title?: string;
@@ -68,7 +69,7 @@ export const PPCForm = ({ title, data, isUpdate }: PPCFormProps) => {
     [data, currentYear],
   );
 
-  const form = useForm<PPCSchema>({
+  const form = useForm<PPCValues>({
     resolver: zodResolver(ppcSchema),
     defaultValues,
   });
@@ -79,7 +80,7 @@ export const PPCForm = ({ title, data, isUpdate }: PPCFormProps) => {
     reset,
   } = form;
 
-  const onSubmitForm: SubmitHandler<PPCSchema> = async (formData) => {
+  const onSubmitForm: SubmitHandler<PPCValues> = async (formData) => {
     try {
       if (isUpdate && data?.id) {
         await updatePpc(data.id, formData, session);

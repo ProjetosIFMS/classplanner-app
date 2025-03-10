@@ -1,8 +1,7 @@
 "use client";
-import { Header } from "@/app/_components/header";
-
 import { useCallback, useEffect, useState } from "react";
-import { deletePpc, getPpc } from "../actions";
+import { deletePpc } from "@/app/_actions/pedagogical-project/deletePpc";
+import { getPpc } from "@/app/_actions/pedagogical-project/getPpc";
 import { useAuth } from "@/app/_components/auth/AuthContext";
 
 import { PPC } from "@/types/ppc";
@@ -17,7 +16,6 @@ export default function ListPpc() {
   const { session } = useAuth();
 
   const fetchPpc = useCallback(async () => {
-    if (!session) return;
     setIsLoading(true);
     try {
       const res = await getPpc(session);
@@ -34,9 +32,7 @@ export default function ListPpc() {
   }, [fetchPpc]);
 
   const handleDeletePPC = useCallback(
-    async (sessionToken: string | undefined, ppc_id: string) => {
-      if (!sessionToken) return false;
-
+    async (sessionToken: string, ppc_id: string) => {
       try {
         const success = await deletePpc(sessionToken, ppc_id);
         if (success) {
@@ -53,7 +49,6 @@ export default function ListPpc() {
 
   return (
     <section className="flex flex-col items-center justify-center">
-      <Header />
       <div className="flex-1 p-6 max-w-7xl mx-auto w-full">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Projetos Pedagógicos</h1>

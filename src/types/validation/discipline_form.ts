@@ -35,4 +35,4 @@ export const disciplineSchema = z.object({
     .min(0, "Total de horas deve ser maior que 0"),
 });
 
-export type DisciplineSchema = z.infer<typeof disciplineSchema>;
+export type DisciplineValues = z.infer<typeof disciplineSchema>;

@@ -1,12 +1,14 @@
-import { Course } from "@/types/course";
+"use server";
+import { PPCValues } from "@/types/validation/ppc_form";
 import api from "@/utils/axios-instance";
-import { AxiosResponse } from "axios";
 
-export async function getCourses(
+export async function updatePpc(
+  id: string,
+  data: PPCValues,
   session: string | undefined,
-): Promise<Course[]> {
+) {
   try {
-    const res: AxiosResponse<Course[]> = await api.get("/course", {
+    const res = await api.patch(`/pedagogical-project/${id}`, data, {
       headers: {
         Authorization: `Bearer ${session}`,
       },

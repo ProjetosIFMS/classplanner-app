@@ -18,8 +18,9 @@ import {
 import { Button } from "../../_components/ui/button";
 import { Area } from "@/types/area";
 import { updateArea } from "./actions";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { areaSchema, AreaSchema } from "@/types/validation/ppc_form";
+import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
+import { areaSchema } from "@/types/validation/area_form";
+import { AreaValues } from "@/types/validation/area_form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -27,6 +28,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "../../_components/ui/form";
 import { MdCheck } from "react-icons/md";
 import { useAuth } from "@/app/_components/auth/AuthContext";
@@ -37,16 +39,20 @@ interface areaFormProps {
 }
 
 export const AreaForm = ({ data }: areaFormProps) => {
-  const form = useForm<AreaSchema>({
-    resolver: zodResolver(areaSchema.pick({ area: true })),
+  const form = useForm<AreaValues>({
+    resolver: zodResolver(areaSchema),
   });
   const { session } = useAuth();
 
-  const onSubmitArea: SubmitHandler<AreaSchema> = async (data) => {
+  const onSubmitArea: SubmitHandler<AreaValues> = async (data) => {
     if (session) {
       await updateArea(data.area, session);
     }
     deleteUserToken();
+  };
+
+  const onError: SubmitErrorHandler<AreaValues> = async (data) => {
+    console.log(data.area);
   };
 
   return (
@@ -58,7 +64,10 @@ export const AreaForm = ({ data }: areaFormProps) => {
 
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmitArea)} className="p-0">
+          <form
+            onSubmit={form.handleSubmit(onSubmitArea, onError)}
+            className="p-0"
+          >
             <div className="flex flex-col gap-3 space-y-1.0">
               <FormField
                 control={form.control}
@@ -72,6 +81,7 @@ export const AreaForm = ({ data }: areaFormProps) => {
                           name="area"
                           onValueChange={field.onChange}
                           required
+                          value={field.value}
                         >
                           <SelectTrigger {...field} id="area">
                             <SelectValue placeholder="Selecione" />
@@ -86,6 +96,7 @@ export const AreaForm = ({ data }: areaFormProps) => {
                           </SelectContent>
                         </Select>
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   );
                 }}
