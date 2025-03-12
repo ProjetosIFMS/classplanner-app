@@ -1,5 +1,5 @@
 "use server";
-import { PPCForm } from "../Ppc-form";
+import { PPCForm } from "../components/Ppc-form";
 
 const CreatePPC = async () => {
   return (

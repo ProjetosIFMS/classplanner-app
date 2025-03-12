@@ -31,13 +31,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/app/_components/ui/form";
-import { useAuth } from "../_components/auth/AuthContext";
+import { useAuth } from "@/app/_components/auth/AuthContext";
 import { useCourses } from "@/hooks/useCourses";
 import { useState, useCallback, useMemo } from "react";
-import { MessageBox } from "../_components/ui/messageBox";
+import { MessageBox } from "@/app/_components/ui/messageBox";
 import { useRouter } from "next/navigation";
-import { createPpc } from "../_actions/pedagogical-project/createPpc";
-import { updatePpc } from "../_actions/pedagogical-project/updatePpc";
+import { createPpc } from "@/app/_actions/pedagogical-project/createPpc";
+import { updatePpc } from "@/app/_actions/pedagogical-project/updatePpc";
 import { PPC } from "@/types/ppc";
 
 interface PPCFormProps {
@@ -291,7 +291,7 @@ export const PPCForm = ({ title, data, isUpdate }: PPCFormProps) => {
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Aulas"
+                          placeholder="Horas totais"
                           type="number"
                           id="extensionCourses"
                           className="h-8 text-sm"

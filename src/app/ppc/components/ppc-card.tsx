@@ -28,7 +28,7 @@ import {
 } from "@/app/_components/ui/alert-dialog";
 import { memo } from "react";
 import { MdDescription, MdAccessTime, MdEdit, MdDelete } from "react-icons/md";
-import { PPCForm } from "../../Ppc-form";
+import { PPCForm } from "./Ppc-form";
 
 export const PPCCard = memo(
   ({

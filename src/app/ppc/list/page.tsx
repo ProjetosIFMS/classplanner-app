@@ -8,7 +8,7 @@ import { PPC } from "@/types/ppc";
 import { Button } from "@/app/_components/ui/button";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { ListCardPpc } from "./components/list-card";
+import { ListCardPpc } from "../components/list-card";
 
 export default function ListPpc() {
   const [ppc, setPpc] = useState<PPC[]>([]);
@@ -32,7 +32,7 @@ export default function ListPpc() {
   }, [fetchPpc]);
 
   const handleDeletePPC = useCallback(
-    async (sessionToken: string, ppc_id: string) => {
+    async (sessionToken: string | undefined, ppc_id: string) => {
       try {
         const success = await deletePpc(sessionToken, ppc_id);
         if (success) {

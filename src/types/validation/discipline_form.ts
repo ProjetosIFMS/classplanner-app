@@ -4,7 +4,9 @@ export const disciplineSchema = z.object({
   course_id: z
     .string({ message: "O curso é necessário" })
     .uuid({ message: "Valor inválido" }),
-  name: z.string().min(8, "O nome da deve conter mais que 8 caracteres"),
+  name: z
+    .string()
+    .min(8, "O nome da disciplina deve conter mais que 8 caracteres"),
   code: z
     .string({ message: "Código da unidade curricular é necessário" })
     .min(6, "Deve conter mais que 6 caracteres"),
