@@ -1,9 +1,10 @@
 "use server";
+import { Session } from "@/types/session";
 import api from "@/utils/axios-instance";
 import { revalidatePath } from "next/cache";
 
 export async function deleteDiscipline(
-  session: string | undefined,
+  session: Session,
   discipline_id: string,
 ) {
   try {
