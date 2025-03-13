@@ -1,20 +1,11 @@
 "use client";
 
-import { type SubmitHandler, useForm } from "react-hook-form";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/_components/ui/card";
+import { type SubmitHandler } from "react-hook-form";
 import {
   disciplineSchema,
   type DisciplineValues,
 } from "@/types/validation/discipline_form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -30,22 +21,26 @@ import {
 } from "@/app/_components/ui/select";
 import { useAuth } from "@/app/_components/auth/AuthContext";
 import { Input } from "@/app/_components/ui/input";
-import { Button } from "@/app/_components/ui/button";
-import { MdCheck, MdOutlineClose } from "react-icons/md";
 import { createDiscipline } from "@/app/_actions/discipline/createDiscipline";
 import { useMemo, useState } from "react";
 import { MessageBox } from "@/app/_components/ui/messageBox";
 import { Discipline } from "@/types/discipline";
 import { useRouter } from "next/navigation";
 import { updateDiscipline } from "@/app/_actions/discipline/updateDiscipline";
+import { FormCard } from "@/app/_components/ui/form-card";
+import { FormProps } from "@/types/form-props";
 
-interface DisciplineFormProps {
-  title: string;
+interface DisciplineFormProps extends FormProps {
   data?: Discipline;
   isUpdate?: boolean;
 }
 
-const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
+const DisciplineForm = ({
+  title,
+  description,
+  data,
+  isUpdate,
+}: DisciplineFormProps) => {
   const {
     session,
     commonData: { courses, pedagogicalProjects, areas, modalities },
@@ -55,7 +50,7 @@ const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
 
   const defaultValues = useMemo<DisciplineValues>(
     () => ({
-      semester: data?.semester ?? 0,
+      semester: data?.semester ?? 1,
       practicalHours: data?.practicalHours ?? 0,
       extensionHours: data?.extensionHours ?? 0,
       theoreticalHours: data?.theoreticalHours ?? 0,
@@ -69,25 +64,13 @@ const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
     [data],
   );
 
-  const form = useForm<DisciplineValues>({
-    resolver: zodResolver(disciplineSchema),
-    defaultValues,
-  });
-
-  const {
-    handleSubmit,
-    formState: { isSubmitting, isDirty },
-  } = form;
-
   const onSubmitForm: SubmitHandler<DisciplineValues> = async (formData) => {
     if (isUpdate && data?.id) {
       await updateDiscipline(formData, session, data.id);
-      form.reset(defaultValues);
       router.refresh();
     } else {
       await createDiscipline(formData, session);
       setShowMessage(true);
-      form.reset();
       router.refresh();
     }
   };
@@ -100,15 +83,17 @@ const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
     return <p className="text-muted-foreground text-md">Carregando...</p>;
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>Insira as informações da disciplina</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-6">
-            {/* Basic Information Section */}
+    <div>
+      <FormCard
+        schema={disciplineSchema}
+        defaultValues={defaultValues}
+        title={title}
+        description={description}
+        weight="2xl"
+        onSubmit={onSubmitForm}
+      >
+        {(form) => (
+          <div>
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -149,8 +134,8 @@ const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
               </div>
             </div>
 
-            <div className="space-y-4">
-              <h3 className="text-md font-medium">Informações do Curso</h3>
+            <div className="space-y-3">
+              <h3 className="text-md font-medium mt-7">Informações do Curso</h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -291,6 +276,7 @@ const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
                         <Select
                           name="semester"
                           required
+                          defaultValue="1"
                           onValueChange={(value) =>
                             field.onChange(Number.parseInt(value, 10))
                           }
@@ -299,7 +285,7 @@ const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione um semestre" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="text-center">
                             {[...Array(12)].map((_, index) => (
                               <SelectItem
                                 key={index}
@@ -311,6 +297,7 @@ const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
                           </SelectContent>
                         </Select>
                       </FormControl>
+
                       <FormMessage className="text-[10px]" />
                     </FormItem>
                   )}
@@ -318,7 +305,7 @@ const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 mt-7">
               <h3 className="text-md font-medium">Carga Horária</h3>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -401,37 +388,17 @@ const DisciplineForm = ({ title, data, isUpdate }: DisciplineFormProps) => {
                 />
               </div>
             </div>
+          </div>
+        )}
+      </FormCard>
 
-            <div className="flex justify-end gap-5">
-              <Button
-                type="button"
-                onClick={() => {
-                  form.reset();
-                }}
-                variant={"outline"}
-              >
-                Cancelar
-                <MdOutlineClose className="ml-2" />
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting || (!isDirty && isUpdate)}
-                variant={"default"}
-              >
-                {isSubmitting ? "Salvando..." : "Salvar"}
-                <MdCheck className="ml-2" />
-              </Button>
-            </div>
-          </form>
-        </Form>
-        <MessageBox
-          title={"Ação bem sucedida"}
-          description={"A disciplina foi registrada."}
-          state={showMessage}
-          onClose={handleCloseMessage}
-        />
-      </CardContent>
-    </Card>
+      <MessageBox
+        title={"Ação bem sucedida"}
+        description={"A disciplina foi registrada."}
+        state={showMessage}
+        onClose={handleCloseMessage}
+      />
+    </div>
   );
 };
 

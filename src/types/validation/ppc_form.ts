@@ -4,11 +4,10 @@ export const ppcSchema = z.object({
   year: z.coerce
     .number({
       message: "É necessário",
-      invalid_type_error: "Campo deve ser composto de números",
     })
     .min(2000, { message: "O ano de criação deve ser maior que o de 2000" }),
-  hasTCC: z.coerce.boolean({ message: "É necessário" }).default(false),
-  status: z.coerce.boolean({ message: "Necessário" }).default(true),
+  hasTCC: z.coerce.boolean({ message: "É necessário" }),
+  status: z.coerce.boolean({ message: "Necessário" }),
   extensionCourses: z.coerce
     .number()
     .min(0, "Total de aulas deve ser maior que 0")

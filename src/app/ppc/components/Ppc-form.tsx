@@ -1,14 +1,5 @@
 "use client";
 
-import { Button } from "@/app/_components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/app/_components/ui/card";
 import { Input } from "@/app/_components/ui/input";
 import {
   Select,
@@ -19,34 +10,36 @@ import {
   SelectValue,
 } from "@/app/_components/ui/select";
 import { Textarea } from "@/app/_components/ui/textarea";
-import { MdCheck, MdOutlineClose } from "react-icons/md";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { type SubmitHandler } from "react-hook-form";
 import { ppcSchema, type PPCValues } from "@/types/validation/ppc_form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/app/_components/ui/form";
-import { useAuth } from "../_components/auth/AuthContext";
+import { useAuth } from "@/app/_components/auth/AuthContext";
 import { useCourses } from "@/hooks/useCourses";
 import { useState, useCallback, useMemo } from "react";
-import { MessageBox } from "../_components/ui/messageBox";
+import { MessageBox } from "@/app/_components/ui/messageBox";
 import { useRouter } from "next/navigation";
-import { createPpc } from "../_actions/pedagogical-project/createPpc";
-import { updatePpc } from "../_actions/pedagogical-project/updatePpc";
+import { createPpc } from "@/app/_actions/pedagogical-project/createPpc";
+import { updatePpc } from "@/app/_actions/pedagogical-project/updatePpc";
 import { PPC } from "@/types/ppc";
+import { FormCard } from "@/app/_components/ui/form-card";
+import { FormProps } from "@/types/form-props";
 
-interface PPCFormProps {
-  title?: string;
+interface PPCFormProps extends FormProps {
   data?: PPC;
-  isUpdate?: boolean;
 }
 
-export const PPCForm = ({ title, data, isUpdate }: PPCFormProps) => {
+export const PPCForm = ({
+  data,
+  isUpdate,
+  title,
+  description,
+}: PPCFormProps) => {
   const { session } = useAuth();
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const courses = useCourses();
@@ -69,26 +62,13 @@ export const PPCForm = ({ title, data, isUpdate }: PPCFormProps) => {
     [data, currentYear],
   );
 
-  const form = useForm<PPCValues>({
-    resolver: zodResolver(ppcSchema),
-    defaultValues,
-  });
-
-  const {
-    handleSubmit,
-    formState: { isSubmitting, isDirty },
-    reset,
-  } = form;
-
   const onSubmitForm: SubmitHandler<PPCValues> = async (formData) => {
     try {
       if (isUpdate && data?.id) {
         await updatePpc(data.id, formData, session);
-        form.reset(defaultValues);
         router.refresh();
       } else {
         await createPpc(formData, session);
-        form.reset(defaultValues);
         router.refresh();
       }
       setShowMessage(true);
@@ -96,10 +76,6 @@ export const PPCForm = ({ title, data, isUpdate }: PPCFormProps) => {
       throw err;
     }
   };
-
-  const handleReset = useCallback(() => {
-    reset(defaultValues);
-  }, [reset, defaultValues]);
 
   const handleCloseMessage = useCallback(() => {
     setShowMessage(false);
@@ -109,16 +85,17 @@ export const PPCForm = ({ title, data, isUpdate }: PPCFormProps) => {
     return <p className="text-md text-muted-foreground">Carregando...</p>;
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-sm">
-      <CardHeader className="border-b pb-2 pt-4 px-4">
-        <CardTitle className="text-xl">{title}</CardTitle>
-        <CardDescription className="text-xs">
-          Preencha os detalhes do Projeto Pedagógico de Curso
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-4 px-4">
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
+    <div>
+      <FormCard
+        schema={ppcSchema}
+        defaultValues={defaultValues}
+        onSubmit={onSubmitForm}
+        title={title}
+        weight="md"
+        description={description}
+      >
+        {(form) => (
+          <>
             <div className="space-y-3">
               <FormField
                 control={form.control}
@@ -250,8 +227,8 @@ export const PPCForm = ({ title, data, isUpdate }: PPCFormProps) => {
               </div>
             </div>
 
-            <div className="space-y-3">
-              <div className="text-xs font-medium text-muted-foreground">
+            <div className="space-y-1">
+              <div className="text-xs mt-4 font-medium text-muted-foreground">
                 Carga Horária
               </div>
 
@@ -291,7 +268,7 @@ export const PPCForm = ({ title, data, isUpdate }: PPCFormProps) => {
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Aulas"
+                          placeholder="Horas totais"
                           type="number"
                           id="extensionCourses"
                           className="h-8 text-sm"
@@ -381,40 +358,17 @@ export const PPCForm = ({ title, data, isUpdate }: PPCFormProps) => {
                 )}
               />
             </div>
-
-            <CardFooter className="flex justify-between pt-2 px-0 pb-0">
-              <Button
-                type="button"
-                onClick={handleReset}
-                variant="outline"
-                size="sm"
-                className="h-8"
-              >
-                <MdOutlineClose className="h-3 w-3 mr-1" />
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting || (!isDirty && isUpdate)}
-                variant="default"
-                size="sm"
-                className="h-8"
-              >
-                <MdCheck className="h-3 w-3 mr-1" />
-                {isSubmitting ? "Salvando..." : "Salvar"}
-              </Button>
-            </CardFooter>
-          </form>
-        </Form>
-        {!data && (
-          <MessageBox
-            title="Ação bem sucedida"
-            description={"A criação do PPC foi bem sucedida."}
-            state={showMessage}
-            onClose={handleCloseMessage}
-          />
+          </>
         )}
-      </CardContent>
-    </Card>
+      </FormCard>
+      {showMessage && !isUpdate && (
+        <MessageBox
+          description="Plano Pedagógico de Curso criado com sucesso."
+          title="PPC criado"
+          onClose={handleCloseMessage}
+          state={showMessage}
+        />
+      )}
+    </div>
   );
 };
