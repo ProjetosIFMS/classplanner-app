@@ -93,7 +93,10 @@ export const ListCardPpc = ({
               <DialogHeader>
                 <DialogTitle>Novo PPC</DialogTitle>
               </DialogHeader>
-              <PPCForm title="Adicionar PPC" />
+              <PPCForm
+                description="Preencha os detalhes para à criação do Projeto Pedagógico de Curso"
+                title="Criação de PPC"
+              />
             </DialogContent>
           </Dialog>
         </CardContent>

@@ -1,22 +1,14 @@
 "use client";
 import { createCourse } from "@/app/_actions/course/createCourse";
 import { useAuth } from "@/app/_components/auth/AuthContext";
-import { Button } from "@/app/_components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/_components/ui/card";
-import {
-  Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/app/_components/ui/form";
+import { FormCard } from "@/app/_components/ui/form-card";
 import { Input } from "@/app/_components/ui/input";
 import { MessageBox } from "@/app/_components/ui/messageBox";
 import {
@@ -26,37 +18,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/_components/ui/select";
+import { FormProps } from "@/types/form-props";
 import { courseSchema, CourseValues } from "@/types/validation/course_form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { MdCheck, MdOutlineClose } from "react-icons/md";
+import { SubmitHandler } from "react-hook-form";
 
-interface CourseFormProps {
-  title?: string;
-}
-
-export const CourseForm = ({ title }: CourseFormProps) => {
+export const CourseForm = ({ title, description }: FormProps) => {
   const { session } = useAuth();
   const [message, setMessage] = useState<boolean>(false);
 
-  const form = useForm<CourseValues>({
-    resolver: zodResolver(courseSchema),
-    defaultValues: {
-      name: "",
-      quantity_semester: 1,
-      workload: 0,
-    },
-  });
-
-  const {
-    formState: { isSubmitting },
-    handleSubmit,
-  } = form;
+  const defaultValues: CourseValues = {
+    name: "",
+    quantity_semester: 1,
+    workload: 0,
+  };
 
   const onSubmitForm: SubmitHandler<CourseValues> = async (formData) => {
     await createCourse(session, formData);
-    form.reset();
     setMessage(true);
   };
 
@@ -65,16 +43,17 @@ export const CourseForm = ({ title }: CourseFormProps) => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-sm">
-      <CardHeader className="border-b pb-2 pt-4 px-4">
-        <CardTitle>{title}</CardTitle>
-        <CardDescription className="text-xs">
-          Preencha os detalhes da criação do Curso
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-4 px-4">
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmitForm)}>
+    <div>
+      <FormCard
+        defaultValues={defaultValues}
+        schema={courseSchema}
+        weight="lg"
+        onSubmit={onSubmitForm}
+        title={title}
+        description={description}
+      >
+        {(form) => (
+          <div>
             <div className="space-y-3">
               <FormField
                 control={form.control}
@@ -98,7 +77,7 @@ export const CourseForm = ({ title }: CourseFormProps) => {
                 )}
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-3">
               <FormField
                 control={form.control}
                 name="quantity_semester"
@@ -158,31 +137,16 @@ export const CourseForm = ({ title }: CourseFormProps) => {
                 )}
               />
             </div>
-            <div className="flex justify-end gap-5 mt-6">
-              <Button
-                type="button"
-                onClick={() => {
-                  form.reset();
-                }}
-                variant={"outline"}
-              >
-                Cancelar
-                <MdOutlineClose className="ml-2" />
-              </Button>
-              <Button type="submit" disabled={isSubmitting} variant={"default"}>
-                {isSubmitting ? "Salvando..." : "Salvar"}
-                <MdCheck className="ml-2" />
-              </Button>
-            </div>
-          </form>
-        </Form>
-        <MessageBox
-          title="Curso criado"
-          state={message}
-          onClose={handleCloseMessage}
-          description="Registro feito com sucesso."
-        />
-      </CardContent>
-    </Card>
+          </div>
+        )}
+      </FormCard>
+
+      <MessageBox
+        title="Curso criado"
+        state={message}
+        onClose={handleCloseMessage}
+        description="Registro feito com sucesso."
+      />
+    </div>
   );
 };

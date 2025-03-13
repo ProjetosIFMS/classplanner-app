@@ -177,6 +177,7 @@ export const createColumns = (
                   data={discipline}
                   isUpdate
                   title="Editar Disciplina"
+                  description="Preencha os detalhes para a edição da disciplina"
                 />
               </DialogContent>
             </Dialog>

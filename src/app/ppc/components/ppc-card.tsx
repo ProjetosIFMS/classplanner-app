@@ -108,9 +108,14 @@ export const PPCCard = memo(
                       className="sm:max-w-[500px] sm:max-h-[850px]"
                     >
                       <DialogHeader>
-                        <DialogTitle>Editar PPC</DialogTitle>
+                        <DialogTitle></DialogTitle>
                       </DialogHeader>
-                      <PPCForm isUpdate data={ppc} />
+                      <PPCForm
+                        isUpdate
+                        description="Preencha os detalhes para à edição do Projeto Pedagógico de Curso"
+                        title="Edição de PPC"
+                        data={ppc}
+                      />
                     </DialogContent>
                   </Dialog>
 
