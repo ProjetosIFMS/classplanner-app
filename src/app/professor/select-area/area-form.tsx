@@ -19,8 +19,8 @@ import { Button } from "../../_components/ui/button";
 import { Area } from "@/types/area";
 import { updateArea } from "./actions";
 import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
-import { areaSchema } from "@/types/validation/area_form";
-import { AreaValues } from "@/types/validation/area_form";
+import { selectAreaSchema } from "@/types/validation/select_area_form";
+import { SelectAreaValues } from "@/types/validation/select_area_form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -39,19 +39,19 @@ interface areaFormProps {
 }
 
 export const AreaForm = ({ data }: areaFormProps) => {
-  const form = useForm<AreaValues>({
-    resolver: zodResolver(areaSchema),
+  const form = useForm<SelectAreaValues>({
+    resolver: zodResolver(selectAreaSchema),
   });
   const { session } = useAuth();
 
-  const onSubmitArea: SubmitHandler<AreaValues> = async (data) => {
+  const onSubmitArea: SubmitHandler<SelectAreaValues> = async (data) => {
     if (session) {
       await updateArea(data.area, session);
     }
     deleteUserToken();
   };
 
-  const onError: SubmitErrorHandler<AreaValues> = async (data) => {
+  const onError: SubmitErrorHandler<SelectAreaValues> = async (data) => {
     console.log(data.area);
   };
 
