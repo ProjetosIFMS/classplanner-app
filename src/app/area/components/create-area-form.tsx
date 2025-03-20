@@ -15,18 +15,35 @@ import { createArea } from "@/app/_actions/area/createArea";
 import { FormCard } from "@/app/_components/ui/form-card";
 import { FormProps } from "@/types/form-props";
 import { MessageBox } from "@/app/_components/ui/messageBox";
+import { Area } from "@/types/area";
+import { updateArea } from "@/app/_actions/area/updateArea";
 
-export const AreaForm = ({ title, description }: FormProps) => {
+interface AreaFormProps extends Readonly<FormProps> {
+  data?: Area;
+}
+
+export const AreaForm = ({
+  title,
+  description,
+  isUpdate,
+  data,
+  onCompleteUpdate,
+}: AreaFormProps) => {
   const { session } = useAuth();
   const [showMessage, setShowMessage] = useState<boolean>(false);
 
   const defaultValues: AreaValues = {
-    name: "",
+    name: data?.name ?? "",
   };
 
   const onSubmitForm: SubmitHandler<AreaValues> = async (formData) => {
-    await createArea(session, formData);
-    setShowMessage(true);
+    if (isUpdate && data?.id && onCompleteUpdate) {
+      await updateArea(session, data.id, formData);
+      onCompleteUpdate();
+    } else {
+      await createArea(session, formData);
+      setShowMessage(true);
+    }
   };
 
   const handleCloseMessage = () => {
@@ -37,11 +54,12 @@ export const AreaForm = ({ title, description }: FormProps) => {
     <div>
       <FormCard<AreaValues>
         schema={areaSchema}
-        onSubmit={onSubmitForm}
-        description={description}
         defaultValues={defaultValues}
-        weight="md"
         title={title}
+        description={description}
+        onSubmit={onSubmitForm}
+        width="sm"
+        isUpdate={isUpdate}
       >
         {(form) => (
           <div className="space-y-3">

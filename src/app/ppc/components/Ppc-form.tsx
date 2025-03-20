@@ -29,8 +29,9 @@ import { updatePpc } from "@/app/_actions/pedagogical-project/updatePpc";
 import { PPC } from "@/types/ppc";
 import { FormCard } from "@/app/_components/ui/form-card";
 import { FormProps } from "@/types/form-props";
+import { LoadingCard } from "@/app/_components/ui/loading-card";
 
-interface PPCFormProps extends FormProps {
+interface PpcFormProps extends FormProps {
   data?: PPC;
 }
 
@@ -39,7 +40,8 @@ export const PPCForm = ({
   isUpdate,
   title,
   description,
-}: PPCFormProps) => {
+  onCompleteUpdate,
+}: PpcFormProps) => {
   const { session } = useAuth();
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const courses = useCourses();
@@ -58,15 +60,16 @@ export const PPCForm = ({
       stageHours: data?.stageHours ?? 0,
       description: data?.description ?? "",
       course_id: data?.course_id ?? "",
+      id: data?.id ?? "",
     }),
     [data, currentYear],
   );
 
   const onSubmitForm: SubmitHandler<PPCValues> = async (formData) => {
     try {
-      if (isUpdate && data?.id) {
+      if (isUpdate && data?.id && onCompleteUpdate) {
         await updatePpc(data.id, formData, session);
-        router.refresh();
+        onCompleteUpdate();
       } else {
         await createPpc(formData, session);
         router.refresh();
@@ -81,8 +84,7 @@ export const PPCForm = ({
     setShowMessage(false);
   }, []);
 
-  if (!courses)
-    return <p className="text-md text-muted-foreground">Carregando...</p>;
+  if (!courses) return <LoadingCard />;
 
   return (
     <div>
@@ -91,8 +93,9 @@ export const PPCForm = ({
         defaultValues={defaultValues}
         onSubmit={onSubmitForm}
         title={title}
-        weight="md"
+        width="md"
         description={description}
+        isUpdate={isUpdate}
       >
         {(form) => (
           <>
@@ -139,7 +142,9 @@ export const PPCForm = ({
                       <FormControl>
                         <Select
                           value={field.value.toString()}
-                          onValueChange={(value) => value.toString()}
+                          onValueChange={(value) =>
+                            field.onChange(value.toString())
+                          }
                         >
                           <SelectTrigger id="year" className="h-8 text-sm">
                             <SelectValue placeholder="Ano" />

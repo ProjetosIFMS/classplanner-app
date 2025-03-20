@@ -21,12 +21,11 @@ import { updateModality } from "../../_actions/modality/updateModality";
 import { createModality } from "../../_actions/modality/createModality";
 import { MessageBox } from "../../_components/ui/messageBox";
 import { FormCard } from "@/app/_components/ui/form-card";
+import { LoadingCard } from "@/app/_components/ui/loading-card";
+import { FormProps } from "@/types/form-props";
 
-interface ModalityFormProps {
+interface ModalityFormProps extends Readonly<FormProps> {
   data?: Modality;
-  isUpdate?: boolean;
-  title: string;
-  description: string;
 }
 
 const ModalityForm = ({
@@ -61,8 +60,7 @@ const ModalityForm = ({
     setShowMessage(false);
   };
 
-  if (!modalities)
-    return <p className="text-muted-foreground text-md">Carregando...</p>;
+  if (!modalities) return <LoadingCard />;
 
   return (
     <div>
@@ -70,7 +68,7 @@ const ModalityForm = ({
         schema={modalitySchema}
         onSubmit={onSubmitForm}
         defaultValues={defaultValues}
-        weight="md"
+        width="md"
         title={title}
         description={description}
       >

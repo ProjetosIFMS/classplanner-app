@@ -73,7 +73,7 @@ export function DataTable<TData, TValue>({
   });
 
   if (isLoading) {
-    return <LoadingCard />;
+    return <LoadingCard size="lg" />;
   }
 
   return (

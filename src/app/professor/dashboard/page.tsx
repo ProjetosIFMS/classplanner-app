@@ -1,5 +1,5 @@
 import { Discipline } from "@/types/discipline";
-import { DisciplinesPanel } from "./disciplinesPanel";
+import { DisciplinesPanel } from "./disciplines-panel";
 import { Panel } from "./panel";
 
 const Dashboard = async () => {

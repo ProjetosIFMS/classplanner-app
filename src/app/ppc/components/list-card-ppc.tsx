@@ -1,19 +1,12 @@
 "use client";
 import { PPC } from "@/types/ppc";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/app/_components/ui/dialog";
-import { PPCForm } from "./Ppc-form";
 import { Card, CardContent, CardHeader } from "@/app/_components/ui/card";
 import { LoadingCard } from "@/app/_components/ui/loading-card";
 import { Button } from "@/app/_components/ui/button";
 import { useState, useCallback } from "react";
 import { PPCCard } from "./ppc-card";
 import { Session } from "@/types/session";
+import Link from "next/link";
 
 type DeletePpcFunction = (session: Session, ppc_id: string) => Promise<boolean>;
 
@@ -78,27 +71,16 @@ export const ListCardPpc = ({
     [deletePpcFn, session],
   );
 
-  if (isLoading) return <LoadingCard />;
+  if (isLoading) return <LoadingCard size="lg" />;
 
   if (!data || data.length === 0) {
     return (
       <Card className="w-full">
         <CardContent className="flex flex-col items-center justify-center py-10">
           <p className="text-muted-foreground mb-4">Nenhum PPC encontrado</p>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>Adicionar PPC</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>Novo PPC</DialogTitle>
-              </DialogHeader>
-              <PPCForm
-                description="Preencha os detalhes para à criação do Projeto Pedagógico de Curso"
-                title="Criação de PPC"
-              />
-            </DialogContent>
-          </Dialog>
+          <Button asChild>
+            <Link href={"/ppc/create"}>Adicionar PPC</Link>
+          </Button>
         </CardContent>
       </Card>
     );

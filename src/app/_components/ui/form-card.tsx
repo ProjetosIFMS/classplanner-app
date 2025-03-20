@@ -28,7 +28,8 @@ type FormCardProps<TFormValues extends FieldValues> = {
   defaultValues: UseFormProps<TFormValues>["defaultValues"];
   onSubmit: SubmitHandler<TFormValues>;
   children: (form: UseFormReturn<TFormValues>) => ReactNode;
-  weight: "sm" | "md" | "lg" | "xl" | "2xl";
+  width: "sm" | "md" | "lg" | "xl" | "2xl";
+  isUpdate?: boolean;
 };
 
 export const FormCard = <TFormValues extends FieldValues>({
@@ -38,7 +39,8 @@ export const FormCard = <TFormValues extends FieldValues>({
   children,
   schema,
   defaultValues,
-  weight = "sm",
+  width = "sm",
+  isUpdate,
 }: FormCardProps<TFormValues>) => {
   const form = useForm<TFormValues>({
     resolver: zodResolver(schema),
@@ -55,7 +57,7 @@ export const FormCard = <TFormValues extends FieldValues>({
   };
 
   return (
-    <Card className={`w-full max-w-${weight} max-w- mx-auto shadow-sm`}>
+    <Card className={`w-full max-w-${width} mx-auto shadow-sm`}>
       <CardHeader className="border-b pb-2 pt-4 px-4">
         <CardTitle>{title}</CardTitle>
         <CardDescription className="text-xs">{description}</CardDescription>
@@ -65,14 +67,16 @@ export const FormCard = <TFormValues extends FieldValues>({
           <CardContent>{children(form)}</CardContent>
           <CardFooter className="justify-end">
             <div className="flex justify-end gap-5 mt-6">
-              <Button
-                type="button"
-                onClick={() => form.reset()}
-                variant={"outline"}
-              >
-                Cancelar
-                <MdOutlineClose className="ml-2" />
-              </Button>
+              {!isUpdate && (
+                <Button
+                  type="button"
+                  onClick={() => form.reset()}
+                  variant={"outline"}
+                >
+                  Cancelar
+                  <MdOutlineClose className="ml-2" />
+                </Button>
+              )}
               <Button
                 type="submit"
                 disabled={form.formState.isSubmitting}

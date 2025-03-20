@@ -8,7 +8,7 @@ import { PPC } from "@/types/ppc";
 import { Button } from "@/app/_components/ui/button";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { ListCardPpc } from "../components/list-card";
+import { ListCardPpc } from "../components/list-card-ppc";
 
 export default function ListPpc() {
   const [ppc, setPpc] = useState<PPC[]>([]);
@@ -39,8 +39,7 @@ export default function ListPpc() {
           setPpc((prevData) => prevData.filter((ppc) => ppc.id !== ppc_id));
         }
         return success;
-      } catch (error) {
-        console.error("Error deleting PPC:", error);
+      } catch {
         return false;
       }
     },

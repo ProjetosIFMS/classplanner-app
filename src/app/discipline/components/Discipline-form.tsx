@@ -29,10 +29,10 @@ import { useRouter } from "next/navigation";
 import { updateDiscipline } from "@/app/_actions/discipline/updateDiscipline";
 import { FormCard } from "@/app/_components/ui/form-card";
 import { FormProps } from "@/types/form-props";
+import { LoadingCard } from "@/app/_components/ui/loading-card";
 
-interface DisciplineFormProps extends FormProps {
+interface DisciplineFormProps extends Readonly<FormProps> {
   data?: Discipline;
-  isUpdate?: boolean;
 }
 
 const DisciplineForm = ({
@@ -80,7 +80,7 @@ const DisciplineForm = ({
   };
 
   if (!courses || !pedagogicalProjects || !areas || !modalities)
-    return <p className="text-muted-foreground text-md">Carregando...</p>;
+    return <LoadingCard />;
 
   return (
     <div>
@@ -89,7 +89,7 @@ const DisciplineForm = ({
         defaultValues={defaultValues}
         title={title}
         description={description}
-        weight="2xl"
+        width="2xl"
         onSubmit={onSubmitForm}
       >
         {(form) => (

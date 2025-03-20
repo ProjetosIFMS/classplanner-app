@@ -26,7 +26,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/app/_components/ui/alert-dialog";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { MdDescription, MdAccessTime, MdEdit, MdDelete } from "react-icons/md";
 import { PPCForm } from "./Ppc-form";
 
@@ -45,6 +45,8 @@ export const PPCCard = memo(
     handleDeleteClick: (id: string) => void;
     session: string | undefined;
   }) => {
+    const [open, setOpen] = useState(false);
+
     return (
       <Card key={ppc.id} className="overflow-hidden">
         <Accordion type="single" collapsible defaultValue={`item-${index}`}>
@@ -93,7 +95,7 @@ export const PPCCard = memo(
                 )}
 
                 <div className="flex justify-end gap-2 mt-2">
-                  <Dialog>
+                  <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
                       <Button
                         variant="outline"
@@ -115,6 +117,7 @@ export const PPCCard = memo(
                         description="Preencha os detalhes para à edição do Projeto Pedagógico de Curso"
                         title="Edição de PPC"
                         data={ppc}
+                        onCompleteUpdate={() => setOpen(false)}
                       />
                     </DialogContent>
                   </Dialog>
