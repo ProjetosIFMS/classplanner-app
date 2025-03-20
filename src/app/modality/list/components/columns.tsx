@@ -94,6 +94,7 @@ export const createColumns = (
                   data={modality}
                   isUpdate
                   title="Editar Modalidade"
+                  description="Preencha os detalhes para à criação da modalidade"
                 />
               </DialogContent>
             </Dialog>
