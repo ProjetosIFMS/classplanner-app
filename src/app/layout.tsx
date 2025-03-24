@@ -4,7 +4,9 @@ import Footer from "./_components/footer";
 import localFont from "next/font/local";
 import { getSession } from "@/lib/getSession";
 import { AuthProvider } from "./_components/auth/AuthContext";
-import { Header } from "./_components/header";
+import { SidebarProvider, SidebarTrigger } from "./_components/ui/sidebar";
+import { AppSidebar } from "./_components/app-sidebar";
+import { isServerMobile } from "@/utils/isMobile";
 
 const poppins = localFont({
   src: [
@@ -24,14 +26,21 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getSession();
+  const isMobile = await isServerMobile();
   return (
     <html lang="pt">
       <body
         className={`${poppins.className} antialiased flex flex-col min-h-screen`}
       >
         <AuthProvider referentialAccessToken={session}>
-          {!!session && <Header />}
-          <main className="flex-grow bg-zinc-100 items-center">{children}</main>
+          <SidebarProvider defaultOpen={false}>
+            {!!session && <AppSidebar />}
+
+            <main className="flex-grow lg:py-24 bg-zinc-100 items-center">
+              {!!session && isMobile ? <SidebarTrigger /> : null}
+              {children}
+            </main>
+          </SidebarProvider>
         </AuthProvider>
         <Footer />
       </body>
