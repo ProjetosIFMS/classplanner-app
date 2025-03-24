@@ -25,7 +25,7 @@ export const SelectDayOffForm = () => {
       <CardHeader>
         <CardTitle className="font-semibold text-base flex items-center justify-start gap-2">
           Selecione um dia da semana{" "}
-          <AlertCircle className="hover:text-yellow-300 transition-all rotate-180" />
+          <AlertCircle className="hover:text-yellow-300 transition-all rotate-180 cursor-pointer" />
         </CardTitle>
         <CardDescription>
           Indique um dia de sua preferência em que gostaria que aulas
@@ -55,9 +55,9 @@ export const SelectDayOffForm = () => {
             {["Seg", "Ter", "Qua", "Qui", "Sex"].map((day) => (
               <div
                 key={day}
-                className="flex justify-center items-center bg-[#F5F5F5] h-16 w-16 rounded-full shadow-md hover:shadow-lg transition-shadow"
+                className="flex justify-center items-center bg-[#F5F5F5] h-16 w-16 rounded-full shadow-md hover:shadow-lg transition-shadow cursor-pointer"
               >
-                <p className="text-center cursor-default">{day}</p>
+                <p className="text-center cursor-pointer">{day}</p>
               </div>
             ))}
           </div>
