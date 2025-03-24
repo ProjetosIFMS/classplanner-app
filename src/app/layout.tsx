@@ -31,7 +31,9 @@ export default async function RootLayout({
       >
         <AuthProvider referentialAccessToken={session}>
           {!!session && <Header />}
-          <main className="flex-grow bg-zinc-100 items-center">{children}</main>
+          <main className="flex flex-grow bg-zinc-100 items-center justify-center min-h-full">
+            {children}
+          </main>
         </AuthProvider>
         <Footer />
       </body>
