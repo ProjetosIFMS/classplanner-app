@@ -52,7 +52,7 @@ export function AppSidebar() {
     {
       icon: <Home size={20} />,
       label: "Dashboard",
-      path: `/dashboard/${user?.role.toLowerCase()}`,
+      path: `/${user?.role.toLowerCase()}/dashboard`,
     },
     { icon: <BookOpen size={20} />, label: "Cursos", path: "/courses/list" },
     { icon: <Users size={20} />, label: "Turmas", path: "/classgrade/list" },
@@ -98,7 +98,7 @@ export function AppSidebar() {
             {isMobile ? (
               <CustomTrigger className="absolute top-0 right-3 mt-3" />
             ) : (
-              <SidebarTrigger className="mb-3" />
+              <SidebarTrigger />
             )}
           </div>
           <div className="flex items-center gap-1 lg:ml-32">
