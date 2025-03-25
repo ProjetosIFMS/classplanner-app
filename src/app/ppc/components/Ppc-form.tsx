@@ -61,6 +61,7 @@ export const PPCForm = ({
       description: data?.description ?? "",
       course_id: data?.course_id ?? "",
       id: data?.id ?? "",
+      document: data?.document ?? "",
     }),
     [data, currentYear],
   );
@@ -88,7 +89,7 @@ export const PPCForm = ({
 
   return (
     <div>
-      <FormCard
+      <FormCard<PPCValues>
         schema={ppcSchema}
         defaultValues={defaultValues}
         onSubmit={onSubmitForm}
@@ -359,6 +360,28 @@ export const PPCForm = ({
                       />
                     </FormControl>
                     <FormMessage className="text-[10px]" />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="mt-2">
+              <FormField
+                control={form.control}
+                name="document"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold text-xs">
+                      Documento do Projeto Pedagógico de Curso
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        accept=".pdf"
+                        {...field}
+                        placeholder="Insira o documento"
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

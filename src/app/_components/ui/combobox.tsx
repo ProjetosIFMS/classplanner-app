@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import {
@@ -29,6 +28,8 @@ export interface ComboboxProps {
   defaultValue?: string;
   /** Callback chamado ao selecionar uma opção */
   onSelect?: (value: string) => void;
+
+  value?: string | readonly string[] | number | undefined;
 }
 
 export function Combobox({
@@ -49,9 +50,11 @@ export function Combobox({
   const handleSelect = (currentValue: string) => {
     const newValue = currentValue === value ? "" : currentValue;
     setValue(newValue);
+
     if (onSelect) {
       onSelect(newValue);
     }
+
     setOpen(false);
   };
 
@@ -66,7 +69,7 @@ export function Combobox({
         >
           {value
             ? items.find((item) => item.value === value)?.label
-            : "Select an option..."}
+            : "Selecione uma opção.."}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -88,7 +91,7 @@ export function Combobox({
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === item.value ? "opacity-100" : "opacity-0"
+                      value === item.value ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>
