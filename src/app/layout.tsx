@@ -33,6 +33,7 @@ export default async function RootLayout({
         className={`${poppins.className} antialiased flex flex-col min-h-screen`}
       >
         <AuthProvider referentialAccessToken={session}>
+
           <SidebarProvider defaultOpen={false}>
             {!!session && <AppSidebar />}
 
@@ -41,6 +42,7 @@ export default async function RootLayout({
               {children}
             </main>
           </SidebarProvider>
+
         </AuthProvider>
         <Footer />
       </body>

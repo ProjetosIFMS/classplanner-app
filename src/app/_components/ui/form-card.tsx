@@ -30,6 +30,7 @@ type FormCardProps<TFormValues extends FieldValues> = {
   children: (form: UseFormReturn<TFormValues>) => ReactNode;
   width: "sm" | "md" | "lg" | "xl" | "2xl";
   isUpdate?: boolean;
+  headerExtras?: ReactNode;
 };
 
 export const FormCard = <TFormValues extends FieldValues>({
@@ -41,6 +42,7 @@ export const FormCard = <TFormValues extends FieldValues>({
   defaultValues,
   width = "sm",
   isUpdate,
+  headerExtras,
 }: FormCardProps<TFormValues>) => {
   const form = useForm<TFormValues>({
     resolver: zodResolver(schema),
@@ -59,7 +61,10 @@ export const FormCard = <TFormValues extends FieldValues>({
   return (
     <Card className={`w-full max-w-${width} mx-auto shadow-sm`}>
       <CardHeader className="border-b pb-2 pt-4 px-4">
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="flex flex-row gap-4 items-center">
+          {title}
+          {headerExtras}
+        </CardTitle>
         <CardDescription className="text-xs">{description}</CardDescription>
       </CardHeader>
       <FormProvider {...form}>
