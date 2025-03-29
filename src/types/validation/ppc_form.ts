@@ -30,6 +30,21 @@ export const ppcSchema = z.object({
   course_id: z
     .string({ message: "Necessário selecionar um curso" })
     .uuid({ message: "Valor inválido" }),
+  document: z
+    .custom<File>((file) => file instanceof File, {
+      message: "Insira um arquivo",
+    })
+    .refine((file) => file.size <= 10 * 1024 * 1024, {
+      message: "O arquivo deve ser menor ou igual que 10MB ",
+    })
+    .refine(
+      (file) =>
+        ["image/png", "image/jpeg", "application/pdf"].includes(file.type),
+      {
+        message: "Apenas extensões PNG, JPEG e PDF são permitidas",
+      },
+    )
+    .optional(),
 });
 
 export type PPCValues = z.infer<typeof ppcSchema>;
