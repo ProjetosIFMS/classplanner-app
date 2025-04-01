@@ -29,7 +29,7 @@ export default function SelectInterest() {
       <div className="flex flex-col items-center justify-center">
         <div>
           <h1 className="text-lg font-extrabold py-6">Seleção de interesses</h1>
-          <Card className="pt-6 w-full">
+          <Card className="pt-6 w-full min-w-[80rem]">
             <CardContent>
               <CoursesPedagogicalProjects
                 courses={courses}
