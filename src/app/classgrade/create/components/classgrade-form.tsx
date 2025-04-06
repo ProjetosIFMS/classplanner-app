@@ -310,21 +310,21 @@ export const ClassgradeForm = ({
                 />
               </div>
 
-              <div className="flex flex-col justify-around gap-8 sm:flex-row">
+              <div className="flex flex-row items-center gap-4 w-full max-w-4xl">
                 <Tabs
-                  className="flex"
+                  className="flex-1"
                   onValueChange={(value) => {
                     updateValues("course", value);
                     form.setValue("course_id", value);
                   }}
                   value={tabsValues.course.id}
                 >
-                  <TabsList className="bg-zinc-400 sm:flex sm:flex-row">
+                  <TabsList className="w-full bg-zinc-100 p-1 rounded-lg">
                     {courses &&
                       courses.map((course) => (
                         <TabsTrigger
                           key={course.name.toLowerCase()}
-                          className="text-white"
+                          className="flex-1 py-2 data-[state=active]:bg-primary data-[state=active]:text-white text-gray-700"
                           value={course.id}
                         >
                           {course.name}
@@ -333,37 +333,33 @@ export const ClassgradeForm = ({
                   </TabsList>
                 </Tabs>
 
+                {/* Pedagogical Projects Tabs */}
                 <Tabs
+                  className="flex-1"
                   onValueChange={(value) => {
                     updateValues("ppc", value);
                     form.setValue("pedagogical_project_id", value);
                   }}
                   value={tabsValues.ppc.id}
                 >
-                  <TabsList className="bg-zinc-400">
+                  <TabsList className="w-full bg-zinc-100 p-1 rounded-lg overflow-x-auto">
                     {pedagogicalProjects &&
                       pedagogicalProjects.map((pedagogicalProject, index) => {
                         const isSameId =
                           pedagogicalProject.course_id === tabsValues.course.id;
-
-                        return (
-                          <div key={index}>
-                            {isSameId && (
-                              <TabsTrigger
-                                key={index}
-                                className="text-white"
-                                value={pedagogicalProject.id}
-                              >
-                                PPC {pedagogicalProject.year}
-                              </TabsTrigger>
-                            )}
-                          </div>
-                        );
+                        return isSameId ? (
+                          <TabsTrigger
+                            key={index}
+                            className="flex-1 py-2 data-[state=active]:bg-primary data-[state=active]:text-white text-gray-700"
+                            value={pedagogicalProject.id}
+                          >
+                            PPC {pedagogicalProject.year}
+                          </TabsTrigger>
+                        ) : null;
                       })}
                   </TabsList>
                 </Tabs>
               </div>
-
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {Array.from(
                   { length: tabsValues.course.quantity_semester },
@@ -498,8 +494,8 @@ export const ClassgradeForm = ({
       </FormCard>
       {showMessage && !isUpdate && (
         <MessageBox
-          description="Plano Pedagógico de Curso criado com sucesso."
-          title="PPC criado"
+          description="Turma criada com sucesso."
+          title="Turma criada"
           onClose={handleCloseMessage}
           state={showMessage}
         />
