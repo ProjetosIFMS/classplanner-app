@@ -7,4 +7,5 @@ export type User = {
   role: Role;
   picture: string;
   area_id: string;
+  id?: string;
 };

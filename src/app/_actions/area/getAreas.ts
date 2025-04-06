@@ -1,11 +1,10 @@
 "use server";
-import { Discipline } from "@/types/discipline";
 import { Session } from "@/types/session";
 import api from "@/utils/axios-instance";
 
-export async function getDisciplines(session: Session): Promise<Discipline[]> {
+export async function getAreas(session: Session) {
   try {
-    const res = await api.get<Discipline[]>("/discipline", {
+    const res = await api.get("/area", {
       headers: {
         Authorization: `Bearer ${session}`,
       },

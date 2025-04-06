@@ -61,7 +61,7 @@ export const PPCForm = ({
       description: data?.description ?? "",
       course_id: data?.course_id ?? "",
       id: data?.id ?? "",
-      document: data?.document ?? "",
+      document: data?.document,
     }),
     [data, currentYear],
   );
@@ -73,6 +73,7 @@ export const PPCForm = ({
         onCompleteUpdate();
       } else {
         await createPpc(formData, session);
+
         router.refresh();
       }
       setShowMessage(true);
@@ -80,6 +81,13 @@ export const PPCForm = ({
       throw err;
     }
   };
+
+  const handleFileChange =(e: React.ChangeEvent<HTMLInputElement>, onChange: (file: File) => void) => {
+    const file = e.target.files?.[0]
+    if(file){
+      onChange(file)
+    }
+  }
 
   const handleCloseMessage = useCallback(() => {
     setShowMessage(false);
@@ -242,20 +250,20 @@ export const PPCForm = ({
                 <FormField
                   control={form.control}
                   name="workload"
-                  render={({ field }) => (
+                  render={({ field: {value, onChange, ...formProps} }) => (
                     <FormItem>
                       <FormLabel className="font-semibold text-xs">
                         Horas Totais
                       </FormLabel>
                       <FormControl>
                         <Input
+                          {...formProps}
                           type="number"
                           placeholder="Horas totais"
                           id="workload"
                           className="h-8 text-sm"
-                          value={field.value}
                           onChange={(e) =>
-                            field.onChange(parseInt(e.target.value, 10) || 0)
+                            onChange(parseInt(e.target.value, 10) || 0)
                           }
                         />
                       </FormControl>
@@ -267,20 +275,20 @@ export const PPCForm = ({
                 <FormField
                   control={form.control}
                   name="extensionCourses"
-                  render={({ field }) => (
+                  render={({ field: {value, onChange, ...formProps} }) => (
                     <FormItem>
                       <FormLabel className="font-semibold text-xs">
                         Horas de extensão
                       </FormLabel>
                       <FormControl>
                         <Input
+                          {...formProps}
                           placeholder="Horas totais"
                           type="number"
                           id="extensionCourses"
                           className="h-8 text-sm"
-                          value={field.value}
                           onChange={(e) =>
-                            field.onChange(parseInt(e.target.value, 10) || 0)
+                            onChange(parseInt(e.target.value, 10) || 0)
                           }
                         />
                       </FormControl>
@@ -292,20 +300,20 @@ export const PPCForm = ({
                 <FormField
                   control={form.control}
                   name="complementaryHours"
-                  render={({ field }) => (
+                  render={({ field: {value, onChange, ...formProps} }) => (
                     <FormItem>
                       <FormLabel className="font-semibold text-xs">
                         Horas complementares
                       </FormLabel>
                       <FormControl>
                         <Input
+                          {...formProps}
                           type="number"
                           placeholder="Horas"
                           id="complementaryHours"
                           className="h-8 text-sm"
-                          value={field.value}
                           onChange={(e) =>
-                            field.onChange(parseInt(e.target.value, 10) || 0)
+                            onChange(parseInt(e.target.value, 10) || 0)
                           }
                         />
                       </FormControl>
@@ -317,20 +325,20 @@ export const PPCForm = ({
                 <FormField
                   control={form.control}
                   name="stageHours"
-                  render={({ field }) => (
+                  render={({ field: {value, onChange, ...fieldProps} }) => (
                     <FormItem>
                       <FormLabel className="font-semibold text-xs">
                         Horas de estágio
                       </FormLabel>
                       <FormControl>
                         <Input
+                          {...fieldProps}
                           type="number"
                           placeholder="Horas"
                           id="stageHours"
                           className="h-8 text-sm"
-                          value={field.value}
                           onChange={(e) =>
-                            field.onChange(parseInt(e.target.value, 10) || 0)
+                            onChange(parseInt(e.target.value, 10) || 0)
                           }
                         />
                       </FormControl>
@@ -368,16 +376,17 @@ export const PPCForm = ({
               <FormField
                 control={form.control}
                 name="document"
-                render={({ field }) => (
+                render={({ field: {value, onChange, ...fieldProps} }) => (
                   <FormItem>
                     <FormLabel className="font-semibold text-xs">
                       Documento do Projeto Pedagógico de Curso
                     </FormLabel>
                     <FormControl>
                       <Input
+                        {...fieldProps}
                         type="file"
-                        accept=".pdf"
-                        {...field}
+                        accept="image/*, application/pdf"
+                        onChange={(e) => handleFileChange(e, onChange)}
                         placeholder="Insira o documento"
                       />
                     </FormControl>
