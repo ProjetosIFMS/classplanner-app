@@ -9,15 +9,12 @@ export const disciplineSchema = z.object({
     .min(8, "O nome da disciplina deve conter mais que 8 caracteres"),
   code: z
     .string({ message: "Código da unidade curricular é necessário" })
-    .min(6, "Deve conter mais que 6 caracteres"),
+    .min(4, "Deve conter mais que 4 caracteres"),
   pedagogical_project_id: z
     .string({ message: "Selecione um projeto pedagógico" })
     .uuid({ message: "Valor inválido" }),
   area_id: z
     .string({ message: "Selecione uma área" })
-    .uuid({ message: "Valor inválido" }),
-  modality_id: z
-    .string({ message: "Selecione a modalidade da disciplina" })
     .uuid({ message: "Valor inválido" }),
   semester: z.coerce
     .number()

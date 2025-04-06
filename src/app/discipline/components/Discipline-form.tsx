@@ -58,7 +58,6 @@ const DisciplineForm = ({
       name: data?.name ?? "",
       area_id: data?.area_id ?? "",
       course_id: data?.course_id ?? "",
-      modality_id: data?.modality_id ?? "",
       pedagogical_project_id: data?.pedagogical_project_id ?? "",
     }),
     [data],
@@ -148,7 +147,10 @@ const DisciplineForm = ({
                       </FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(e) => {
+                            field.onChange(e);
+                            form.resetField("pedagogical_project_id");
+                          }}
                           value={field.value}
                           required
                         >
@@ -187,11 +189,23 @@ const DisciplineForm = ({
                             <SelectValue placeholder="Selecione um projeto" />
                           </SelectTrigger>
                           <SelectContent>
-                            {pedagogicalProjects?.map((values) => (
-                              <SelectItem key={values.id} value={values.id}>
-                                {values.year}
-                              </SelectItem>
-                            ))}
+                            {pedagogicalProjects?.map((values, index) => {
+                              const isSameId =
+                                values.course_id == form.getValues("course_id");
+
+                              return (
+                                <div key={index}>
+                                  {isSameId && (
+                                    <SelectItem
+                                      key={values.id}
+                                      value={values.id}
+                                    >
+                                      {values.year}
+                                    </SelectItem>
+                                  )}
+                                </div>
+                              );
+                            })}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -201,7 +215,7 @@ const DisciplineForm = ({
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="area_id"
@@ -221,37 +235,6 @@ const DisciplineForm = ({
                           </SelectTrigger>
                           <SelectContent>
                             {areas?.map((values) => (
-                              <SelectItem key={values.id} value={values.id}>
-                                {values.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage className="text-[10px]" />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="modality_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-semibold text-sm">
-                        Modalidade
-                      </FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                          required
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione uma modalidade" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {modalities?.map((values) => (
                               <SelectItem key={values.id} value={values.id}>
                                 {values.name}
                               </SelectItem>
