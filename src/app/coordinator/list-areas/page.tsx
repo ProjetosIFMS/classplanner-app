@@ -44,9 +44,9 @@ const ListArea = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 content-start">
               {getAllAreas.data &&
-                getAllAreas.data.map((area, index) => (
+                getAllAreas.data.map((area) => (
                   <ListAreasCard
-                    key={index}
+                    key={area.id}
                     id={area.id}
                     title={area.name}
                     data={area}
