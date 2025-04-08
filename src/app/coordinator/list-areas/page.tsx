@@ -29,7 +29,7 @@ const ListArea = () => {
           <CreateAreaModal />
         </div>
         <div className="bg-white h-full rounded-lg shadow-sm">
-          {getAllAreas.isPending ? (
+          {getAllAreas.isLoading ? (
             <div className="flex justify-center items-center h-full">
               <ClipLoader size={50} color="#000000" />
             </div>
@@ -47,7 +47,7 @@ const ListArea = () => {
                     title={area.name}
                     data={area}
                     onDelete={handleDelete}
-                    isLoading={deleteArea.isPending}
+                    isLoading={deleteArea.isLoading}
                   />
                 ))}
             </div>
