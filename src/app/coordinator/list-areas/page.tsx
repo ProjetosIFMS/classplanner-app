@@ -6,6 +6,7 @@ import { useAuth } from "@/app/_components/auth/AuthContext";
 import { getAreas } from "@/app/_actions/area/getAreas";
 import { Area } from "@/types/area";
 import { deleteArea } from "@/app/_actions/area/deleteArea";
+import { CreateAreaModal } from "@/app/coordinator/list-areas/create-area-modal";
 
 const areasData = [
   {
@@ -194,7 +195,10 @@ const ListArea = () => {
   return (
     <section className="flex-1 h-full">
       <div className="container mx-auto py-4 h-full">
-        <h1 className="text-2xl font-bold mb-6">Áreas Acadêmicas</h1>
+        <div className="flex justify-between">
+          <h1 className="text-2xl font-bold mb-6">Áreas Acadêmicas</h1>
+          <CreateAreaModal />
+        </div>
         <div className="bg-white h-full rounded-lg shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6  content-start">
             {areas &&
