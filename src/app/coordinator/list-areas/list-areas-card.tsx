@@ -10,7 +10,6 @@ import { Button } from "@/app/_components/ui/button";
 import { Edit } from "lucide-react";
 import { ConfirmDeleteCardModal } from "./confirm-delete-card-modal";
 import { Area } from "@/types/area";
-import { useState } from "react";
 
 interface ListAreasCardProps {
   id: string;

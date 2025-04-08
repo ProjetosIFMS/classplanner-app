@@ -2,9 +2,11 @@
 import { Session } from "@/types/session";
 import api from "@/utils/axios-instance";
 
-export async function getAreas(session: Session) {
+import { Area } from "@/types/area";
+
+export async function getAreas(session: Session): Promise<Area[]> {
   try {
-    const res = await api.get("/area", {
+    const res = await api.get<Area[]>("/area", {
       headers: {
         Authorization: `Bearer ${session}`,
       },
