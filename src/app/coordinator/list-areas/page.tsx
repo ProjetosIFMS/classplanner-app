@@ -12,16 +12,12 @@ const ListArea = () => {
   const { session } = useAuth();
   const getAllAreas = useGetAllAreas(session);
   const deleteArea = useDeleteArea(session);
-  const [isDeleting, setIsDeleting] = React.useState<boolean>(false);
 
   function handleDelete(id: string) {
-    setIsDeleting(true);
     deleteArea.mutate(id, {
       onSuccess: () => {},
       onError: () => {},
-      onSettled: () => {
-        setIsDeleting(false);
-      },
+      onSettled: () => {},
     });
   }
 
@@ -33,7 +29,7 @@ const ListArea = () => {
           <CreateAreaModal />
         </div>
         <div className="bg-white h-full rounded-lg shadow-sm">
-          {getAllAreas.isFetching || isDeleting ? (
+          {getAllAreas.isPending ? (
             <div className="flex justify-center items-center h-full">
               <ClipLoader size={50} color="#000000" />
             </div>

@@ -43,10 +43,9 @@ export function CreateAreaModal() {
   });
 
   function onSubmit(data: z.infer<typeof areaSchema>) {
+    setIsOpen(false);
     postArea.mutate(data, {
-      onSuccess: () => {
-        setIsOpen(false);
-      },
+      onSuccess: () => {},
       onError: () => {},
     });
   }

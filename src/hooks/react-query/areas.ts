@@ -10,7 +10,7 @@ import { deleteArea } from "@/app/_actions/area/deleteArea";
 
 export function useGetAllAreas(session: Session) {
   return useQuery({
-    queryKey: ["GET", "areas"],
+    queryKey: ["areas"],
     queryFn: () => getAreas(session),
   });
 }
@@ -22,7 +22,26 @@ export function usePostArea(session: Session) {
     mutationKey: ["POST", "area"],
     mutationFn: (formData: AreaValues): Promise<Area | null> =>
       createArea(session, formData),
-    onSuccess: () => {
+    onMutate: async (formData) => {
+      await queryClient.cancelQueries(["areas"]);
+
+      const previousAreas = queryClient.getQueryData<Area[]>(["areas"]);
+
+      if (previousAreas) {
+        queryClient.setQueryData<Area[]>(
+          ["areas"],
+          [...previousAreas, { id: "temp-id", ...formData }]
+        );
+      }
+
+      return { previousAreas };
+    },
+    onError: (_error, _formData, context) => {
+      if (context?.previousAreas) {
+        queryClient.setQueryData(["areas"], context.previousAreas);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries(["areas"]);
     },
   });
@@ -34,7 +53,26 @@ export function useDeleteArea(session: Session) {
   return useMutation({
     mutationKey: ["DELETE", "area"],
     mutationFn: (id: string): Promise<void> => deleteArea(session, id),
-    onSuccess: () => {
+    onMutate: async (id) => {
+      await queryClient.cancelQueries(["areas"]);
+
+      const previousAreas = queryClient.getQueryData<Area[]>(["areas"]);
+
+      if (previousAreas) {
+        queryClient.setQueryData<Area[]>(
+          ["areas"],
+          previousAreas.filter((area) => area.id !== id)
+        );
+      }
+
+      return { previousAreas };
+    },
+    onError: (_error, _id, context) => {
+      if (context?.previousAreas) {
+        queryClient.setQueryData(["areas"], context.previousAreas);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries(["areas"]);
     },
   });
