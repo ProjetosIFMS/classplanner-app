@@ -10,7 +10,6 @@ import { Button } from "@/app/_components/ui/button";
 import { Edit } from "lucide-react";
 import { ConfirmDeleteCardModal } from "./confirm-delete-card-modal";
 import { Area } from "@/types/area";
-import { useState } from "react";
 
 interface ListAreasCardProps {
   id: string;
@@ -59,7 +58,7 @@ const ListAreasCard = ({
                 Professores
               </p>
               <p className="text-3xl font-bold text-primary">
-                {data.User.length}
+                {data.User ? data.User.length : 0}
               </p>
             </div>
             <div className="space-y-1 bg-muted/50 p-3 rounded-lg text-center">
@@ -67,7 +66,7 @@ const ListAreasCard = ({
                 Disciplinas
               </p>
               <p className="text-3xl font-bold text-primary">
-                {data.Discipline.length}
+                {data.Discipline ? data.Discipline.length : 0}
               </p>
             </div>
           </div>
