@@ -74,6 +74,7 @@ export const ClassgradeForm = ({
     status: false,
     workload: 0,
     year: 2000,
+    documentUrl: "",
   };
 
   const fallbackCourse: Course = {

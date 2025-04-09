@@ -2,6 +2,24 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { setSession } from "./lib/setSession";
 import { cookies } from "next/headers";
+import { Role } from "./types/user";
+import { verifyAuth } from "./lib/auth";
+
+type Routes = {
+  path: string;
+  exact: boolean;
+  roles: Role[];
+};
+
+const protectedRoutes: Routes[] = [
+  { path: "/course/create", exact: true, roles: ["ADMIN"] },
+  { path: "/classgrade/create", exact: true, roles: ["ADMIN", "COORDINATOR"] },
+  { path: "/ppc/create", exact: true, roles: ["ADMIN", "COORDINATOR"] },
+  { path: "/professor", exact: false, roles: ["PROFESSOR"] },
+  { path: "/coordinator", exact: false, roles: ["COORDINATOR", "ADMIN"] },
+  { path: "/modality/create", exact: true, roles: ["COORDINATOR", "ADMIN"] },
+  { path: "discipline/create", exact: true, roles: ["COORDINATOR"] },
+];
 
 export async function middleware(request: NextRequest) {
   const cookieStore = await cookies();
@@ -43,6 +61,24 @@ export async function middleware(request: NextRequest) {
 
   if (!token) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
+  }
+
+  const user = await verifyAuth(token);
+
+  if (!user) {
+    return NextResponse.redirect(new URL("/auth/login", request.url));
+  }
+
+  const routeConfig = protectedRoutes.find((route) =>
+    route.exact ? route.path === pathname : pathname.startsWith(route.path),
+  );
+
+  if (routeConfig && (!user.role || !routeConfig.roles.includes(user.role))) {
+    return NextResponse.redirect(new URL("/unauthorized", request.url));
+  }
+
+  if (pathname === "/unauthorized") {
+    return NextResponse.next();
   }
 
   return NextResponse.next({
