@@ -205,11 +205,13 @@ const DisciplineForm = ({
                                 }
 
                                 if (!hasEletiva && !hasOferta) {
-                                  selectedIds.push(
-                                    getModalities.data?.find(
-                                      (modality) => modality.name === "Oferta"
-                                    )?.id ?? ""
-                                  );
+                                  const ofertaId = getModalities.data?.find(
+                                    (modality) => modality.name === "Oferta"
+                                  )?.id;
+
+                                  if (ofertaId) {
+                                    selectedIds.push(ofertaId);
+                                  }
                                 }
 
                                 form.setValue("modalities_ids", selectedIds);
