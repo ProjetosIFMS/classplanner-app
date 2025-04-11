@@ -19,6 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/_components/ui/select";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@/app/_components/ui/toggle-group";
 import { useAuth } from "@/app/_components/auth/AuthContext";
 import { Input } from "@/app/_components/ui/input";
 import { createDiscipline } from "@/app/_actions/discipline/createDiscipline";
@@ -30,6 +34,8 @@ import { updateDiscipline } from "@/app/_actions/discipline/updateDiscipline";
 import { FormCard } from "@/app/_components/ui/form-card";
 import { FormProps } from "@/types/form-props";
 import { LoadingCard } from "@/app/_components/ui/loading-card";
+import { useGetModalities } from "@/hooks/react-query/modalities";
+import ClipLoader from "react-spinners/ClipLoader";
 
 interface DisciplineFormProps extends Readonly<FormProps> {
   data?: Discipline;
@@ -43,10 +49,12 @@ const DisciplineForm = ({
 }: DisciplineFormProps) => {
   const {
     session,
-    commonData: { courses, pedagogicalProjects, areas, modalities },
+    commonData: { courses, pedagogicalProjects, areas },
   } = useAuth();
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const router = useRouter();
+
+  const getModalities = useGetModalities(session);
 
   const defaultValues = useMemo<DisciplineValues>(
     () => ({
@@ -59,8 +67,16 @@ const DisciplineForm = ({
       area_id: data?.area_id ?? "",
       course_id: data?.course_id ?? "",
       pedagogical_project_id: data?.pedagogical_project_id ?? "",
+      modalities_ids: data?.modalities_ids ?? [
+        ...(
+          getModalities.data?.map((modality) => {
+            if (modality.name === "Oferta") return modality.id;
+            return null;
+          }) ?? []
+        ).filter((id) => id !== null),
+      ],
     }),
-    [data],
+    [data, getModalities.data]
   );
 
   const onSubmitForm: SubmitHandler<DisciplineValues> = async (formData) => {
@@ -78,11 +94,10 @@ const DisciplineForm = ({
     setShowMessage(false);
   };
 
-  if (!courses || !pedagogicalProjects || !areas || !modalities)
-    return <LoadingCard />;
+  if (!courses || !pedagogicalProjects || !areas) return <LoadingCard />;
 
   return (
-    <div>
+    <div className="max-w-4xl">
       <FormCard
         schema={disciplineSchema}
         defaultValues={defaultValues}
@@ -115,21 +130,124 @@ const DisciplineForm = ({
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-semibold text-sm">
-                        Código
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Código UC" id="code" {...field} />
-                      </FormControl>
-                      <FormMessage className="text-[10px]" />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="code"
+                    render={({ field }) => (
+                      <FormItem className="grid-cols-1">
+                        <FormLabel className="font-semibold text-sm">
+                          Código
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="Código UC" id="code" {...field} />
+                        </FormControl>
+                        <FormMessage className="text-[10px]" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="modalities_ids"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-semibold text-sm">
+                          Modalidades
+                        </FormLabel>
+                        {getModalities.isLoading ? (
+                          <ClipLoader />
+                        ) : (
+                          <FormControl>
+                            <ToggleGroup
+                              type="multiple"
+                              {...field}
+                              onValueChange={(selectedIds) => {
+                                const selectedModalities =
+                                  getModalities.data?.filter((modality) =>
+                                    selectedIds.includes(modality.id)
+                                  );
+
+                                const hasEletiva = selectedModalities?.some(
+                                  (modality) => modality.name === "Eletiva"
+                                );
+                                const hasOferta = selectedModalities?.some(
+                                  (modality) => modality.name === "Oferta"
+                                );
+
+                                if (hasEletiva && hasOferta) {
+                                  const lastSelectedId =
+                                    selectedIds[selectedIds.length - 1];
+                                  const lastSelectedModality =
+                                    getModalities.data?.find(
+                                      (modality) =>
+                                        modality.id === lastSelectedId
+                                    );
+
+                                  if (
+                                    lastSelectedModality?.name === "Eletiva"
+                                  ) {
+                                    selectedIds = selectedIds.filter(
+                                      (id) =>
+                                        getModalities.data?.find(
+                                          (modality) => modality.id === id
+                                        )?.name !== "Oferta"
+                                    );
+                                  } else if (
+                                    lastSelectedModality?.name === "Oferta"
+                                  ) {
+                                    selectedIds = selectedIds.filter(
+                                      (id) =>
+                                        getModalities.data?.find(
+                                          (modality) => modality.id === id
+                                        )?.name !== "Eletiva"
+                                    );
+                                  }
+                                }
+
+                                if (!hasEletiva && !hasOferta) {
+                                  const ofertaId = getModalities.data?.find(
+                                    (modality) => modality.name === "Oferta"
+                                  )?.id;
+
+                                  if (ofertaId) {
+                                    selectedIds.push(ofertaId);
+                                  }
+                                }
+
+                                form.setValue("modalities_ids", selectedIds);
+                              }}
+                            >
+                              {getModalities.data?.map((modality) => {
+                                return (
+                                  <ToggleGroupItem
+                                    key={modality.id}
+                                    value={modality.id}
+                                    className="w-full"
+                                    title={modality.name}
+                                  >
+                                    <span
+                                      className={isUpdate ? "hidden" : "inline"}
+                                    >
+                                      {modality.name}
+                                    </span>
+                                    <span
+                                      className={
+                                        !isUpdate ? "hidden" : "inline"
+                                      }
+                                    >
+                                      {modality.name.charAt(0)}
+                                    </span>
+                                  </ToggleGroupItem>
+                                );
+                              })}
+                            </ToggleGroup>
+                          </FormControl>
+                        )}
+                        <FormMessage className="text-[10px]" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </div>
 
@@ -308,7 +426,7 @@ const DisciplineForm = ({
                           value={field.value}
                           onChange={(e) =>
                             field.onChange(
-                              Number.parseInt(e.target.value, 10) || 0,
+                              Number.parseInt(e.target.value, 10) || 0
                             )
                           }
                         />
@@ -334,7 +452,7 @@ const DisciplineForm = ({
                           value={field.value}
                           onChange={(e) =>
                             field.onChange(
-                              Number.parseInt(e.target.value, 10) || 0,
+                              Number.parseInt(e.target.value, 10) || 0
                             )
                           }
                         />
@@ -360,7 +478,7 @@ const DisciplineForm = ({
                           value={field.value}
                           onChange={(e) =>
                             field.onChange(
-                              Number.parseInt(e.target.value, 10) || 0,
+                              Number.parseInt(e.target.value, 10) || 0
                             )
                           }
                         />

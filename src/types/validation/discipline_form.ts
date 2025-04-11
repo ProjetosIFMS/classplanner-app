@@ -32,6 +32,11 @@ export const disciplineSchema = z.object({
   theoreticalHours: z.coerce
     .number({ message: "Insira um número" })
     .min(0, "Total de horas deve ser maior que 0"),
+  modalities_ids: z.array(
+    z.string().uuid({
+      message: "Valor inválido",
+    })
+  ),
 });
 
 export type DisciplineValues = z.infer<typeof disciplineSchema>;
