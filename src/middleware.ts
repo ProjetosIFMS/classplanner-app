@@ -32,12 +32,14 @@ export async function middleware(request: NextRequest) {
     try {
       const access_token = request.nextUrl.searchParams.get("access_token");
 
+      const { role } = (await verifyAuth(access_token)) as { role: string };
+
       if (!access_token) {
         throw new Error("Access token not found");
       }
 
       const response = NextResponse.redirect(
-        new URL("/professor/dashboard", request.url),
+        new URL(`/${role.toLowerCase()}/dashboard`, request.url)
       );
 
       setSession(response, access_token);
@@ -45,11 +47,11 @@ export async function middleware(request: NextRequest) {
       return response;
     } catch (error) {
       const response = NextResponse.redirect(
-        new URL("/auth/login", request.url),
+        new URL("/auth/login", request.url)
       );
       response.headers.set(
         "X-Error-Message",
-        encodeURIComponent(String(error)),
+        encodeURIComponent(String(error))
       );
       return response;
     }
@@ -70,7 +72,7 @@ export async function middleware(request: NextRequest) {
   }
 
   const routeConfig = protectedRoutes.find((route) =>
-    route.exact ? route.path === pathname : pathname.startsWith(route.path),
+    route.exact ? route.path === pathname : pathname.startsWith(route.path)
   );
 
   if (routeConfig && (!user.role || !routeConfig.roles.includes(user.role))) {
