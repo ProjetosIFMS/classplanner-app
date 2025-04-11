@@ -221,8 +221,20 @@ const DisciplineForm = ({
                                     key={modality.id}
                                     value={modality.id}
                                     className="w-full"
+                                    title={modality.name}
                                   >
-                                    {modality.name}
+                                    <span
+                                      className={isUpdate ? "hidden" : "inline"}
+                                    >
+                                      {modality.name}
+                                    </span>
+                                    <span
+                                      className={
+                                        !isUpdate ? "hidden" : "inline"
+                                      }
+                                    >
+                                      {modality.name.charAt(0)}
+                                    </span>
                                   </ToggleGroupItem>
                                 );
                               })}
