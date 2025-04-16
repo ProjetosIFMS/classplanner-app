@@ -205,7 +205,8 @@ export function CoursesPedagogicalProjectsDisciplines(
           </p>
         )}
       </div>
-      <div className="w-full flex justify-between">
+
+      <div className="w-full flex justify-between px-4">
         <div>
           {props.workload >= 0 && !(localPedagogicalProject === undefined) && (
             <div>

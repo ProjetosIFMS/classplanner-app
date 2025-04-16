@@ -44,6 +44,14 @@ export default function SelectInterest() {
     },
   });
 
+  React.useEffect(() => {
+    form.reset();
+  }, [course, form]);
+
+  React.useEffect(() => {
+    form.reset();
+  }, [pedagogicalProject, form]);
+
   function onSubmit(data: z.infer<typeof professorInterestsFormSchema>) {
     console.log(data);
   }
