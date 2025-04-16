@@ -15,12 +15,14 @@ import { Button } from "@/app/_components/ui/button";
 import type { PPC } from "@/types/ppc";
 import type { Course } from "@/types/course";
 import type { Discipline } from "@/types/discipline";
+import { MdCheck } from "react-icons/md";
 
 interface CoursesPedagogicalProjectsDisciplinesProps {
   courses: Course[];
   pedagogicalProjects: PPC[];
   disciplines: Discipline[];
   workload?: number;
+  posting?: boolean;
   renderDisciplineForm: (discipline: Discipline) => React.ReactNode;
   setPedagogicalProject?: React.Dispatch<React.SetStateAction<PPC>>;
   setCourse?: React.Dispatch<React.SetStateAction<Course>>;
@@ -206,7 +208,7 @@ export function CoursesPedagogicalProjectsDisciplines(
         )}
       </div>
 
-      <div className="w-full flex justify-between px-4">
+      <div className="w-full flex items-center justify-between px-4">
         <div>
           {props.workload >= 0 && !(localPedagogicalProject === undefined) && (
             <div>
@@ -216,11 +218,17 @@ export function CoursesPedagogicalProjectsDisciplines(
           )}
         </div>
         <Button
-          className="justify-center"
+          className="flex justify-center items-center"
           type="submit"
-          disabled={localPedagogicalProject === undefined}
+          disabled={localPedagogicalProject === undefined || props.posting}
         >
-          Salvar
+          {props.posting ? (
+            <ClipLoader color="#fff" size={20} />
+          ) : (
+            <div className="flex justify-center items-center gap-1">
+              Salvar <MdCheck />
+            </div>
+          )}
         </Button>
       </div>
     </div>

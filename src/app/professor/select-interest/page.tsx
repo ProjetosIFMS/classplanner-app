@@ -4,6 +4,7 @@ import React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 import { Card, CardContent } from "@/app/_components/ui/card";
 import { FormField, FormItem, FormControl } from "@/app/_components/ui/form";
@@ -14,10 +15,9 @@ import { useCourses } from "@/hooks/useCourses";
 import { usePedagogicalProjects } from "@/hooks/usePedagogicalProjects";
 import { CoursesPedagogicalProjectsDisciplines } from "@/app/_components/courses-pedagogical-projects-disciplines";
 import { useGetAllDisciplines } from "@/hooks/react-query/disciplines";
-import {
-  ProfessorInterestsForm,
-  professorInterestsFormSchema,
-} from "@/app/professor/select-interest/ProfessorInterestsForm";
+import { ProfessorInterestsForm } from "@/app/professor/select-interest/ProfessorInterestsForm";
+import { professorInterestsSelectionSchema } from "@/types/validation/interests-selection_form";
+import { usePostInterestsSelection } from "@/hooks/react-query/interests-selection";
 import "./style.css";
 
 import { type Course } from "@/types/course";
@@ -28,6 +28,7 @@ export default function SelectInterest() {
   const courses = useCourses();
   const pedagogicalProjects = usePedagogicalProjects();
   const disciplines = useGetAllDisciplines(session);
+  const postInterestsSelection = usePostInterestsSelection(session);
 
   const [workload, setWorkload] = React.useState<number>(0);
   const [course, setCourse] = React.useState<Course>();
@@ -37,8 +38,8 @@ export default function SelectInterest() {
   const [isPedagogicalProjectSelected, setIsPedagogicalProjectSelected] =
     React.useState<boolean>(false);
 
-  const form = useForm<z.infer<typeof professorInterestsFormSchema>>({
-    resolver: zodResolver(professorInterestsFormSchema),
+  const form = useForm<z.infer<typeof professorInterestsSelectionSchema>>({
+    resolver: zodResolver(professorInterestsSelectionSchema),
     defaultValues: {
       disciplines_ids: [],
     },
@@ -52,8 +53,17 @@ export default function SelectInterest() {
     form.reset();
   }, [pedagogicalProject, form]);
 
-  function onSubmit(data: z.infer<typeof professorInterestsFormSchema>) {
+  function onSubmit(data: z.infer<typeof professorInterestsSelectionSchema>) {
     console.log(data);
+
+    postInterestsSelection.mutate(data, {
+      onSuccess: () => {
+        toast.success("Seleção de interesses criada com sucesso!");
+      },
+      onError: () => {
+        toast.error("Erro ao criar seleção de interesses");
+      },
+    });
   }
 
   return (
@@ -70,6 +80,7 @@ export default function SelectInterest() {
             <CardContent>
               <ProfessorInterestsForm form={form} onSubmit={onSubmit}>
                 <CoursesPedagogicalProjectsDisciplines
+                  posting={postInterestsSelection.isPending}
                   courses={courses}
                   pedagogicalProjects={pedagogicalProjects}
                   disciplines={disciplines.data}
