@@ -17,26 +17,21 @@ import { CoursesPedagogicalProjectsDisciplines } from "@/app/_components/courses
 import { useGetAllDisciplines } from "@/hooks/react-query/disciplines";
 import { ProfessorInterestsForm } from "@/app/professor/select-interest/ProfessorInterestsForm";
 import { professorInterestsSelectionSchema } from "@/types/validation/interests-selection_form";
-import { usePostInterestsSelection } from "@/hooks/react-query/interests-selection";
+import {
+  useGetMyInterestsSelection,
+  usePostInterestsSelection,
+} from "@/hooks/react-query/interests-selection";
 import "./style.css";
-
-import { type Course } from "@/types/course";
-import { type PPC } from "@/types/ppc";
 
 export default function SelectInterest() {
   const { session } = useAuth();
   const courses = useCourses();
   const pedagogicalProjects = usePedagogicalProjects();
   const disciplines = useGetAllDisciplines(session);
+  const getMyInterestsSelection = useGetMyInterestsSelection(session);
   const postInterestsSelection = usePostInterestsSelection(session);
 
   const [workload, setWorkload] = React.useState<number>(0);
-  const [course, setCourse] = React.useState<Course>();
-  const [pedagogicalProject, setPedagogicalProject] = React.useState<PPC>();
-  const [isCourseSelected, setIsCourseSelected] =
-    React.useState<boolean>(false);
-  const [isPedagogicalProjectSelected, setIsPedagogicalProjectSelected] =
-    React.useState<boolean>(false);
 
   const form = useForm<z.infer<typeof professorInterestsSelectionSchema>>({
     resolver: zodResolver(professorInterestsSelectionSchema),
@@ -46,22 +41,21 @@ export default function SelectInterest() {
   });
 
   React.useEffect(() => {
-    form.reset();
-  }, [course, form]);
-
-  React.useEffect(() => {
-    form.reset();
-  }, [pedagogicalProject, form]);
+    form.setValue(
+      "disciplines_ids",
+      getMyInterestsSelection.data?.map(
+        (interestSelection) => interestSelection.discipline_id
+      )
+    );
+  }, [getMyInterestsSelection.data, form]);
 
   function onSubmit(data: z.infer<typeof professorInterestsSelectionSchema>) {
-    console.log(data);
-
     postInterestsSelection.mutate(data, {
       onSuccess: () => {
-        toast.success("Seleção de interesses criada com sucesso!");
+        toast.success("Seleção de interesses salva com sucesso!");
       },
       onError: () => {
-        toast.error("Erro ao criar seleção de interesses");
+        toast.error("Erro ao salvar seleção de interesses");
       },
     });
   }
@@ -85,12 +79,6 @@ export default function SelectInterest() {
                   pedagogicalProjects={pedagogicalProjects}
                   disciplines={disciplines.data}
                   workload={workload}
-                  setCourse={setCourse}
-                  setPedagogicalProject={setPedagogicalProject}
-                  setIsCourseSelected={setIsCourseSelected}
-                  setIsPedagogicalProjectSelected={
-                    setIsPedagogicalProjectSelected
-                  }
                   renderDisciplineForm={(discipline) => (
                     <FormField
                       control={form.control}
@@ -120,6 +108,10 @@ export default function SelectInterest() {
                                   );
                                 }
                               }}
+                              disabled={
+                                postInterestsSelection.isPending ||
+                                getMyInterestsSelection.isPending
+                              }
                             />
                           </FormControl>
                         </FormItem>
