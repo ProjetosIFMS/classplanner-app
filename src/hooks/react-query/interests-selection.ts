@@ -1,4 +1,5 @@
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { z } from "zod";
 
 import { createInterestsSelection } from "@/app/_actions/interests-selection/createInterestsSelection";
 import { professorInterestsSelectionSchema } from "@/types/validation/interests-selection_form";
