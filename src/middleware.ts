@@ -18,7 +18,7 @@ const protectedRoutes: Routes[] = [
   { path: "/professor", exact: false, roles: ["PROFESSOR"] },
   { path: "/coordinator", exact: false, roles: ["COORDINATOR", "ADMIN"] },
   { path: "/modality/create", exact: true, roles: ["COORDINATOR", "ADMIN"] },
-  { path: "discipline/create", exact: true, roles: ["COORDINATOR"] },
+  { path: "/discipline/create", exact: true, roles: ["COORDINATOR"] },
 ];
 
 export async function middleware(request: NextRequest) {
