@@ -43,9 +43,14 @@ export default function SelectInterest() {
   React.useEffect(() => {
     form.setValue(
       "disciplines_ids",
-      getMyInterestsSelection.data?.map(
-        (interestSelection) => interestSelection.discipline_id
-      )
+      getMyInterestsSelection.data
+        ?.map((interestSelection) => {
+          if (interestSelection.status == "INACTIVE") {
+            return null;
+          }
+          return interestSelection.discipline_id;
+        })
+        .filter(Boolean as string[])
     );
   }, [getMyInterestsSelection.data, form]);
 
