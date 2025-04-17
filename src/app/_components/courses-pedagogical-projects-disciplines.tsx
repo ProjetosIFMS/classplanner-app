@@ -24,8 +24,8 @@ interface CoursesPedagogicalProjectsDisciplinesProps {
   workload?: number;
   posting?: boolean;
   renderDisciplineForm: (discipline: Discipline) => React.ReactNode;
-  setPedagogicalProject?: React.Dispatch<React.SetStateAction<PPC>>;
-  setCourse?: React.Dispatch<React.SetStateAction<Course>>;
+  setPedagogicalProject?: React.Dispatch<React.SetStateAction<PPC | undefined>>;
+  setCourse?: React.Dispatch<React.SetStateAction<Course | undefined>>;
   setIsCourseSelected?: React.Dispatch<React.SetStateAction<boolean>>;
   setIsPedagogicalProjectSelected?: React.Dispatch<
     React.SetStateAction<boolean>
@@ -60,13 +60,14 @@ export function CoursesPedagogicalProjectsDisciplines(
       <div className="flex justify-between flex-col lg:flex-row items-center">
         <div className="min-w-96 max-w-96">
           <Tabs
-            onValueChange={(course) => {
-              setLocalCourse(course);
+            onValueChange={(courseId) => {
+              setLocalCourse(localCourses.find((c) => c.id === courseId));
               setLocalPedagogicalProject(undefined);
               setLocalFilteredDisciplines([]);
               if (props.setPedagogicalProject)
                 props.setPedagogicalProject(undefined);
-              if (props.setCourse) props.setCourse(course);
+              if (props.setCourse)
+                props.setCourse(localCourses.find((c) => c.id === courseId));
               if (props.setIsCourseSelected) props.setIsCourseSelected(true);
               if (props.setIsPedagogicalProjectSelected)
                 props.setIsPedagogicalProjectSelected(false);
@@ -74,11 +75,11 @@ export function CoursesPedagogicalProjectsDisciplines(
             className="w-full"
           >
             <TabsList className="flex justify-start h-14 w-full overflow-x-auto scrollbar-thin">
-              {props.courses ? (
-                localCourses?.map((course, index) => (
+              {props.courses.length > 0 ? (
+                localCourses?.map((course) => (
                   <TabsTrigger
-                    key={`course-${index}`}
-                    value={course}
+                    key={`course-${course.id}`}
+                    value={course.id}
                     className="whitespace-nowrap p-2"
                   >
                     {course.name}
@@ -95,33 +96,45 @@ export function CoursesPedagogicalProjectsDisciplines(
 
         <div className="min-w-96 max-w-96">
           <Tabs
-            value={localPedagogicalProject ?? ""}
-            onValueChange={(pedagogicalProject) => {
-              setLocalPedagogicalProject(pedagogicalProject);
+            value={localPedagogicalProject?.id ?? ""}
+            onValueChange={(pedagogicalProjectId) => {
+              setLocalPedagogicalProject(
+                localPedagogicalProjects.find(
+                  (pedagogicalProject) =>
+                    pedagogicalProject.id === pedagogicalProjectId
+                )
+              );
               setLocalFilteredDisciplines(
                 props.disciplines.filter(
                   (discipline) =>
                     discipline.pedagogical_project_id ===
-                      pedagogicalProject.id &&
+                      pedagogicalProjectId &&
                     discipline.course_id === localCourse?.id
                 )
               );
               if (props.setPedagogicalProject)
-                props.setPedagogicalProject(pedagogicalProject);
+                props.setPedagogicalProject(
+                  localPedagogicalProjects.find(
+                    (pedagogicalProject) =>
+                      pedagogicalProject.id === pedagogicalProjectId
+                  )
+                );
               if (props.setIsPedagogicalProjectSelected)
                 props.setIsPedagogicalProjectSelected(true);
             }}
             className="w-full"
           >
             <TabsList className="flex justify-between h-14 w-full overflow-x-auto flex-nowrap overflow-y-hidden scrollbar-thin">
-              {!props.courses && (
+              {props.courses.length <= 0 && (
                 <div className="flex justify-center items-center w-full">
                   <ClipLoader />
                 </div>
               )}
-              {props.courses && !localCourse && (
+
+              {props.courses.length > 0 && !localCourse && (
                 <p className="w-full text-center">Selecione um curso</p>
               )}
+
               {localCourse &&
                 !localPedagogicalProjects.some(
                   (pedagogicalProject) =>
@@ -131,6 +144,7 @@ export function CoursesPedagogicalProjectsDisciplines(
                     Nenhum PPC encontrado para este curso
                   </p>
                 )}
+
               {localCourse &&
                 localPedagogicalProjects?.map((pedagogicalProject, index) => {
                   if (
@@ -140,7 +154,7 @@ export function CoursesPedagogicalProjectsDisciplines(
                     return (
                       <TabsTrigger
                         key={`pedagogicalProject-${index}`}
-                        value={pedagogicalProject}
+                        value={pedagogicalProject.id}
                         className="whitespace-nowrap p-2 w-full"
                       >
                         PPC {pedagogicalProject.year}
@@ -162,12 +176,15 @@ export function CoursesPedagogicalProjectsDisciplines(
             defaultValue={Array.from(
               { length: localCourse?.quantity_semester || 0 },
               (_, index) => index + 1
-            )}
+            ).map(String)}
           >
             {Array.from(
               { length: localCourse?.quantity_semester || 0 },
               (_, index) => (
-                <AccordionItem key={`semester-${index + 1}`} value={index + 1}>
+                <AccordionItem
+                  key={`semester-${index + 1}`}
+                  value={(index + 1).toString()}
+                >
                   <AccordionTrigger>
                     <span className="font-bold">SEMESTRE {index + 1}</span>
                   </AccordionTrigger>
@@ -210,12 +227,14 @@ export function CoursesPedagogicalProjectsDisciplines(
 
       <div className="w-full flex items-center justify-between px-4">
         <div>
-          {props.workload >= 0 && !(localPedagogicalProject === undefined) && (
-            <div>
-              <span className="text-muted-foreground">Carga horária: </span>
-              <span className="font-bold">{props.workload}h</span>
-            </div>
-          )}
+          {props.workload !== undefined &&
+            props.workload >= 0 &&
+            !(localPedagogicalProject === undefined) && (
+              <div>
+                <span className="text-muted-foreground">Carga horária: </span>
+                <span className="font-bold">{props.workload}h</span>
+              </div>
+            )}
         </div>
         <Button
           className="flex justify-center items-center"

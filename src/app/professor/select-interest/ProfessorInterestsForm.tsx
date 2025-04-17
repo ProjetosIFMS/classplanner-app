@@ -9,7 +9,9 @@ import { professorInterestsSelectionSchema } from "@/types/validation/interests-
 
 interface ProfessorInterestsFormProps {
   children?: React.ReactNode;
-  form: ReturnType<typeof useForm>;
+  form: ReturnType<
+    typeof useForm<z.infer<typeof professorInterestsSelectionSchema>>
+  >;
   onSubmit: (data: z.infer<typeof professorInterestsSelectionSchema>) => void;
 }
 

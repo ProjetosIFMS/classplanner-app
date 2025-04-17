@@ -50,7 +50,7 @@ export default function SelectInterest() {
           }
           return interestSelection.discipline_id;
         })
-        .filter(Boolean as string[])
+        .filter((id): id is string => id !== null) || []
     );
   }, [getMyInterestsSelection.data, form]);
 
@@ -80,9 +80,9 @@ export default function SelectInterest() {
               <ProfessorInterestsForm form={form} onSubmit={onSubmit}>
                 <CoursesPedagogicalProjectsDisciplines
                   posting={postInterestsSelection.isPending}
-                  courses={courses}
-                  pedagogicalProjects={pedagogicalProjects}
-                  disciplines={disciplines.data}
+                  courses={courses ?? []}
+                  pedagogicalProjects={pedagogicalProjects ?? []}
+                  disciplines={disciplines.data ?? []}
                   workload={workload}
                   renderDisciplineForm={(discipline) => (
                     <FormField
