@@ -3,7 +3,7 @@ import { LoginButton } from "@/app/_components/ui/loginButton";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50">
+    <div className="flex min-h-full flex-col items-center justify-center">
       <div className="relative w-80 h-80">
         <Image
           aria-hidden
