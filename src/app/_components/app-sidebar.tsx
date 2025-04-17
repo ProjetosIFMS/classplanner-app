@@ -24,16 +24,34 @@ import {
   BookOpen,
   Users,
   HelpCircle,
+  GraduationCap,
+  Folder,
+  Map,
+  List,
+  PlusCircle,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { UserAvatar } from "./ui/userAvatar";
 import { CustomTrigger } from "./ui/custom-trigger";
 import { Tooltip, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "./ui/dropdown-menu";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 
-type primaryNavItemsProps = {
-  icon: JSX.Element;
+type Navbar = {
   label: string;
   path: string;
+  icon?: JSX.Element;
+};
+
+type primaryNavItemsProps = {
+  icon: Navbar["icon"];
+  label: Navbar["label"];
+  path: Navbar["path"];
+  nested?: Navbar[];
 };
 
 export function AppSidebar() {
@@ -41,6 +59,7 @@ export function AppSidebar() {
   const path = usePathname();
   const router = useRouter();
   const isMobile = useIsMobile();
+  const isCoordinator = user?.role === "COORDINATOR";
 
   // Excluded paths where sidebar shouldn't render
   const excludedPaths = ["/professor/select-area", "/auth/login"];
@@ -54,8 +73,96 @@ export function AppSidebar() {
       label: "Dashboard",
       path: `/${user?.role.toLowerCase()}/dashboard`,
     },
-    { icon: <BookOpen size={20} />, label: "Cursos", path: "/courses/list" },
-    { icon: <Users size={20} />, label: "Turmas", path: "/classgrade/list" },
+    {
+      icon: <BookOpen size={20} />,
+      label: "Cursos",
+      path: "/course/list",
+      nested: [
+        {
+          icon: <List size={16} />,
+          label: "Todos os cursos",
+          path: "/course/list",
+        },
+        {
+          icon: <PlusCircle size={16} />,
+          label: "Criar Curso",
+          path: "/course/create",
+        },
+      ],
+    },
+    {
+      icon: <Users size={20} />,
+      label: "Turmas",
+      path: "/classgrade/list",
+      nested: [
+        {
+          icon: <List size={16} />,
+          label: "Todas as turmas",
+          path: "/classgrade/list",
+        },
+        {
+          icon: <PlusCircle size={16} />,
+          label: "Criar Turma",
+          path: "/classgrade/create",
+        },
+      ],
+    },
+    {
+      icon: <Settings size={20} />,
+      label: "Modalidades",
+      path: "/modality/list",
+      nested: [
+        {
+          icon: <List size={16} />,
+          label: "Todas as modalidades",
+          path: "/modality/list",
+        },
+        {
+          icon: <PlusCircle size={16} />,
+          label: "Criar Modalidade",
+          path: "/modality/create",
+        },
+      ],
+    },
+    {
+      icon: <GraduationCap size={20} />,
+      label: "Disciplinas",
+      path: "/discipline/list",
+      nested: [
+        {
+          icon: <List size={16} />,
+          label: "Todas as disciplinas",
+          path: "/discipline/list",
+        },
+        {
+          icon: <PlusCircle size={16} />,
+          label: "Criar Disciplina",
+          path: "/discipline/create",
+        },
+      ],
+    },
+    {
+      icon: <Folder size={20} />,
+      label: "Projeto Pedagógico de Curso",
+      path: "/ppc/list",
+      nested: [
+        {
+          icon: <List size={16} />,
+          label: "Todos os PPCs",
+          path: "/ppc/list",
+        },
+        {
+          icon: <PlusCircle size={16} />,
+          label: "Criar PPC",
+          path: "/ppc/create",
+        },
+      ],
+    },
+    {
+      icon: <Map size={20} />,
+      label: "Eixo",
+      path: "/coordinator/list-areas",
+    },
   ];
 
   const secondaryNavItems = [
@@ -70,19 +177,48 @@ export function AppSidebar() {
   const NavigationItem = ({
     item,
     index,
+    isCoordinator,
   }: {
     item: primaryNavItemsProps;
     index: number;
+    isCoordinator: boolean;
   }) => (
     <Tooltip key={index} delayDuration={300}>
       <TooltipTrigger asChild>
-        <SidebarMenuItem
-          className="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors duration-200 bg-primary/10 text-primary font-medium"
-          onClick={() => handleNavigation(item.path)}
-        >
-          <div className="text-primary">{item.icon}</div>
-          <Label className="font-medium">{item.label}</Label>
-        </SidebarMenuItem>
+        {isCoordinator && item.nested ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger className="w-full">
+              <div className="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors duration-200 bg-primary/10 text-primary font-medium text-start">
+                <div className="text-primary">{item.icon}</div>
+                <Label className="font-medium cursor-pointer">
+                  {item.label}
+                </Label>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {item.nested.map((nestedItem, nestedIndex) => (
+                <DropdownMenuItem
+                  key={nestedIndex}
+                  className="flex items-center ml-3 rounded-lg cursor-pointer transition-colors duration-200 text-primary font-medium"
+                  onClick={() => handleNavigation(nestedItem.path)}
+                >
+                  <div className="text-primary mr-3">{nestedItem.icon}</div>
+                  <Label className="font-medium cursor-pointer">
+                    {nestedItem.label}
+                  </Label>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <SidebarMenuItem
+            className="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors duration-200 bg-primary/10 text-primary font-medium"
+            onClick={() => handleNavigation(item.path)}
+          >
+            <div className="text-primary">{item.icon}</div>
+            <Label className="font-medium cursor-pointer">{item.label}</Label>
+          </SidebarMenuItem>
+        )}
       </TooltipTrigger>
     </Tooltip>
   );
@@ -129,7 +265,12 @@ export function AppSidebar() {
             </SidebarGroupLabel>
             <SidebarGroupContent className="space-y-1">
               {primaryNavItems.map((item, index) => (
-                <NavigationItem key={index} item={item} index={index} />
+                <NavigationItem
+                  isCoordinator={isCoordinator}
+                  key={index}
+                  item={item}
+                  index={index}
+                />
               ))}
             </SidebarGroupContent>
           </SidebarGroup>
@@ -140,7 +281,12 @@ export function AppSidebar() {
             </SidebarGroupLabel>
             <SidebarGroupContent className="space-y-1">
               {secondaryNavItems.map((item, index) => (
-                <NavigationItem key={index} item={item} index={index} />
+                <NavigationItem
+                  isCoordinator
+                  key={index}
+                  item={item}
+                  index={index}
+                />
               ))}
             </SidebarGroupContent>
           </SidebarGroup>
