@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/app/_components/auth/AuthContext";
 import { Button } from "@/app/_components/ui/button";
 import { Checkbox } from "@/app/_components/ui/checkbox";
 import { Combobox } from "@/app/_components/ui/combobox";
@@ -11,12 +12,14 @@ import {
 } from "@/app/_components/ui/form";
 import { FormCard } from "@/app/_components/ui/form-card";
 import { Label } from "@/app/_components/ui/label";
+import { MessageBox } from "@/app/_components/ui/messageBox";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/app/_components/ui/popover";
 import { Textarea } from "@/app/_components/ui/textarea";
+import { usePostDayOffSelection } from "@/hooks/react-query/day-off";
 import {
   ClassFrequencyValues,
   DayValues,
@@ -27,19 +30,41 @@ import {
 import { AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
+import { toast } from "sonner";
+import { getEnglishWeekday } from "@/types/validation/select-day-off_form";
 
 export const SelectDayOffForm = () => {
   const [showPrepDay, setShowPrepDay] = useState(false);
   const [showSpecificRequest, setShowSpecificRequest] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
+  const { session } = useAuth();
+  const postDayOffSelection = usePostDayOffSelection(session);
   const defaultValues: SelectDayOffValues = {
-    preparationDay: undefined,
-    specificRequest: "",
-    classFrequency: null,
-    timeSchedule: null,
+    weekday: undefined,
+    reason: "",
+    frequency: null,
+    schedule: null,
   };
 
   const onSubmitForm: SubmitHandler<SelectDayOffValues> = async (formData) => {
-    console.log(formData);
+    formData.weekday = getEnglishWeekday(
+      formData.weekday as
+        | "Segunda-Feira"
+        | "Terça-Feira"
+        | "Quarta-Feira"
+        | "Quinta-Feira"
+        | "Sexta-Feira"
+        | undefined
+    );
+    postDayOffSelection.mutate(formData, {
+      onSuccess: () => {
+        setShowMessage(true);
+        toast.success("Solicitação de dia de preparação feita com sucesso.");
+      },
+      onError: () => {
+        toast.error("Erro ao fazer a solicitação.");
+      },
+    });
   };
 
   return (
@@ -70,7 +95,7 @@ export const SelectDayOffForm = () => {
           <div className="space-y-8">
             <FormField
               control={form.control}
-              name="preparationDay"
+              name="weekday"
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center space-x-3">
@@ -81,6 +106,7 @@ export const SelectDayOffForm = () => {
                       onCheckedChange={(checked) => {
                         setShowPrepDay(!!checked);
                         setShowSpecificRequest(false);
+                        form.setValue("reason", "");
                       }}
                     />
                     <FormLabel
@@ -123,7 +149,7 @@ export const SelectDayOffForm = () => {
 
             <FormField
               control={form.control}
-              name="specificRequest"
+              name="reason"
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center space-x-3">
@@ -134,6 +160,7 @@ export const SelectDayOffForm = () => {
                       onCheckedChange={(checked) => {
                         setShowSpecificRequest(!!checked);
                         setShowPrepDay(false);
+                        form.setValue("weekday", undefined);
                       }}
                     />
                     <FormLabel
@@ -166,7 +193,7 @@ export const SelectDayOffForm = () => {
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="timeSchedule"
+                name="schedule"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base">
@@ -188,7 +215,7 @@ export const SelectDayOffForm = () => {
               />
               <FormField
                 control={form.control}
-                name="classFrequency"
+                name="frequency"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base">
@@ -210,24 +237,43 @@ export const SelectDayOffForm = () => {
               />
             </div>
 
-            {(!!(
-              form.formState.errors.specificRequest ||
-              form.formState.errors.preparationDay
-            ) ||
-              form.formState.errors.classFrequency ||
-              form.formState.errors.timeSchedule) && (
+            {Object.keys(form.formState.errors).length > 0 && (
               <div
-                className=" text-red-500 py-2  text-center border-b border-b-red-400 text-sm relative"
+                className="bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-600"
                 role="alert"
               >
-                <span>{form.formState.errors.specificRequest?.message}</span>
-                <span>{form.formState.errors.classFrequency?.message}</span>
+                <div className="flex items-center gap-2 mb-2 font-medium">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>Solicitação inválida, corrija os seguintes erros:</span>
+                </div>
+                <ul className="space-y-1 pl-6 list-disc">
+                  {form.formState.errors.weekday?.message && (
+                    <li>{form.formState.errors.weekday.message}</li>
+                  )}
+                  {form.formState.errors.reason?.message && (
+                    <li>{form.formState.errors.reason.message}</li>
+                  )}
+                  {form.formState.errors.frequency?.message && (
+                    <li>{form.formState.errors.frequency.message}</li>
+                  )}
+                  {form.formState.errors.schedule?.message && (
+                    <li>{form.formState.errors.schedule.message}</li>
+                  )}
+                </ul>
               </div>
             )}
           </div>
         )}
       </FormCard>
-      <div></div>
+      <div>
+        <MessageBox
+          description="Solicitação de dia de preparação feita com sucesso."
+          title="Dia de preparação"
+          redirectPath="/professor/dashboard"
+          state={showMessage}
+          onClose={() => setShowMessage(false)}
+        />
+      </div>
     </>
   );
 };
