@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const PreparationDayEnum = z.enum(
+const WeekDayEnum = z.enum(
   [
     "Segunda-Feira",
     "Terça-Feira",
@@ -21,50 +21,62 @@ const ClassFrequencyEnum = z.enum(["3 aulas contínuas", "Aulas separadas"], {
 
 export const selectDayOffSchema = z
   .object({
-    preparationDay: PreparationDayEnum.optional(),
-    specificRequest: z
-      .string({ message: "Insira a sua solicitação" })
-      .optional(),
-    timeSchedule: TimeScheduleEnum.nullable().refine(
-      (val) => val !== undefined,
-      { message: "Selecione uma opção" },
-    ),
-    classFrequency: ClassFrequencyEnum.nullable().refine(
+    weekday: WeekDayEnum.optional(),
+    reason: z.string({ message: "Insira a sua solicitação" }).optional(),
+    schedule: TimeScheduleEnum.nullable().refine((val) => val !== undefined, {
+      message: "Selecione uma opção",
+    }),
+    frequency: ClassFrequencyEnum.nullable().refine(
       (val) => val !== undefined,
       { message: "Selecione uma opção" },
     ),
   })
   .superRefine(
-    (
-      { specificRequest, preparationDay, classFrequency, timeSchedule },
-      refinementContext,
-    ) => {
-      if (!specificRequest && !preparationDay) {
+    ({ reason, weekday, frequency, schedule }, refinementContext) => {
+      if ((!reason || reason.trim() === "") && !weekday) {
         refinementContext.addIssue({
           code: z.ZodIssueCode.custom,
           message:
-            "Insira pelo menos o valor a uma opção para o dia de preparação.",
-          path: ["specificRequest"],
+            "Selecione um dia da semana ou forneça uma solicitação específica.",
+          path: ["weekday"],
+        });
+      }
+      if (reason && reason.trim() !== "" && weekday) {
+        refinementContext.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            "Escolha apenas uma opção: dia da semana OU solicitação específica.",
+          path: ["weekday"],
         });
         refinementContext.addIssue({
           code: z.ZodIssueCode.custom,
           message:
-            "Insira pelo menos o valor a uma opção para o dia de preparação.",
-          path: ["preparationDay"],
+            "Escolha apenas uma opção: dia da semana OU solicitação específica.",
+          path: ["reason"],
         });
-      } else if (
-        (specificRequest || preparationDay) &&
-        (!timeSchedule || !classFrequency)
-      ) {
+      }
+
+      if (reason && reason.trim() !== "" && reason.length < 20) {
         refinementContext.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Selecione os horários de aula e a frequência",
-          path: ["classFrequency"],
+          message:
+            "A solicitação deve ser descritiva e conter no mínimo 20 caracteres.",
+          path: ["reason"],
         });
+      }
+
+      if (!schedule) {
         refinementContext.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Selecione os horários de aula e a frequência",
-          path: ["timeSchedule"],
+          message: "Selecione os horários de aula.",
+          path: ["schedule"],
+        });
+      }
+      if (!frequency) {
+        refinementContext.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Selecione a frequência de aulas.",
+          path: ["frequency"],
         });
       }
     },
@@ -72,6 +84,6 @@ export const selectDayOffSchema = z
 
 export type SelectDayOffValues = z.infer<typeof selectDayOffSchema>;
 
-export const DayValues = Object.values(PreparationDayEnum.Values);
+export const DayValues = Object.values(WeekDayEnum.Values);
 export const TimeScheduleValues = Object.values(TimeScheduleEnum.Values);
 export const ClassFrequencyValues = Object.values(ClassFrequencyEnum.Values);
