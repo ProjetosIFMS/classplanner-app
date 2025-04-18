@@ -51,7 +51,7 @@ export const selectDayOffSchema = z
         });
       }
 
-      if (reason && reason.trim() !== "" && reason.length < 20) {
+      if (reason && reason.trim() !== "" && reason.trim().length < 20) {
         refinementContext.addIssue({
           code: z.ZodIssueCode.custom,
           message:
