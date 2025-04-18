@@ -54,7 +54,7 @@ export const Panel = ({
               messages.map((message, index) => (
                 <div
                   key={index}
-                  className="mb-4 grid grid-cols-[25px_1fr] h-[50px] min-h-[50px] items-center pb-6 pt-2 p-4rounded-lg last:mb-0 last:pb-0"
+                  className="mb-4 grid grid-cols-[25px_1fr] h-[50px] min-h-[50px] items-center pb-6 pt-2 last:mb-0 last:pb-0"
                 >
                   <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
                   <div className="space-y-1 hover:bg-gray-100 items-center rounded-xl ">
