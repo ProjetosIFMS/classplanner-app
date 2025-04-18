@@ -10,6 +10,10 @@ import {
 import { formatAuditLogMessage } from "@/lib/auditLogMessage";
 import { useGetMyAuditLogs } from "@/hooks/react-query/audit-logs";
 import { useAuth } from "@/app/_components/auth/AuthContext";
+import { useGetMyInterestsSelection } from "@/hooks/react-query/interests-selection";
+import { useGetAllDisciplines } from "@/hooks/react-query/disciplines";
+import { useGetAllUsers } from "@/hooks/react-query/user";
+import { useGetAllCourses } from "@/hooks/react-query/courses";
 
 const mockedNotifications = [
   {
@@ -34,36 +38,63 @@ const mockedNotifications = [
   },
 ];
 
-const mockedProfessorsAndDisciplineData: ProfessorAndDiscipline[] = [
-  {
-    professorName: "Prof. Dr. Fulano de Tal",
-    disciplineName: "Algoritmos I",
-    courseName: "Engenharia da Computação",
-    workload: "60",
-  },
-  {
-    professorName: "Prof. Dr. Ciclano de Tal",
-    disciplineName: "BAlgoritmos II",
-    courseName: "Engenharia da Computação",
-    workload: "60",
-  },
-  {
-    professorName: "Prof. Dr. Beltrano de Tal",
-    disciplineName: "CAlgoritmos III",
-    courseName: "Engenharia da Computação",
-    workload: "60",
-  },
-];
-
 export default function CoordinatorDashboard() {
   const [notifications, setNotifications] = React.useState(() => [
     ...mockedNotifications,
   ]);
   const [professorsAndDisciplineData, setProfessorsAndDisciplineData] =
-    React.useState(() => [...mockedProfessorsAndDisciplineData]);
+    React.useState<ProfessorAndDiscipline[]>([]);
 
   const { session } = useAuth();
   const getMyAuditLogs = useGetMyAuditLogs(session);
+  const getMyInterestsSelection = useGetMyInterestsSelection(session);
+  const getAllDisciplines = useGetAllDisciplines(session);
+  const getAllUsers = useGetAllUsers(session);
+  const getAllCourses = useGetAllCourses(session);
+
+  React.useEffect(() => {
+    if (
+      (getMyInterestsSelection.data?.length ?? 0) > 0 &&
+      (getAllDisciplines.data?.length ?? 0) > 0 &&
+      (getAllUsers.data?.length ?? 0) > 0 &&
+      (getAllCourses.data?.length ?? 0) > 0
+    ) {
+      setProfessorsAndDisciplineData((): ProfessorAndDiscipline[] => {
+        return (
+          getMyInterestsSelection.data
+            ?.filter(
+              (interestSelection) => interestSelection.status !== "INACTIVE"
+            )
+            .flatMap((interestSelection) => {
+              const relatedUser = getAllUsers.data?.find(
+                (user) => user.id === interestSelection.user_id
+              );
+              const relatedDiscipline = getAllDisciplines.data?.find(
+                (discipline) =>
+                  discipline.id === interestSelection.discipline_id
+              );
+              const relatedCourse = getAllCourses.data?.find(
+                (course) => course.id === relatedDiscipline?.course_id
+              );
+
+              return {
+                professorName: `${
+                  relatedUser?.firstName
+                } ${relatedUser?.lastName}`,
+                disciplineName: relatedDiscipline?.name || "N/A",
+                courseName: relatedCourse?.name || "N/A",
+                workload: relatedDiscipline?.practicalHours || 0,
+              };
+            }) || []
+        );
+      });
+    }
+  }, [
+    getMyInterestsSelection.data,
+    getAllDisciplines.data,
+    getAllUsers.data,
+    getAllCourses.data,
+  ]);
 
   return (
     <section>
@@ -93,6 +124,12 @@ export default function CoordinatorDashboard() {
             <div className="flex flex-col items-center justify-center">
               <ProfessorAndDisciplinesTable
                 data={professorsAndDisciplineData}
+                isLoading={
+                  getMyInterestsSelection.isLoading ||
+                  getAllDisciplines.isLoading ||
+                  getAllUsers.isLoading ||
+                  getAllCourses.isLoading
+                }
               />
             </div>
           </div>
