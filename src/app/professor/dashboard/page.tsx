@@ -1,8 +1,18 @@
+"use client";
+
+import React from "react";
+
 import { Discipline } from "@/types/discipline";
 import { DisciplinesPanel } from "./disciplines-panel";
 import { Panel } from "./panel";
+import { useAuth } from "@/app/_components/auth/AuthContext";
+import { useGetMyAuditLogs } from "@/hooks/react-query/audit-logs";
+import { formatAuditLogMessage } from "@/lib/auditLogMessage";
 
-const Dashboard = async () => {
+export default function ProfessorDashboard() {
+  const { session } = useAuth();
+  const getMyAuditLogs = useGetMyAuditLogs(session);
+
   const notifications = [
     {
       title: "Existem conflitos em suas disciplinas",
@@ -26,30 +36,6 @@ const Dashboard = async () => {
     },
   ];
 
-  const records = [
-    {
-      title: "Selecionou a disciplina Algoritmos I em TADS",
-      description: "1 hour ago",
-    },
-    {
-      title: "Selecionou a disciplina Algoritmos I em TADS",
-      description: "1 hour ago",
-    },
-    {
-      title: "Selecionou a disciplina Algoritmos I em Engenharia da Computação",
-      description: "1 hour ago",
-    },
-    {
-      title:
-        "Selecionou a disciplina Estrutura de Dados em Engenharia da Computação",
-      description: "1 hour ago",
-    },
-    {
-      title: "Selecionou a disciplina Algoritmos I em Engenharia da Computação",
-      description: "1 hour ago",
-    },
-  ];
-
   const disciplines: Discipline[] = [];
 
   return (
@@ -58,19 +44,18 @@ const Dashboard = async () => {
         <div>
           <h1 className="text-lg font-extrabold py-6">Dashboard</h1>
           <div className="flex flex-row justify-around gap-12">
-            <Panel
-              name="Avisos"
-              panelDescription={`Você têm ${notifications.length} avisos`}
-              messages={notifications}
-            />
+            <Panel name="Avisos" messages={notifications} />
             <Panel
               name="Histórico"
-              panelDescription={`Você realizou ${records.length} ações`}
-              messages={records}
+              messages={
+                getMyAuditLogs.data
+                  ? getMyAuditLogs.data.map((log) => formatAuditLogMessage(log))
+                  : []
+              }
+              loading={getMyAuditLogs.isLoading}
             />
           </div>
           <h2 className="text-lg font-extrabold py-6 self-start">
-            {" "}
             Suas Disciplinas
           </h2>
           <div className="flex flex-row gap-16 mb-24 mx-8">
@@ -82,6 +67,4 @@ const Dashboard = async () => {
       </div>
     </section>
   );
-};
-
-export default Dashboard;
+}
