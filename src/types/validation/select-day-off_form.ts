@@ -1,15 +1,10 @@
 import { z } from "zod";
 
-const WeekDayEnum = z.enum(
-  [
-    "Segunda-Feira",
-    "Terça-Feira",
-    "Quarta-Feira",
-    "Quinta-Feira",
-    "Sexta-Feira",
-  ],
-  { message: "Selecione um dia" },
-);
+import { WEEKDAY } from "@/types/weekday";
+
+const WeekDayEnum = z.enum(Object.keys(WEEKDAY) as [string, ...string[]], {
+  message: "Selecione um dia",
+});
 
 const TimeScheduleEnum = z.enum(["Contínuos", "Espaçados"], {
   message: "Selecione uma opção",
@@ -28,7 +23,7 @@ export const selectDayOffSchema = z
     }),
     frequency: ClassFrequencyEnum.nullable().refine(
       (val) => val !== undefined,
-      { message: "Selecione uma opção" },
+      { message: "Selecione uma opção" }
     ),
   })
   .superRefine(
@@ -79,11 +74,18 @@ export const selectDayOffSchema = z
           path: ["frequency"],
         });
       }
-    },
+    }
   );
 
 export type SelectDayOffValues = z.infer<typeof selectDayOffSchema>;
 
-export const DayValues = Object.values(WeekDayEnum.Values);
+export const DayValues = Object.keys(WEEKDAY);
 export const TimeScheduleValues = Object.values(TimeScheduleEnum.Values);
 export const ClassFrequencyValues = Object.values(ClassFrequencyEnum.Values);
+
+export const getEnglishWeekday = (
+  portugueseDay: keyof typeof WEEKDAY | undefined
+): (typeof WEEKDAY)[keyof typeof WEEKDAY] | undefined => {
+  if (!portugueseDay) return undefined;
+  return WEEKDAY[portugueseDay];
+};

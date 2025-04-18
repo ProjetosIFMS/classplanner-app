@@ -31,6 +31,7 @@ import { AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
+import { getEnglishWeekday } from "@/types/validation/select-day-off_form";
 
 export const SelectDayOffForm = () => {
   const [showPrepDay, setShowPrepDay] = useState(false);
@@ -46,6 +47,15 @@ export const SelectDayOffForm = () => {
   };
 
   const onSubmitForm: SubmitHandler<SelectDayOffValues> = async (formData) => {
+    formData.weekday = getEnglishWeekday(
+      formData.weekday as
+        | "Segunda-Feira"
+        | "Terça-Feira"
+        | "Quarta-Feira"
+        | "Quinta-Feira"
+        | "Sexta-Feira"
+        | undefined
+    );
     try {
       postDayOffSelection.mutate(formData, {
         onSuccess: () => {
