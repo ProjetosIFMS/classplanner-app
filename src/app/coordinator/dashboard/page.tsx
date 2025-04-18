@@ -1,11 +1,15 @@
 "use client";
 
+import React from "react";
+
 import { Panel } from "@/app/professor/dashboard/panel";
 import {
   ProfessorAndDisciplinesTable,
   type ProfessorAndDiscipline,
 } from "@/app/coordinator/dashboard/professors-and-disciplines-table";
-import React from "react";
+import { formatAuditLogMessage } from "@/lib/auditLogMessage";
+import { useGetMyAuditLogs } from "@/hooks/react-query/audit-logs";
+import { useAuth } from "@/app/_components/auth/AuthContext";
 
 const mockedNotifications = [
   {
@@ -26,29 +30,6 @@ const mockedNotifications = [
   },
   {
     title: "Existem conflitos em suas disciplinas",
-    description: "1 hour ago",
-  },
-];
-
-const mockedHistory = [
-  {
-    title: "Selecionou a disciplina Algoritmos I em Engenharia da Computação",
-    description: "1 hour ago",
-  },
-  {
-    title: "Selecionou a disciplina Algoritmos I em TADS",
-    description: "1 hour ago",
-  },
-  {
-    title: "Selecionou a disciplina Algoritmos I em TADS",
-    description: "1 hour ago",
-  },
-  {
-    title: "Selecionou a disciplina Algoritmos I em TADS",
-    description: "1 hour ago",
-  },
-  {
-    title: "Selecionou a disciplina Algoritmos I em TADS",
     description: "1 hour ago",
   },
 ];
@@ -74,13 +55,16 @@ const mockedProfessorsAndDisciplineData: ProfessorAndDiscipline[] = [
   },
 ];
 
-const CoordinatorDashboard = () => {
+export default function CoordinatorDashboard() {
   const [notifications, setNotifications] = React.useState(() => [
     ...mockedNotifications,
   ]);
-  const [history, setHistory] = React.useState(() => [...mockedHistory]);
   const [professorsAndDisciplineData, setProfessorsAndDisciplineData] =
     React.useState(() => [...mockedProfessorsAndDisciplineData]);
+
+  const { session } = useAuth();
+  const getMyAuditLogs = useGetMyAuditLogs(session);
+
   return (
     <section>
       <div className="flex flex-col items-center justify-center">
@@ -94,8 +78,12 @@ const CoordinatorDashboard = () => {
             />
             <Panel
               name="Histórico"
-              panelDescription={`Você realizou ${history.length} ações`}
-              messages={history}
+              messages={
+                getMyAuditLogs.data
+                  ? getMyAuditLogs.data.map((log) => formatAuditLogMessage(log))
+                  : []
+              }
+              loading={getMyAuditLogs.isLoading}
             />
           </div>
           <div>
@@ -112,6 +100,4 @@ const CoordinatorDashboard = () => {
       </div>
     </section>
   );
-};
-
-export default CoordinatorDashboard;
+}
