@@ -82,13 +82,13 @@ export const MessageBox = ({
             <span className="block text-gray-600 dark:text-gray-300">
               {description}
             </span>
-            <div className="flex items-center justify-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+            <span className="flex items-center justify-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400">
               Redirecionando em{" "}
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-600 font-bold transition-all duration-200 ease-in-out transform">
                 {timeLeft}
               </span>{" "}
               segundos
-            </div>
+            </span>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-6 flex gap-3">

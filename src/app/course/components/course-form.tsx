@@ -44,10 +44,10 @@ export const CourseForm = ({ title, description }: FormProps) => {
 
   return (
     <div>
-      <FormCard
+      <FormCard<CourseValues>
         defaultValues={defaultValues}
         schema={courseSchema}
-        weight="lg"
+        width="lg"
         onSubmit={onSubmitForm}
         title={title}
         description={description}

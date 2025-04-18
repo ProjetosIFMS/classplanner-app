@@ -8,6 +8,7 @@ import { SidebarProvider, SidebarTrigger } from "./_components/ui/sidebar";
 import { AppSidebar } from "./_components/app-sidebar";
 import { isServerMobile } from "@/utils/isMobile";
 import ReactQueryProvider from "@/app/providers";
+import { Toaster } from "@/app/_components/ui/sonner";
 
 const poppins = localFont({
   src: [
@@ -34,6 +35,7 @@ export default async function RootLayout({
       <body
         className={`${poppins.className} antialiased flex flex-col min-h-screen`}
       >
+        <Toaster />
         <ReactQueryProvider>
           <AuthProvider referentialAccessToken={session}>
             <SidebarProvider defaultOpen={false}>
