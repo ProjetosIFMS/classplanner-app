@@ -56,16 +56,15 @@ export const SelectDayOffForm = () => {
         | "Sexta-Feira"
         | undefined
     );
-    try {
-      postDayOffSelection.mutate(formData, {
-        onSuccess: () => {
-          setShowMessage(true);
-          toast.success("Solicitação de dia de preparação feita com sucesso.");
-        },
-      });
-    } catch {
-      toast.error("Erro ao fazer a solicitação.");
-    }
+    postDayOffSelection.mutate(formData, {
+      onSuccess: () => {
+        setShowMessage(true);
+        toast.success("Solicitação de dia de preparação feita com sucesso.");
+      },
+      onError: () => {
+        toast.error("Erro ao fazer a solicitação.");
+      },
+    });
   };
 
   return (
