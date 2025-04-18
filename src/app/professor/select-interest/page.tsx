@@ -22,6 +22,7 @@ import {
   usePostInterestsSelection,
 } from "@/hooks/react-query/interests-selection";
 import "./style.css";
+import { MessageBox } from "@/app/_components/ui/messageBox";
 
 export default function SelectInterest() {
   const { session } = useAuth();
@@ -30,7 +31,7 @@ export default function SelectInterest() {
   const disciplines = useGetAllDisciplines(session);
   const getMyInterestsSelection = useGetMyInterestsSelection(session);
   const postInterestsSelection = usePostInterestsSelection(session);
-
+  const [showMessage, setShowMessage] = React.useState<boolean>(false);
   const [workload, setWorkload] = React.useState<number>(0);
 
   const form = useForm<z.infer<typeof professorInterestsSelectionSchema>>({
@@ -50,14 +51,14 @@ export default function SelectInterest() {
           }
           return interestSelection.discipline_id;
         })
-        .filter((id): id is string => id !== null) || []
+        .filter((id): id is string => id !== null) || [],
     );
   }, [getMyInterestsSelection.data, form]);
 
   function onSubmit(data: z.infer<typeof professorInterestsSelectionSchema>) {
     postInterestsSelection.mutate(data, {
       onSuccess: () => {
-        toast.success("Seleção de interesses salva com sucesso!");
+        setShowMessage(true);
       },
       onError: () => {
         toast.error("Erro ao salvar seleção de interesses");
@@ -96,7 +97,8 @@ export default function SelectInterest() {
                               onCheckedChange={(checked) => {
                                 if (checked) {
                                   setWorkload(
-                                    (prev) => prev + discipline.theoreticalHours
+                                    (prev) =>
+                                      prev + discipline.theoreticalHours,
                                   );
                                   field.onChange([
                                     ...field.value,
@@ -104,12 +106,13 @@ export default function SelectInterest() {
                                   ]);
                                 } else {
                                   setWorkload(
-                                    (prev) => prev - discipline.theoreticalHours
+                                    (prev) =>
+                                      prev - discipline.theoreticalHours,
                                   );
                                   field.onChange(
                                     field.value?.filter(
-                                      (id) => id !== discipline.id
-                                    )
+                                      (id) => id !== discipline.id,
+                                    ),
                                   );
                                 }
                               }}
@@ -127,6 +130,14 @@ export default function SelectInterest() {
               </ProfessorInterestsForm>
             </CardContent>
           </Card>
+          <MessageBox
+            description="Interesses salvos com sucesso, eles serão analisados pela coordenação do curso."
+            title="Seleção de Interesse bem sucedida!"
+            countdown={5}
+            state={showMessage}
+            onClose={() => setShowMessage(false)}
+            redirectPath="/professor/dashboard"
+          />
         </div>
       </div>
     </section>
