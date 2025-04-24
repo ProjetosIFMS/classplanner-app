@@ -1,13 +1,11 @@
 "use client";
 
-import { z } from "zod";
 import React from "react";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
 import {
-  Form,
   FormItem,
   FormField,
   FormControl,
@@ -15,27 +13,27 @@ import {
   FormMessage,
 } from "@/app/_components/ui/form";
 
-import { areaSchema } from "@/types/validation/area_form";
+import { areaSchema, AreaValues } from "@/types/validation/area_form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePostArea } from "@/hooks/react-query/areas";
 import { useAuth } from "@/app/_components/auth/AuthContext";
-import { CreateDialog } from "@/app/_components/dialogs/create-dialog";
+import { CreateDialogForm } from "@/app/_components/dialogs/create-dialog-form";
 
-export function CreateAreaModal() {
+export function CreateAreaModalForm() {
   const { session } = useAuth();
   const postArea = usePostArea(session);
 
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
-  const form = useForm<z.infer<typeof areaSchema>>({
+  const form = useForm<AreaValues>({
     resolver: zodResolver(areaSchema),
     defaultValues: {
       name: "",
     },
   });
 
-  function onSubmit(data: z.infer<typeof areaSchema>) {
+  function onSubmit(data: AreaValues) {
     setIsOpen(false);
     postArea.mutate(data, {
       onSuccess: () => {},
@@ -43,8 +41,9 @@ export function CreateAreaModal() {
     });
   }
   return (
-    <CreateDialog
-      handleCreate={form.handleSubmit(onSubmit)}
+    <CreateDialogForm<AreaValues>
+      form={form}
+      onSubmit={onSubmit}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       trigger={
@@ -57,23 +56,19 @@ export function CreateAreaModal() {
       description="Preencha os campos para a criação da área"
       isLoading={postArea.isPending}
     >
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nome</FormLabel>
-                <FormControl>
-                  <Input placeholder="Nome da área" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </form>
-      </Form>
-    </CreateDialog>
+      <FormField
+        control={form.control}
+        name="name"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Nome</FormLabel>
+            <FormControl>
+              <Input placeholder="Nome da área" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </CreateDialogForm>
   );
 }

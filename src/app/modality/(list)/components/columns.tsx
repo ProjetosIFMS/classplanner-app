@@ -3,16 +3,8 @@
 import React from "react";
 import type { ColumnDef, Row } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-import { MdEdit } from "react-icons/md";
 
 import { Button } from "@/app/_components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/app/_components/ui/dialog";
 
 import { Modality } from "@/types/modality";
 import { Session } from "@/types/session";

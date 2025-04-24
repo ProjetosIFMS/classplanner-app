@@ -5,7 +5,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 
 import ListAreasCard from "./list-areas-card";
 import { useAuth } from "@/app/_components/auth/AuthContext";
-import { CreateAreaModal } from "@/app/coordinator/list-areas/create-area-modal";
+import { CreateAreaModalForm } from "@/app/coordinator/list-areas/create-area-modal-form";
 import { useGetAllAreas, useDeleteArea } from "@/hooks/react-query/areas";
 
 const ListArea = () => {
@@ -26,7 +26,7 @@ const ListArea = () => {
       <div className="container mx-auto py-4 h-full">
         <div className="flex justify-between">
           <h1 className="text-2xl font-bold mb-6">Áreas Acadêmicas</h1>
-          <CreateAreaModal />
+          <CreateAreaModalForm />
         </div>
         <div className="bg-white h-full rounded-lg shadow-sm">
           {getAllAreas.isLoading ? (
