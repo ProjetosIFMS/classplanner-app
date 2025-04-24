@@ -10,9 +10,10 @@ import { getDisciplines } from "@/app/_actions/discipline/getDisciplines";
 import { Button } from "@/app/_components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { Role } from "@/types/user";
 
 const ListDisciplines = () => {
-  const { session } = useAuth();
+  const { session, user } = useAuth();
   const [data, setData] = useState<Discipline[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -33,12 +34,12 @@ const ListDisciplines = () => {
 
   const handleDeleteDiscipline = async (
     session: string | undefined,
-    discipline_id: string,
+    discipline_id: string
   ) => {
     const success = await deleteDiscipline(session, discipline_id);
     if (success) {
       setData((prevData) =>
-        prevData.filter((discipline) => discipline.id !== discipline_id),
+        prevData.filter((discipline) => discipline.id !== discipline_id)
       );
     }
     return success;
@@ -51,12 +52,14 @@ const ListDisciplines = () => {
       <div className="flex-1 p-6 max-w-7xl mx-auto w-full">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Disciplinas</h1>
-          <Button asChild>
-            <Link href="/discipline/create">
-              <Plus className="mr-2 h-4 w-4" />
-              Nova Disciplina
-            </Link>
-          </Button>
+          {user?.role !== Role.PROFESSOR && (
+            <Button asChild>
+              <Link href="/discipline/create">
+                <Plus className="mr-2 h-4 w-4" />
+                Nova Disciplina
+              </Link>
+            </Button>
+          )}{" "}
         </div>
         <div className="bg-white dark:bg-gray-950 rounded-lg shadow p-6">
           <DataTable
