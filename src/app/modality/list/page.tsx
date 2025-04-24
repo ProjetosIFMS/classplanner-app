@@ -8,7 +8,7 @@ import Link from "next/link";
 import { getModalities } from "@/app/_actions/modality/getModalities";
 import { Modality } from "@/types/modality";
 import { createColumns } from "./components/columns";
-import { DataTable } from "./components/data-table";
+import { DataTable } from "@/app/_components/ui/data-table";
 import { deleteModality } from "@/app/_actions/modality/deleteModality";
 import { Role } from "@/types/user";
 

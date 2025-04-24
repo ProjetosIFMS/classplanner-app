@@ -1,51 +1,19 @@
 "use client";
 
-import { DataTable } from "../components/data-table";
+import { DataTable } from "@/app/_components/ui/data-table";
 import { createColumns } from "../components/columns";
-import { useEffect, useState } from "react";
 import { useAuth } from "@/app/_components/auth/AuthContext";
-import type { Discipline } from "@/types/discipline";
-import { deleteDiscipline } from "@/app/_actions/discipline/deleteDiscipline";
-import { getDisciplines } from "@/app/_actions/discipline/getDisciplines";
 import { Button } from "@/app/_components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { Role } from "@/types/user";
+import { useGetAllDisciplines } from "@/hooks/react-query/disciplines";
 
 const ListDisciplines = () => {
   const { session, user } = useAuth();
-  const [data, setData] = useState<Discipline[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const getDisciplines = useGetAllDisciplines(session);
 
-  useEffect(() => {
-    const fetchDisciplines = async (session: string | undefined) => {
-      setIsLoading(true);
-      try {
-        const res = await getDisciplines(session);
-        if (res) setData(res);
-      } catch (error) {
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchDisciplines(session);
-  }, [session]);
-
-  const handleDeleteDiscipline = async (
-    session: string | undefined,
-    discipline_id: string
-  ) => {
-    const success = await deleteDiscipline(session, discipline_id);
-    if (success) {
-      setData((prevData) =>
-        prevData.filter((discipline) => discipline.id !== discipline_id)
-      );
-    }
-    return success;
-  };
-
-  const columns = createColumns(handleDeleteDiscipline, session);
+  const columns = createColumns(session);
 
   return (
     <section className="min-h-screen flex flex-col">
@@ -59,13 +27,13 @@ const ListDisciplines = () => {
                 Nova Disciplina
               </Link>
             </Button>
-          )}{" "}
+          )}
         </div>
         <div className="bg-white dark:bg-gray-950 rounded-lg shadow p-6">
           <DataTable
-            data={data}
+            data={getDisciplines.data ?? []}
             columns={columns}
-            isLoading={isLoading}
+            isLoading={getDisciplines.isLoading}
             searchColumn="name"
             searchPlaceholder="Buscar disciplinas..."
           />

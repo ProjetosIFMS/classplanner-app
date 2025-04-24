@@ -59,7 +59,7 @@ export default function ListPpc() {
                 Novo PPC
               </Link>
             </Button>
-          )}{" "}
+          )}
         </div>
         <ListCardPpc
           data={ppc}

@@ -1,15 +1,11 @@
 "use client";
 
-import { Button } from "@/app/_components/ui/button";
-import type { Discipline } from "@/types/discipline";
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, Row } from "@tanstack/react-table";
+import { MdEdit } from "react-icons/md";
 import { ArrowUpDown } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/app/_components/ui/dropdown-menu";
+import React from "react";
+
+import { Button } from "@/app/_components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,19 +13,78 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/app/_components/ui/dialog";
-import { MdDelete, MdEdit } from "react-icons/md";
-import DisciplineForm from "../components/Discipline-form";
 
-// Define a type for the delete function
-type DeleteDisciplineFunction = (
-  session: string | undefined,
-  discipline_id: string,
-) => Promise<boolean>;
+import DisciplineForm from "../components/Discipline-form";
+import type { Discipline } from "@/types/discipline";
+import { DeleteDialog } from "@/app/_components/dialogs/delete-dialog";
+import { useDeleteDiscipline } from "@/hooks/react-query/disciplines";
+import { Session } from "@/types/session";
+
+interface ActionsRowProps {
+  row: Row<Discipline>;
+  session: Session;
+}
+
+function ActionsRow(props: ActionsRowProps) {
+  const discipline = props.row.original;
+  const deleteDiscipline = useDeleteDiscipline(props.session);
+  const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
+
+  function handleDelete() {
+    console.log(discipline.id);
+    deleteDiscipline.mutate(discipline.id, {
+      onSuccess: () => {
+        setIsDeleteOpen(false);
+      },
+      onError: () => {},
+    });
+  }
+
+  return (
+    <div className="flex items-center justify-center space-x-2">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="ghost" className="text-blue-600" size="icon">
+            <MdEdit />
+          </Button>
+        </DialogTrigger>
+        <DialogContent
+          aria-describedby={undefined}
+          className=" sm-max-w-[950px] sm:max-h-[720px]"
+        >
+          <DialogHeader>
+            <DialogTitle></DialogTitle>
+          </DialogHeader>
+          <DisciplineForm
+            data={discipline}
+            isUpdate
+            title="Editar Disciplina"
+            description="Preencha os detalhes para a edição da disciplina"
+          />
+        </DialogContent>
+      </Dialog>
+
+      <DeleteDialog
+        handleDelete={handleDelete}
+        isLoading={deleteDiscipline.isPending}
+        title="Excluir disciplina"
+        description={
+          <p className="text-muted-foreground">
+            Você tem certeza que deseja excluir a disciplina{" "}
+            <span className="font-bold text-black">{discipline.name}</span>?
+            Essa ação não poderá ser desfeita.
+          </p>
+        }
+        openState={isDeleteOpen}
+        setOpenState={setIsDeleteOpen}
+      />
+    </div>
+  );
+}
 
 // Create a function that returns the columns with the delete function injected
 export const createColumns = (
-  deleteDisciplineFn: DeleteDisciplineFunction,
-  session: string | undefined,
+  session: string | undefined
 ): ColumnDef<Discipline>[] => {
   return [
     {
@@ -138,72 +193,7 @@ export const createColumns = (
     {
       id: "actions",
       header: () => <div className="text-center">Ações</div>,
-      cell: ({ row }) => {
-        const discipline = row.original;
-
-        const handleDelete = async () => {
-          if (
-            confirm(`Deseja realmente excluir a disciplina ${discipline.name}?`)
-          ) {
-            try {
-              const success = await deleteDisciplineFn(session, discipline.id);
-              if (success) {
-                alert("Disciplina excluída com sucesso!");
-              } else {
-                alert("Erro ao excluir disciplina.");
-              }
-            } catch {
-              alert("Ocorreu um erro ao excluir a disciplina.");
-            }
-          }
-        };
-
-        return (
-          <div className="flex items-center justify-center space-x-2">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="ghost" className="text-blue-600" size="icon">
-                  <MdEdit />
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                className=" sm-max-w-[950px] sm:max-h-[720px]"
-              >
-                <DialogHeader>
-                  <DialogTitle></DialogTitle>
-                </DialogHeader>
-                <DisciplineForm
-                  data={discipline}
-                  isUpdate
-                  title="Editar Disciplina"
-                  description="Preencha os detalhes para a edição da disciplina"
-                />
-              </DialogContent>
-            </Dialog>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
-                >
-                  <MdDelete />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  className="text-destructive focus:text-destructive cursor-pointer"
-                  onClick={handleDelete}
-                >
-                  Confirmar exclusão
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        );
-      },
+      cell: ({ row }) => <ActionsRow row={row} session={session} />,
     },
   ];
 };
