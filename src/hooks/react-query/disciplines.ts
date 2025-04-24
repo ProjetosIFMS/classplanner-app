@@ -21,7 +21,6 @@ export function usePostDiscipline(session: Session) {
     mutationKey: ["POST", "discipline"],
     mutationFn: (data: DisciplineValues) => createDiscipline(data, session),
     onSettled: () => {
-      console.log("settled");
       queryClient.invalidateQueries({ queryKey: ["GET", "disciplines"] });
     },
   });
@@ -40,7 +39,6 @@ export function usePatchDiscipline(session: Session) {
       discipline_id: string;
     }) => updateDiscipline(data, session, discipline_id),
     onSettled: () => {
-      console.log("settled");
       queryClient.invalidateQueries({ queryKey: ["GET", "disciplines"] });
     },
   });
