@@ -4,8 +4,8 @@ import { Modality } from "./modality";
 import { PPC } from "./ppc";
 
 export type CommonData = {
-  courses: Course[] | null;
-  pedagogicalProjects: PPC[] | null;
-  areas: Area[] | null;
-  modalities: Modality[] | null;
+  courses: Course[] | undefined;
+  pedagogicalProjects: PPC[] | undefined;
+  areas: Area[] | undefined;
+  modalities: Modality[] | undefined;
 };
