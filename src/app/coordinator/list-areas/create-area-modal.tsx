@@ -3,6 +3,7 @@
 import { z } from "zod";
 import ClipLoader from "react-spinners/ClipLoader";
 import React from "react";
+import { Plus } from "lucide-react";
 
 import { Button } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
@@ -52,8 +53,9 @@ export function CreateAreaModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="text-lg font-bold">
-          Criar área
+        <Button>
+          <Plus className="mr-2 h-4 w-4" />
+          Nova área
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
