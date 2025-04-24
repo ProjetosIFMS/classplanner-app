@@ -31,12 +31,10 @@ function ActionsRow(props: ActionsRowProps) {
   const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
 
   function handleDelete() {
-    console.log(discipline.id);
     deleteDiscipline.mutate(discipline.id, {
       onSuccess: () => {
         setIsDeleteOpen(false);
       },
-      onError: () => {},
     });
   }
 

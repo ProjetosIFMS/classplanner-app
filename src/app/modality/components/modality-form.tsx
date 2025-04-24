@@ -1,10 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { type SubmitHandler } from "react-hook-form";
-import {
-  modalitySchema,
-  type ModalityValues,
-} from "@/types/validation/modality_form";
+
 import {
   FormControl,
   FormField,
@@ -12,17 +10,22 @@ import {
   FormLabel,
   FormMessage,
 } from "../../_components/ui/form";
-import { useAuth } from "../../_components/auth/AuthContext";
-import { Input } from "../../_components/ui/input";
-import { useState } from "react";
-import { Modality } from "@/types/modality";
-import { useRouter } from "next/navigation";
-import { updateModality } from "../../_actions/modality/updateModality";
-import { createModality } from "../../_actions/modality/createModality";
 import { MessageBox } from "../../_components/ui/messageBox";
-import { FormCard } from "@/app/_components/ui/form-card";
+import { Input } from "../../_components/ui/input";
 import { LoadingCard } from "@/app/_components/ui/loading-card";
+import { FormCard } from "@/app/_components/ui/form-card";
+
+import {
+  modalitySchema,
+  type ModalityValues,
+} from "@/types/validation/modality_form";
+import { useAuth } from "../../_components/auth/AuthContext";
+import { Modality } from "@/types/modality";
 import { FormProps } from "@/types/form-props";
+import {
+  usePatchModality,
+  usePostModality,
+} from "@/hooks/react-query/modalities";
 
 interface ModalityFormProps extends Readonly<FormProps> {
   data?: Modality;
@@ -39,7 +42,8 @@ const ModalityForm = ({
     commonData: { modalities },
   } = useAuth();
   const [showMessage, setShowMessage] = useState<boolean>(false);
-  const router = useRouter();
+  const postModality = usePostModality(session);
+  const patchModality = usePatchModality(session);
 
   const defaultValues: ModalityValues = {
     name: "",
@@ -47,12 +51,10 @@ const ModalityForm = ({
 
   const onSubmitForm: SubmitHandler<ModalityValues> = async (formData) => {
     if (isUpdate && data?.id) {
-      await updateModality(formData, session, data.id);
-      router.refresh();
+      await patchModality.mutateAsync({ data: formData, modality_id: data.id });
     } else {
-      await createModality(formData, session);
+      await postModality.mutateAsync(formData);
       setShowMessage(true);
-      router.refresh();
     }
   };
 
