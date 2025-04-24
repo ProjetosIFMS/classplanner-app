@@ -66,15 +66,9 @@ function ActionsRow(props: ActionsRowProps) {
         handleDelete={handleDelete}
         isLoading={deleteModality.isPending}
         title="Excluir modalidade"
-        description={
-          <p className="text-muted-foreground">
-            Você tem certeza que deseja excluir a modalidade{" "}
-            <span className="font-bold text-black">{modality.name}</span>? Essa
-            ação não poderá ser desfeita.
-          </p>
-        }
-        openState={isDeleteOpen}
-        setOpenState={setIsDeleteOpen}
+        description={`Você tem certeza que deseja excluir a modalidade ${modality.name}? Essa ação não poderá ser desfeita.`}
+        isOpen={isDeleteOpen}
+        setIsOpen={setIsDeleteOpen}
       />
     </div>
   );

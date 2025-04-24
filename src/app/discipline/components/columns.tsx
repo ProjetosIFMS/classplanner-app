@@ -66,13 +66,7 @@ function ActionsRow(props: ActionsRowProps) {
         handleDelete={handleDelete}
         isLoading={deleteDiscipline.isPending}
         title="Excluir disciplina"
-        description={
-          <p className="text-muted-foreground">
-            Você tem certeza que deseja excluir a disciplina{" "}
-            <span className="font-bold text-black">{discipline.name}</span>?
-            Essa ação não poderá ser desfeita.
-          </p>
-        }
+        description={`Você tem certeza que deseja excluir a disciplina ${discipline.name}? Essa ação não poderá ser desfeita.`}
         openState={isDeleteOpen}
         setOpenState={setIsDeleteOpen}
       />
