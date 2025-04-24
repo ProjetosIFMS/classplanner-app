@@ -25,17 +25,18 @@ import {
 } from "@/app/_components/ui/toggle-group";
 import { useAuth } from "@/app/_components/auth/AuthContext";
 import { Input } from "@/app/_components/ui/input";
-import { createDiscipline } from "@/app/_actions/discipline/createDiscipline";
 import { useMemo, useState } from "react";
 import { MessageBox } from "@/app/_components/ui/messageBox";
 import { Discipline } from "@/types/discipline";
-import { useRouter } from "next/navigation";
-import { updateDiscipline } from "@/app/_actions/discipline/updateDiscipline";
 import { FormCard } from "@/app/_components/ui/form-card";
 import { FormProps } from "@/types/form-props";
 import { LoadingCard } from "@/app/_components/ui/loading-card";
 import { useGetModalities } from "@/hooks/react-query/modalities";
 import ClipLoader from "react-spinners/ClipLoader";
+import {
+  usePatchDiscipline,
+  usePostDiscipline,
+} from "@/hooks/react-query/disciplines";
 
 interface DisciplineFormProps extends Readonly<FormProps> {
   data?: Discipline;
@@ -52,7 +53,8 @@ const DisciplineForm = ({
     commonData: { courses, pedagogicalProjects, areas },
   } = useAuth();
   const [showMessage, setShowMessage] = useState<boolean>(false);
-  const router = useRouter();
+  const postDiscipline = usePostDiscipline(session);
+  const patchDiscipline = usePatchDiscipline(session);
 
   const getModalities = useGetModalities(session);
 
@@ -81,12 +83,13 @@ const DisciplineForm = ({
 
   const onSubmitForm: SubmitHandler<DisciplineValues> = async (formData) => {
     if (isUpdate && data?.id) {
-      await updateDiscipline(formData, session, data.id);
-      router.refresh();
+      await patchDiscipline.mutateAsync({
+        data: formData,
+        discipline_id: data.id,
+      });
     } else {
-      await createDiscipline(formData, session);
+      await postDiscipline.mutateAsync(formData);
       setShowMessage(true);
-      router.refresh();
     }
   };
 
