@@ -47,7 +47,7 @@ const ListArea = () => {
                     title={area.name}
                     data={area}
                     onDelete={handleDelete}
-                    isLoading={deleteArea.isLoading}
+                    isLoading={deleteArea.isPending}
                   />
                 ))}
             </div>

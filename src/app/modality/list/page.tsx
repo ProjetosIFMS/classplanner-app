@@ -1,51 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useAuth } from "@/app/_components/auth/AuthContext";
 import { Button } from "@/app/_components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { getModalities } from "@/app/_actions/modality/getModalities";
-import { Modality } from "@/types/modality";
 import { createColumns } from "./components/columns";
-import { DataTable } from "./components/data-table";
-import { deleteModality } from "@/app/_actions/modality/deleteModality";
+import { DataTable } from "@/app/_components/ui/data-table";
 import { Role } from "@/types/user";
+import { useGetModalities } from "@/hooks/react-query/modalities";
 
 const ListModalities = () => {
   const { session, user } = useAuth();
-  const [data, setData] = useState<Modality[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const getModalities = useGetModalities(session);
 
-  useEffect(() => {
-    const fetchModalities = async (session: string | undefined) => {
-      setIsLoading(true);
-      try {
-        const res = await getModalities(session);
-        if (res) setData(res);
-      } catch (error) {
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchModalities(session);
-  }, [session]);
-
-  const handleDeleteModality = async (
-    session: string | undefined,
-    modality_id: string
-  ) => {
-    const success = await deleteModality(session, modality_id);
-    if (success) {
-      setData((prevData) =>
-        prevData.filter((modality) => modality.id !== modality_id)
-      );
-    }
-    return success;
-  };
-
-  const columns = createColumns(handleDeleteModality, session);
+  const columns = createColumns(session);
 
   return (
     <section className="min-h-screen flex flex-col">
@@ -63,9 +31,9 @@ const ListModalities = () => {
         </div>
         <div className="bg-white dark:bg-gray-950 rounded-lg shadow p-6">
           <DataTable
-            data={data}
+            data={getModalities.data ?? []}
             columns={columns}
-            isLoading={isLoading}
+            isLoading={getModalities.isLoading}
             searchColumn="name"
             searchPlaceholder="Buscar modalidades..."
           />
