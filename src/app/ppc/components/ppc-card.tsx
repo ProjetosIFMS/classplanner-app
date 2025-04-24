@@ -29,6 +29,8 @@ import {
 import { memo, useState } from "react";
 import { MdDescription, MdAccessTime, MdEdit, MdDelete } from "react-icons/md";
 import { PPCForm } from "./Ppc-form";
+import { useAuth } from "@/app/_components/auth/AuthContext";
+import { Role } from "@/types/user";
 
 export const PPCCard = memo(
   ({
@@ -46,6 +48,7 @@ export const PPCCard = memo(
     session: string | undefined;
   }) => {
     const [open, setOpen] = useState(false);
+    const { user } = useAuth();
 
     return (
       <Card key={ppc.id} className="overflow-hidden">
@@ -96,15 +99,17 @@ export const PPCCard = memo(
 
                 <div className="flex justify-end gap-2 mt-2">
                   <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="text-blue-600"
-                      >
-                        <MdEdit size={18} />
-                      </Button>
-                    </DialogTrigger>
+                    {user?.role !== Role.PROFESSOR && (
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="text-blue-600"
+                        >
+                          <MdEdit size={18} />
+                        </Button>
+                      </DialogTrigger>
+                    )}
                     <DialogContent
                       aria-describedby={undefined}
                       className="sm:max-w-[500px] sm:max-h-[850px]"
@@ -123,15 +128,17 @@ export const PPCCard = memo(
                   </Dialog>
 
                   <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="text-red-600"
-                      >
-                        <MdDelete size={18} />
-                      </Button>
-                    </AlertDialogTrigger>
+                    {user?.role !== Role.PROFESSOR && (
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="text-red-600"
+                        >
+                          <MdDelete size={18} />
+                        </Button>
+                      </AlertDialogTrigger>
+                    )}
                     <AlertDialogContent className="sm:max-w-[500px]">
                       <AlertDialogHeader>
                         <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
@@ -166,7 +173,7 @@ export const PPCCard = memo(
         </Accordion>
       </Card>
     );
-  },
+  }
 );
 
 PPCCard.displayName = "PPCCard";
