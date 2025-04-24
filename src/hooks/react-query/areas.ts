@@ -23,16 +23,20 @@ export function usePostArea(session: Session) {
     mutationFn: (formData: AreaValues): Promise<Area | null> =>
       createArea(session, formData),
     onMutate: async (formData) => {
-      await queryClient.cancelQueries(["areas"]);
+      await queryClient.cancelQueries({ queryKey: ["areas"] });
 
-      const previousAreas = queryClient.getQueryData<Area[]>(["areas"]);
+      const previousAreas = queryClient.getQueryData<Area[]>(["areas"]) || [];
 
-      if (previousAreas) {
-        queryClient.setQueryData<Area[]>(
-          ["areas"],
-          [...previousAreas, { id: "temp-id", ...formData }]
-        );
-      }
+      const tempId = `temp-${Date.now()}`;
+
+      const newArea: Area = {
+        id: tempId,
+        ...formData,
+        Discipline: [],
+        User: [],
+      };
+
+      queryClient.setQueryData<Area[]>(["areas"], [...previousAreas, newArea]);
 
       return { previousAreas };
     },
@@ -42,7 +46,7 @@ export function usePostArea(session: Session) {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries(["areas"]);
+      queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
 }
@@ -52,16 +56,16 @@ export function useDeleteArea(session: Session) {
 
   return useMutation({
     mutationKey: ["DELETE", "area"],
-    mutationFn: (id: string): Promise<void> => deleteArea(session, id),
+    mutationFn: (id: string): Promise<boolean> => deleteArea(session, id),
     onMutate: async (id) => {
-      await queryClient.cancelQueries(["areas"]);
+      await queryClient.cancelQueries({ queryKey: ["areas"] });
 
       const previousAreas = queryClient.getQueryData<Area[]>(["areas"]);
 
       if (previousAreas) {
         queryClient.setQueryData<Area[]>(
           ["areas"],
-          previousAreas.filter((area) => area.id !== id)
+          previousAreas.filter((area) => area.id !== id),
         );
       }
 
@@ -73,7 +77,7 @@ export function useDeleteArea(session: Session) {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries(["areas"]);
+      queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
 }
