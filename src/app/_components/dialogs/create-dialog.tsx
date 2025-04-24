@@ -1,3 +1,4 @@
+// deprecated
 import { MdOutlineClose, MdCheck } from "react-icons/md";
 
 import {
