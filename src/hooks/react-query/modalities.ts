@@ -7,7 +7,7 @@ import { createModality } from "@/app/_actions/modality/createModality";
 import { updateModality } from "@/app/_actions/modality/updateModality";
 import { deleteModality } from "@/app/_actions/modality/deleteModality";
 
-export function useGetModalities(session: Session) {
+export function useGetAllModalities(session: Session) {
   return useQuery({
     queryKey: ["GET", "modality"],
     queryFn: () => getModalities(session),

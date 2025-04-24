@@ -31,7 +31,7 @@ import { Discipline } from "@/types/discipline";
 import { FormCard } from "@/app/_components/ui/form-card";
 import { FormProps } from "@/types/form-props";
 import { LoadingCard } from "@/app/_components/ui/loading-card";
-import { useGetModalities } from "@/hooks/react-query/modalities";
+import { useGetAllModalities } from "@/hooks/react-query/modalities";
 import ClipLoader from "react-spinners/ClipLoader";
 import {
   usePatchDiscipline,
@@ -56,7 +56,7 @@ const DisciplineForm = ({
   const postDiscipline = usePostDiscipline(session);
   const patchDiscipline = usePatchDiscipline(session);
 
-  const getModalities = useGetModalities(session);
+  const getModalities = useGetAllModalities(session);
 
   const defaultValues = useMemo<DisciplineValues>(
     () => ({
@@ -78,7 +78,7 @@ const DisciplineForm = ({
         ).filter((id) => id !== null),
       ],
     }),
-    [data, getModalities.data]
+    [data, getModalities.data],
   );
 
   const onSubmitForm: SubmitHandler<DisciplineValues> = async (formData) => {
@@ -167,14 +167,14 @@ const DisciplineForm = ({
                               onValueChange={(selectedIds) => {
                                 const selectedModalities =
                                   getModalities.data?.filter((modality) =>
-                                    selectedIds.includes(modality.id)
+                                    selectedIds.includes(modality.id),
                                   );
 
                                 const hasEletiva = selectedModalities?.some(
-                                  (modality) => modality.name === "Eletiva"
+                                  (modality) => modality.name === "Eletiva",
                                 );
                                 const hasOferta = selectedModalities?.some(
-                                  (modality) => modality.name === "Oferta"
+                                  (modality) => modality.name === "Oferta",
                                 );
 
                                 if (hasEletiva && hasOferta) {
@@ -183,7 +183,7 @@ const DisciplineForm = ({
                                   const lastSelectedModality =
                                     getModalities.data?.find(
                                       (modality) =>
-                                        modality.id === lastSelectedId
+                                        modality.id === lastSelectedId,
                                     );
 
                                   if (
@@ -192,8 +192,8 @@ const DisciplineForm = ({
                                     selectedIds = selectedIds.filter(
                                       (id) =>
                                         getModalities.data?.find(
-                                          (modality) => modality.id === id
-                                        )?.name !== "Oferta"
+                                          (modality) => modality.id === id,
+                                        )?.name !== "Oferta",
                                     );
                                   } else if (
                                     lastSelectedModality?.name === "Oferta"
@@ -201,15 +201,15 @@ const DisciplineForm = ({
                                     selectedIds = selectedIds.filter(
                                       (id) =>
                                         getModalities.data?.find(
-                                          (modality) => modality.id === id
-                                        )?.name !== "Eletiva"
+                                          (modality) => modality.id === id,
+                                        )?.name !== "Eletiva",
                                     );
                                   }
                                 }
 
                                 if (!hasEletiva && !hasOferta) {
                                   const ofertaId = getModalities.data?.find(
-                                    (modality) => modality.name === "Oferta"
+                                    (modality) => modality.name === "Oferta",
                                   )?.id;
 
                                   if (ofertaId) {
@@ -429,7 +429,7 @@ const DisciplineForm = ({
                           value={field.value}
                           onChange={(e) =>
                             field.onChange(
-                              Number.parseInt(e.target.value, 10) || 0
+                              Number.parseInt(e.target.value, 10) || 0,
                             )
                           }
                         />
@@ -455,7 +455,7 @@ const DisciplineForm = ({
                           value={field.value}
                           onChange={(e) =>
                             field.onChange(
-                              Number.parseInt(e.target.value, 10) || 0
+                              Number.parseInt(e.target.value, 10) || 0,
                             )
                           }
                         />
@@ -481,7 +481,7 @@ const DisciplineForm = ({
                           value={field.value}
                           onChange={(e) =>
                             field.onChange(
-                              Number.parseInt(e.target.value, 10) || 0
+                              Number.parseInt(e.target.value, 10) || 0,
                             )
                           }
                         />

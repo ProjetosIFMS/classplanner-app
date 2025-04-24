@@ -4,13 +4,13 @@ import { useAuth } from "@/app/_components/auth/AuthContext";
 import { createColumns } from "./components/columns";
 import { DataTable } from "@/app/_components/ui/data-table";
 import { Role } from "@/types/user";
-import { useGetModalities } from "@/hooks/react-query/modalities";
+import { useGetAllModalities } from "@/hooks/react-query/modalities";
 
 import { CreateModalityModalForm } from "@/app/modality/(list)/components/create-modality-modal-form";
 
 export default function ListModalities() {
   const { session, user } = useAuth();
-  const getModalities = useGetModalities(session);
+  const getModalities = useGetAllModalities(session);
 
   const columns = createColumns(session);
 
