@@ -1,7 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
 
 import {
   FormField,
@@ -10,25 +9,29 @@ import {
   FormControl,
   FormMessage,
 } from "@/app/_components/ui/form";
-import { Button } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
 
-import { CreateDialogForm } from "@/app/_components/dialogs/create-dialog-form";
+import { UpdateDialogForm } from "@/app/_components/dialogs/update-dialog-form";
 import {
   ModalityValues,
   modalitySchema,
 } from "@/types/validation/modality_form";
-import { usePostModality } from "@/hooks/react-query/modalities";
+import { usePatchModality } from "@/hooks/react-query/modalities";
 import { Session } from "@/types/session";
+import { Modality } from "@/types/modality";
 
-interface CreateModalityFormProps {
+interface UpdateModalityModalFormProps {
   session: Session;
+  data: Modality;
 }
 
-export function CreateModalityForm({ session }: CreateModalityFormProps) {
+export function UpdateModalityModalForm({
+  session,
+  data,
+}: UpdateModalityModalFormProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const postModality = usePostModality(session);
+  const patchModality = usePatchModality(session);
 
   const form = useForm<ModalityValues>({
     resolver: zodResolver(modalitySchema),
@@ -37,29 +40,26 @@ export function CreateModalityForm({ session }: CreateModalityFormProps) {
     },
   });
 
-  function onSubmit(data: ModalityValues) {
-    postModality.mutate(data, {
-      onSuccess: () => {
-        setIsOpen(false);
-      },
-    });
+  function onSubmit(formData: ModalityValues) {
+    patchModality.mutate(
+      { data: formData, modality_id: data.id },
+      {
+        onSuccess: () => {
+          setIsOpen(false);
+        },
+      }
+    );
   }
 
   return (
-    <CreateDialogForm<ModalityValues>
+    <UpdateDialogForm<ModalityValues>
       form={form}
       onSubmit={onSubmit}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      trigger={
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Nova Modalidade
-        </Button>
-      }
-      description="Preencha os campos abaixo para criar uma nova modalidade."
-      title="Criar Modalidade"
-      isLoading={postModality.isPending}
+      description={`Preencha os campos abaixo para editar a modalidade ${data.name}.`}
+      title="Editar modalidade"
+      isLoading={patchModality.isPending}
     >
       <FormField
         control={form.control}
@@ -74,6 +74,6 @@ export function CreateModalityForm({ session }: CreateModalityFormProps) {
           </FormItem>
         )}
       />
-    </CreateDialogForm>
+    </UpdateDialogForm>
   );
 }

@@ -6,7 +6,7 @@ import { DataTable } from "@/app/_components/ui/data-table";
 import { Role } from "@/types/user";
 import { useGetModalities } from "@/hooks/react-query/modalities";
 
-import { CreateModalityForm } from "@/app/modality/(list)/components/create-modality-form";
+import { CreateModalityModalForm } from "@/app/modality/(list)/components/create-modality-modal-form";
 
 export default function ListModalities() {
   const { session, user } = useAuth();
@@ -20,7 +20,7 @@ export default function ListModalities() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Modalidades</h1>
           {user?.role !== Role.PROFESSOR && (
-            <CreateModalityForm session={session} />
+            <CreateModalityModalForm session={session} />
           )}
         </div>
         <div className="bg-white dark:bg-gray-950 rounded-lg shadow p-6">

@@ -14,11 +14,11 @@ import {
   DialogTrigger,
 } from "@/app/_components/ui/dialog";
 
-import ModalityForm from "../../components/modality-form";
 import { Modality } from "@/types/modality";
 import { Session } from "@/types/session";
 import { useDeleteModality } from "@/hooks/react-query/modalities";
 import { DeleteDialog } from "@/app/_components/dialogs/delete-dialog";
+import { UpdateModalityModalForm } from "@/app/modality/(list)/components/update-modality-modal-form";
 
 interface ActionsRowProps {
   row: Row<Modality>;
@@ -40,27 +40,7 @@ function ActionsRow(props: ActionsRowProps) {
 
   return (
     <div className="flex items-center justify-center space-x-2">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="ghost" className="text-blue-600" size="icon">
-            <MdEdit />
-          </Button>
-        </DialogTrigger>
-        <DialogContent
-          aria-describedby={undefined}
-          className=" sm-max-w-[950px] sm:max-h-[720px]"
-        >
-          <DialogHeader>
-            <DialogTitle></DialogTitle>
-          </DialogHeader>
-          <ModalityForm
-            data={modality}
-            isUpdate
-            title="Editar Modalidade"
-            description="Preencha os detalhes para à criação da modalidade"
-          />
-        </DialogContent>
-      </Dialog>
+      <UpdateModalityModalForm session={props.session} data={modality} />
 
       <DeleteDialog
         handleDelete={handleDelete}
