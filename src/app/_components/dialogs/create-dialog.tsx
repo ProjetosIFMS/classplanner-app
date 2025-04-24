@@ -44,7 +44,11 @@ export function CreateDialog({
         {children}
 
         <DialogFooter>
-          <Button disabled={isLoading}>
+          <Button
+            disabled={isLoading}
+            onClick={() => setIsOpen(false)}
+            variant={"outline"}
+          >
             Cancelar <MdOutlineClose className="ml-2" />
           </Button>
 
