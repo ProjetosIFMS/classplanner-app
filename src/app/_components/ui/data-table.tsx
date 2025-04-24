@@ -1,6 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -21,7 +32,9 @@ import {
 } from "@/app/_components/ui/select";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { LoadingCard } from "@/app/_components/ui/loading-card";
-import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table";
+
+import { useAuth } from "@/app/_components/auth/AuthContext";
+import { Role } from "@/types/user";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -45,9 +58,17 @@ export function DataTable<TData, TValue>({
     pageSize: 10,
   });
 
+  const { user } = useAuth();
+  const filteredColumns = columns.filter((column) => {
+    if (user?.role === Role.PROFESSOR && column.id === "actions") {
+      return false;
+    }
+    return true;
+  });
+
   const table = useReactTable({
     data,
-    columns,
+    columns: filteredColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
@@ -63,7 +84,7 @@ export function DataTable<TData, TValue>({
   });
 
   if (isLoading) {
-    return <LoadingCard />;
+    return <LoadingCard size="lg" />;
   }
 
   return (
@@ -104,7 +125,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   );
@@ -129,7 +150,7 @@ export function DataTable<TData, TValue>({
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}

@@ -1,4 +1,8 @@
-export type Role = "PROFESSOR" | "COORDINATOR" | "ADMIN";
+export enum Role {
+  COORDINATOR = "COORDINATOR",
+  PROFESSOR = "PROFESSOR",
+  ADMIN = "ADMIN",
+}
 
 export type User = {
   email: string;

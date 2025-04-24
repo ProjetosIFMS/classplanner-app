@@ -29,6 +29,9 @@ import {
 import { memo, useState } from "react";
 import { MdDescription, MdAccessTime, MdEdit, MdDelete } from "react-icons/md";
 import { PPCForm } from "./Ppc-form";
+import { useAuth } from "@/app/_components/auth/AuthContext";
+import { Role } from "@/types/user";
+import { FrownIcon } from "lucide-react";
 
 export const PPCCard = memo(
   ({
@@ -46,6 +49,7 @@ export const PPCCard = memo(
     session: string | undefined;
   }) => {
     const [open, setOpen] = useState(false);
+    const { user } = useAuth();
 
     return (
       <Card key={ppc.id} className="overflow-hidden">
@@ -54,6 +58,7 @@ export const PPCCard = memo(
             <AccordionTrigger className="px-4 py-3 font-semibold hover:no-underline">
               <div className="flex items-center gap-2">
                 <span>PPC {ppc.year}</span>
+
                 {ppc.status ? (
                   <p className="bg-green-50 text-green-700 border-green-200">
                     Ativo
@@ -67,13 +72,41 @@ export const PPCCard = memo(
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-4">
               <div className="flex flex-col gap-4">
-                <Button
-                  variant="outline"
-                  className="flex items-center gap-2 w-fit"
-                >
-                  <MdDescription className="text-primary" />
-                  Visualizar documento
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild color="transparent">
+                    <Button
+                      variant="outline"
+                      className="flex items-center gap-2 w-fit"
+                    >
+                      <MdDescription className="text-primary" />
+                      Visualizar documento
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent
+                    className={`${ppc.documentUrl ? "sm:max-w-[1150px] sm:max-h-[1000px]" : "sm:max-w-[500px]"}`}
+                  >
+                    <DialogHeader>
+                      <DialogTitle>Visualização do documento</DialogTitle>
+                    </DialogHeader>
+                    {ppc.documentUrl ? (
+                      <iframe
+                        src={ppc.documentUrl}
+                        width="100%"
+                        height="900px"
+                        style={{ border: "none" }}
+                        className="rounded-lg"
+                      />
+                    ) : (
+                      <div className="flex flex-col gap-5 items-center justify-center h-full text-gray-500">
+                        <FrownIcon className="w-48 h-48"></FrownIcon>
+                        <p className="">
+                          Nenhum documento disponível para visualização. Por
+                          favor, faça o upload de um documento para visualizar.
+                        </p>
+                      </div>
+                    )}
+                  </DialogContent>
+                </Dialog>
 
                 <div className="flex flex-col gap-4 mt-2">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -96,15 +129,17 @@ export const PPCCard = memo(
 
                 <div className="flex justify-end gap-2 mt-2">
                   <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="text-blue-600"
-                      >
-                        <MdEdit size={18} />
-                      </Button>
-                    </DialogTrigger>
+                    {user?.role !== Role.PROFESSOR && (
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="text-blue-600"
+                        >
+                          <MdEdit size={18} />
+                        </Button>
+                      </DialogTrigger>
+                    )}
                     <DialogContent
                       aria-describedby={undefined}
                       className="sm:max-w-[500px] sm:max-h-[850px]"
@@ -123,15 +158,17 @@ export const PPCCard = memo(
                   </Dialog>
 
                   <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="text-red-600"
-                      >
-                        <MdDelete size={18} />
-                      </Button>
-                    </AlertDialogTrigger>
+                    {user?.role !== Role.PROFESSOR && (
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="text-red-600"
+                        >
+                          <MdDelete size={18} />
+                        </Button>
+                      </AlertDialogTrigger>
+                    )}
                     <AlertDialogContent className="sm:max-w-[500px]">
                       <AlertDialogHeader>
                         <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
