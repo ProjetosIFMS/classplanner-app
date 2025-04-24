@@ -1,25 +1,18 @@
 "use client";
 
 import { deleteUserToken } from "@/app/_actions/deleteUserToken";
-import { getCourses } from "@/app/_actions/getCourses";
-import { getModalities } from "@/app/_actions/modality/getModalities";
-import { getUserData } from "@/app/_actions/getUserData";
-import { getPpc } from "@/app/_actions/pedagogical-project/getPpc";
-import { getAreas } from "@/app/professor/select-area/actions";
 import { CommonData } from "@/types/common-data";
 import { User } from "@/types/user";
 import { useRouter } from "next/navigation";
-import {
-  useState,
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useCallback,
-} from "react";
+import { createContext, ReactNode, useContext } from "react";
+import { useGetAllPPC } from "@/hooks/react-query/ppc";
+import { useGetAllAreas } from "@/hooks/react-query/areas";
+import { useGetAllCourses } from "@/hooks/react-query/courses";
+import { useGetUserData } from "@/hooks/react-query/user";
+import { useGetAllModalities } from "@/hooks/react-query/modalities";
 
 interface AuthContextType {
-  user: User | null;
+  user: User | null | undefined;
   session: string | undefined;
   commonData: CommonData;
   logout: () => void;
@@ -45,58 +38,33 @@ export const AuthProvider = ({
   referentialAccessToken: string | undefined;
 }) => {
   const session = referentialAccessToken;
-  const [user, setUser] = useState<User | null>(null);
-  const [data, setData] = useState<CommonData>({
-    courses: null,
-    pedagogicalProjects: null,
-    areas: null,
-    modalities: null,
-  });
+
+  const user = useGetUserData(session).data;
+  const courses = useGetAllCourses(session);
+  const areas = useGetAllAreas(session);
+  const pedagogicalProjects = useGetAllPPC(session);
+  const modalities = useGetAllModalities(session);
   const router = useRouter();
-
-  const fetchUserData = useCallback(
-    async (session: string | undefined) => {
-      const userData = await getUserData(session);
-      setUser(userData);
-
-      if (!userData) {
-        throw new Error("Access token not found");
-      }
-      if (!userData.area_id && userData.role == "PROFESSOR") {
-        router.push("/professor/select-area");
-      }
-    },
-    [router],
-  );
-
-  const fetchCommonData = useCallback(async (session: string | undefined) => {
-    try {
-      const [courses, areas, pedagogicalProjects, modalities] =
-        await Promise.all([
-          getCourses(session),
-          getAreas(session),
-          getPpc(session),
-          getModalities(session),
-        ]);
-      setData({ courses, areas, pedagogicalProjects, modalities });
-    } catch (err) {
-      throw err;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (session) {
-      fetchUserData(session);
-      fetchCommonData(session);
-    }
-  }, [session, fetchUserData, fetchCommonData]);
 
   const logout = () => {
     deleteUserToken();
+    router.push("/auth/login");
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, logout, commonData: data }}>
+    <AuthContext.Provider
+      value={{
+        session,
+        user,
+        logout,
+        commonData: {
+          areas: areas.data,
+          courses: courses.data,
+          modalities: modalities.data,
+          pedagogicalProjects: pedagogicalProjects.data,
+        },
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
