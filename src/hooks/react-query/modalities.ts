@@ -10,7 +10,7 @@ import { deleteModality } from "@/app/_actions/modality/deleteModality";
 export function useGetAllModalities(session: Session) {
   return useQuery({
     queryKey: ["GET", "modality"],
-    queryFn: () => getModalities(session),
+    queryFn: async () => await getModalities(session),
   });
 }
 

@@ -14,6 +14,6 @@ export function usePostPPC(session: Session) {
 export function useGetAllPPC(session: Session) {
   return useQuery({
     queryKey: ["GET", "pedagogical-project"],
-    queryFn: () => getPpc(session),
+    queryFn: async () => await getPpc(session),
   });
 }

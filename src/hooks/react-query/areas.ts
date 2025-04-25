@@ -11,7 +11,7 @@ import { deleteArea } from "@/app/_actions/area/deleteArea";
 export function useGetAllAreas(session: Session) {
   return useQuery({
     queryKey: ["areas"],
-    queryFn: () => getAreas(session),
+    queryFn: async () => await getAreas(session),
   });
 }
 

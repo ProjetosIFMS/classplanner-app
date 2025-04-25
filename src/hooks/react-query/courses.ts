@@ -5,6 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 export function useGetAllCourses(session: Session) {
   return useQuery({
     queryKey: ["GET", "course"],
-    queryFn: () => getCourses(session),
+    queryFn: async () => await getCourses(session),
   });
 }
