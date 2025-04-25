@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useGetAllUsers(session: Session) {
   return useQuery({
-    queryKey: ["GET", "user"],
+    queryKey: ["GET", "users"],
     queryFn: () => getAllUsers(session),
   });
 }
@@ -13,6 +13,7 @@ export function useGetAllUsers(session: Session) {
 export function useGetUserData(session: Session) {
   return useQuery({
     queryKey: ["GET", "user"],
-    queryFn: () => getUserData(session),
+    queryFn: async () => await getUserData(session),
+    enabled: !!session,
   });
 }
