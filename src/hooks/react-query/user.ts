@@ -14,5 +14,6 @@ export function useGetUserData(session: Session) {
   return useQuery({
     queryKey: ["GET", "user"],
     queryFn: async () => await getUserData(session),
+    enabled: !!session,
   });
 }

@@ -6,5 +6,6 @@ export function useGetAllCourses(session: Session) {
   return useQuery({
     queryKey: ["GET", "course"],
     queryFn: async () => await getCourses(session),
+    enabled: !!session,
   });
 }

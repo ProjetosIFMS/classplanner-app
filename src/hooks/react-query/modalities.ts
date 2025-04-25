@@ -11,6 +11,7 @@ export function useGetAllModalities(session: Session) {
   return useQuery({
     queryKey: ["GET", "modality"],
     queryFn: async () => await getModalities(session),
+    enabled: !!session,
   });
 }
 

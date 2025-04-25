@@ -12,6 +12,7 @@ export function useGetAllAreas(session: Session) {
   return useQuery({
     queryKey: ["areas"],
     queryFn: async () => await getAreas(session),
+    enabled: !!session,
   });
 }
 
