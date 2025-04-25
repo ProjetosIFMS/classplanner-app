@@ -3,8 +3,7 @@
 import { deleteUserToken } from "@/app/_actions/deleteUserToken";
 import { CommonData } from "@/types/common-data";
 import { User } from "@/types/user";
-import { useRouter } from "next/navigation";
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useMemo } from "react";
 import { useGetAllPPC } from "@/hooks/react-query/ppc";
 import { useGetAllAreas } from "@/hooks/react-query/areas";
 import { useGetAllCourses } from "@/hooks/react-query/courses";
@@ -39,30 +38,37 @@ export const AuthProvider = ({
 }) => {
   const session = referentialAccessToken;
 
-  const user = useGetUserData(session).data;
-  const courses = useGetAllCourses(session);
-  const areas = useGetAllAreas(session);
-  const pedagogicalProjects = useGetAllPPC(session);
-  const modalities = useGetAllModalities(session);
-  const router = useRouter();
+  const { data: userData } = useGetUserData(session);
+
+  const { data: coursesData } = useGetAllCourses(session);
+
+  const { data: areasData } = useGetAllAreas(session);
+
+  const { data: ppcData } = useGetAllPPC(session);
+
+  const { data: modalitiesData } = useGetAllModalities(session);
 
   const logout = () => {
     deleteUserToken();
-    router.push("/auth/login");
   };
+
+  const commonData = useMemo(
+    () => ({
+      areas: areasData || [],
+      courses: coursesData || [],
+      modalities: modalitiesData || [],
+      pedagogicalProjects: ppcData || [],
+    }),
+    [areasData, coursesData, modalitiesData, ppcData],
+  );
 
   return (
     <AuthContext.Provider
       value={{
         session,
-        user,
+        user: userData || null,
         logout,
-        commonData: {
-          areas: areas.data,
-          courses: courses.data,
-          modalities: modalities.data,
-          pedagogicalProjects: pedagogicalProjects.data,
-        },
+        commonData,
       }}
     >
       {children}
