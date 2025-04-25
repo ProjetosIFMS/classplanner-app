@@ -110,19 +110,7 @@ export function AppSidebar() {
     {
       icon: <Settings size={20} />,
       label: "Modalidades",
-      path: "/modality/list",
-      nested: [
-        {
-          icon: <List size={16} />,
-          label: "Todas as modalidades",
-          path: "/modality/list",
-        },
-        {
-          icon: <PlusCircle size={16} />,
-          label: "Criar Modalidade",
-          path: "/modality/create",
-        },
-      ],
+      path: "/modality",
     },
     {
       icon: <GraduationCap size={20} />,
