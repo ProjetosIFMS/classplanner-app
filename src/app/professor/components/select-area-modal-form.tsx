@@ -46,7 +46,11 @@ export function SelectAreaModalForm({
   });
 
   function onSubmit(formData: SelectAreaValues) {
-    patchSelectArea.mutate(formData.area_id);
+    patchSelectArea.mutate(formData.area_id, {
+      onSuccess: () => {
+        setIsOpen(false);
+      },
+    });
   }
 
   return (
