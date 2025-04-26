@@ -1,80 +1,17 @@
 "use client";
 
-import type { ColumnDef, Row } from "@tanstack/react-table";
-import { MdEdit } from "react-icons/md";
+import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import React from "react";
+import { validate as isUUID } from "uuid";
 
 import { Button } from "@/app/_components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/app/_components/ui/dialog";
 
-import DisciplineForm from "../components/Discipline-form";
 import type { Discipline } from "@/types/discipline";
-import { DeleteDialog } from "@/app/_components/dialogs/delete-dialog";
-import { useDeleteDiscipline } from "@/hooks/react-query/disciplines";
-import { Session } from "@/types/session";
+import { UpdateDisciplineModalForm } from "@/app/discipline/(list)/components/update-discipline-modal-form";
+import { DeleteDisciplineModal } from "@/app/discipline/(list)/components/delete-discipline-modal";
+import ClipLoader from "react-spinners/ClipLoader";
 
-interface ActionsRowProps {
-  row: Row<Discipline>;
-  session: Session;
-}
-
-function ActionsRow(props: ActionsRowProps) {
-  const discipline = props.row.original;
-  const deleteDiscipline = useDeleteDiscipline(props.session);
-  const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
-
-  function handleDelete() {
-    deleteDiscipline.mutate(discipline.id, {
-      onSuccess: () => {
-        setIsDeleteOpen(false);
-      },
-    });
-  }
-
-  return (
-    <div className="flex items-center justify-center space-x-2">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="ghost" className="text-blue-600" size="icon">
-            <MdEdit />
-          </Button>
-        </DialogTrigger>
-        <DialogContent
-          aria-describedby={undefined}
-          className=" sm-max-w-[950px] sm:max-h-[720px]"
-        >
-          <DialogHeader>
-            <DialogTitle></DialogTitle>
-          </DialogHeader>
-          <DisciplineForm
-            data={discipline}
-            isUpdate
-            title="Editar Disciplina"
-            description="Preencha os detalhes para a edição da disciplina"
-          />
-        </DialogContent>
-      </Dialog>
-
-      <DeleteDialog
-        handleDelete={handleDelete}
-        isLoading={deleteDiscipline.isPending}
-        title="Excluir disciplina"
-        description={`Você tem certeza que deseja excluir a disciplina ${discipline.name}? Essa ação não poderá ser desfeita.`}
-        openState={isDeleteOpen}
-        setOpenState={setIsDeleteOpen}
-      />
-    </div>
-  );
-}
-
-// Create a function that returns the columns with the delete function injected
 export const createColumns = (
   session: string | undefined
 ): ColumnDef<Discipline>[] => {
@@ -185,7 +122,21 @@ export const createColumns = (
     {
       id: "actions",
       header: () => <div className="text-center">Ações</div>,
-      cell: ({ row }) => <ActionsRow row={row} session={session} />,
+      cell: ({ row }) => (
+        <>
+          {isUUID(row.original.id) ? (
+            <>
+              <UpdateDisciplineModalForm
+                session={session}
+                data={row.original}
+              />
+              <DeleteDisciplineModal session={session} data={row.original} />
+            </>
+          ) : (
+            <ClipLoader />
+          )}
+        </>
+      ),
     },
   ];
 };
