@@ -204,7 +204,7 @@ export function SelectDayoffModalForm({
                   htmlFor="specific-request-checkbox"
                   className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
-                  Fazer uma solicitação especifica
+                  Fazer uma solicitação específica
                 </FormLabel>
               </div>
               <FormControl>
