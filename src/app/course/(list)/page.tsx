@@ -3,10 +3,8 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/app/_components/ui/card";
 
 import { LoadingCard } from "@/app/_components/ui/loading-card";
