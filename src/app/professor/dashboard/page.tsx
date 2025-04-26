@@ -4,7 +4,6 @@ import React from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 
 import { Discipline } from "@/types/discipline";
-import { DisciplinesPanel } from "./disciplines-panel";
 import { Panel } from "./panel";
 import { useAuth } from "@/app/_components/auth/AuthContext";
 import { useGetMyAuditLogs } from "@/hooks/react-query/audit-logs";
@@ -13,6 +12,7 @@ import { useGetMyInterestsSelection } from "@/hooks/react-query/interests-select
 import { useGetAllCourses } from "@/hooks/react-query/courses";
 import { useGetAllDisciplines } from "@/hooks/react-query/disciplines";
 import { SelectAreaModalForm } from "@/app/professor/components/select-area-modal-form";
+import { CoursesPanel } from "@/app/professor/dashboard/components/courses-panel";
 
 export default function ProfessorDashboard() {
   const [isSelectAreaModalOpen, setIsSelectAreaModalOpen] =
@@ -26,7 +26,7 @@ export default function ProfessorDashboard() {
 
   const [disciplinesPanelInfo, setDisciplinesPanelInfo] = React.useState<
     {
-      course: string;
+      course_name: string;
       disciplines: Discipline[];
     }[]
   >([]);
@@ -68,7 +68,7 @@ export default function ProfessorDashboard() {
             );
 
             return {
-              course: course.name
+              course_name: course.name
                 .split(" ")
                 .map((word) => word[0])
                 .filter((letter) => letter === letter.toUpperCase())
@@ -135,23 +135,14 @@ export default function ProfessorDashboard() {
           <h2 className="text-lg font-extrabold py-6 self-start">
             Suas Disciplinas
           </h2>
-          <div className="flex flex-row justify-between gap-16 mb-24 mx-8">
-            {getMyInterestsSelection.isLoading ||
-            getAllCourses.isLoading ||
-            getAllDisciplines.isLoading ? (
-              <div className="flex justify-center items-center w-full">
-                <ClipLoader />
-              </div>
-            ) : (
-              disciplinesPanelInfo.map((disciplinePanel, index) => (
-                <DisciplinesPanel
-                  key={index}
-                  course={disciplinePanel.course}
-                  disciplines={disciplinePanel.disciplines}
-                />
-              ))
-            )}
-          </div>
+          <CoursesPanel
+            courses={disciplinesPanelInfo}
+            isLoading={
+              getMyInterestsSelection.isLoading ||
+              getAllCourses.isLoading ||
+              getAllDisciplines.isLoading
+            }
+          />
         </div>
       </div>
     </section>
