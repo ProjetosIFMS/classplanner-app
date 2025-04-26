@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 
 import { Discipline } from "@/types/discipline";
 import { DisciplinesPanel } from "./disciplines-panel";
@@ -11,10 +12,13 @@ import { formatAuditLogMessage } from "@/lib/auditLogMessage";
 import { useGetMyInterestsSelection } from "@/hooks/react-query/interests-selection";
 import { useGetAllCourses } from "@/hooks/react-query/courses";
 import { useGetAllDisciplines } from "@/hooks/react-query/disciplines";
-import ClipLoader from "react-spinners/ClipLoader";
+import { SelectAreaModalForm } from "@/app/professor/components/select-area-modal-form";
 
 export default function ProfessorDashboard() {
-  const { session } = useAuth();
+  const [isSelectAreaModalOpen, setIsSelectAreaModalOpen] =
+    React.useState<boolean>(false);
+
+  const { user, session } = useAuth();
   const getMyAuditLogs = useGetMyAuditLogs(session);
   const getMyInterestsSelection = useGetMyInterestsSelection(session);
   const getAllCourses = useGetAllCourses(session);
@@ -26,6 +30,12 @@ export default function ProfessorDashboard() {
       disciplines: Discipline[];
     }[]
   >([]);
+
+  React.useEffect(() => {
+    if (user?.area_id === null) {
+      setIsSelectAreaModalOpen(true);
+    }
+  }, [user]);
 
   React.useEffect(() => {
     if (
@@ -102,7 +112,14 @@ export default function ProfessorDashboard() {
     <section>
       <div className="flex flex-col items-center justify-center ">
         <div>
-          <h1 className="text-lg font-extrabold py-6">Dashboard</h1>
+          <div className="flex justify-between items-center">
+            <h1 className="text-lg font-extrabold py-6">Dashboard</h1>
+            <SelectAreaModalForm
+              session={session}
+              isOpen={isSelectAreaModalOpen}
+              setIsOpen={setIsSelectAreaModalOpen}
+            />
+          </div>
           <div className="flex flex-row justify-around gap-12">
             <Panel name="Avisos" messages={notifications} />
             <Panel
