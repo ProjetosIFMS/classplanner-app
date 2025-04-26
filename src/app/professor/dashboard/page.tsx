@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import ClipLoader from "react-spinners/ClipLoader";
 
 import { Discipline } from "@/types/discipline";
 import { Panel } from "./panel";
@@ -13,9 +12,13 @@ import { useGetAllCourses } from "@/hooks/react-query/courses";
 import { useGetAllDisciplines } from "@/hooks/react-query/disciplines";
 import { SelectAreaModalForm } from "@/app/professor/components/select-area-modal-form";
 import { CoursesPanel } from "@/app/professor/dashboard/components/courses-panel";
+import { SelectDayoffModalForm } from "@/app/professor/components/select-dayoff-modal-form";
+import { useGetMyDayoff } from "@/hooks/react-query/dayoff";
 
 export default function ProfessorDashboard() {
   const [isSelectAreaModalOpen, setIsSelectAreaModalOpen] =
+    React.useState<boolean>(false);
+  const [isSelectDayoffModalOpen, setIsSelectDayoffModalOpen] =
     React.useState<boolean>(false);
 
   const { user, session } = useAuth();
@@ -23,6 +26,7 @@ export default function ProfessorDashboard() {
   const getMyInterestsSelection = useGetMyInterestsSelection(session);
   const getAllCourses = useGetAllCourses(session);
   const getAllDisciplines = useGetAllDisciplines(session);
+  const getMyDayoff = useGetMyDayoff(session);
 
   const [disciplinesPanelInfo, setDisciplinesPanelInfo] = React.useState<
     {
@@ -132,9 +136,19 @@ export default function ProfessorDashboard() {
               loading={getMyAuditLogs.isLoading}
             />
           </div>
-          <h2 className="text-lg font-extrabold py-6 self-start">
-            Suas Disciplinas
-          </h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-extrabold py-6 self-start">
+              Suas Disciplinas
+            </h2>
+            <SelectDayoffModalForm
+              session={session}
+              isOpen={isSelectDayoffModalOpen}
+              setIsOpen={setIsSelectDayoffModalOpen}
+              isLoading={getMyDayoff.isLoading}
+              isUpdate={getMyDayoff.data !== undefined}
+              data={getMyDayoff.data ?? undefined}
+            />
+          </div>
           <CoursesPanel
             courses={disciplinesPanelInfo}
             isLoading={
