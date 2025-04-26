@@ -115,19 +115,7 @@ export function AppSidebar() {
     {
       icon: <GraduationCap size={20} />,
       label: "Disciplinas",
-      path: "/discipline/list",
-      nested: [
-        {
-          icon: <List size={16} />,
-          label: "Todas as disciplinas",
-          path: "/discipline/list",
-        },
-        {
-          icon: <PlusCircle size={16} />,
-          label: "Criar Disciplina",
-          path: "/discipline/create",
-        },
-      ],
+      path: "/discipline",
     },
     {
       icon: <Folder size={20} />,
