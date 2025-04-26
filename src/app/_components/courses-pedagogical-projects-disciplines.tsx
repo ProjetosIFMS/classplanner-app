@@ -24,14 +24,16 @@ interface CoursesPedagogicalProjectsDisciplinesProps {
   workload?: number;
   posting?: boolean;
   renderDisciplineForm: (discipline: Discipline) => React.ReactNode;
+  renderBeforeDisciplines?: () => React.ReactNode;
   setPedagogicalProject?: React.Dispatch<React.SetStateAction<PPC | undefined>>;
+  onSetPedagogicalProject?: (pedagogicalProject: PPC | undefined) => void;
   setCourse?: React.Dispatch<React.SetStateAction<Course | undefined>>;
+  onSetCourse?: (course: Course | undefined) => void;
   setIsCourseSelected?: React.Dispatch<React.SetStateAction<boolean>>;
   setIsPedagogicalProjectSelected?: React.Dispatch<
     React.SetStateAction<boolean>
   >;
-  setDisciplines?: React.Dispatch<React.SetStateAction<Discipline[]>>;
-  setIsDisciplineSelected?: React.Dispatch<React.SetStateAction<boolean>>;
+  showSubmitButton?: boolean;
 }
 
 export function CoursesPedagogicalProjectsDisciplines(
@@ -66,8 +68,15 @@ export function CoursesPedagogicalProjectsDisciplines(
               setLocalFilteredDisciplines([]);
               if (props.setPedagogicalProject)
                 props.setPedagogicalProject(undefined);
+              if (props.onSetPedagogicalProject) {
+                props.onSetPedagogicalProject(undefined);
+              }
               if (props.setCourse)
                 props.setCourse(localCourses.find((c) => c.id === courseId));
+              if (props.onSetCourse)
+                props.onSetCourse(
+                  localCourses.find((c) => c.id === courseId) as Course
+                );
               if (props.setIsCourseSelected) props.setIsCourseSelected(true);
               if (props.setIsPedagogicalProjectSelected)
                 props.setIsPedagogicalProjectSelected(false);
@@ -114,6 +123,13 @@ export function CoursesPedagogicalProjectsDisciplines(
               );
               if (props.setPedagogicalProject)
                 props.setPedagogicalProject(
+                  localPedagogicalProjects.find(
+                    (pedagogicalProject) =>
+                      pedagogicalProject.id === pedagogicalProjectId
+                  )
+                );
+              if (props.onSetPedagogicalProject)
+                props.onSetPedagogicalProject(
                   localPedagogicalProjects.find(
                     (pedagogicalProject) =>
                       pedagogicalProject.id === pedagogicalProjectId
@@ -189,6 +205,9 @@ export function CoursesPedagogicalProjectsDisciplines(
                     <span className="font-bold">SEMESTRE {index + 1}</span>
                   </AccordionTrigger>
                   <AccordionContent className="space-y-2">
+                    {props.renderBeforeDisciplines && (
+                      <props.renderBeforeDisciplines />
+                    )}
                     {localFilteredDisciplines.filter(
                       (discipline) => discipline.semester === index + 1
                     ).length > 0 ? (
@@ -221,6 +240,9 @@ export function CoursesPedagogicalProjectsDisciplines(
           <p className="text-center col-span-3 p-40">
             {!localCourse && !localPedagogicalProject && "Selecione um curso"}
             {localCourse && !localPedagogicalProject && "Selecione um PPC"}
+            {localCourse &&
+              localPedagogicalProject &&
+              "Nenhuma disciplina encontrada"}
           </p>
         )}
       </div>
@@ -236,19 +258,21 @@ export function CoursesPedagogicalProjectsDisciplines(
               </div>
             )}
         </div>
-        <Button
-          className="flex justify-center items-center"
-          type="submit"
-          disabled={localPedagogicalProject === undefined || props.posting}
-        >
-          {props.posting ? (
-            <ClipLoader color="#fff" size={20} />
-          ) : (
-            <div className="flex justify-center items-center gap-1">
-              Salvar <MdCheck />
-            </div>
-          )}
-        </Button>
+        {props.showSubmitButton && (
+          <Button
+            className="flex justify-center items-center"
+            type="submit"
+            disabled={localPedagogicalProject === undefined || props.posting}
+          >
+            {props.posting ? (
+              <ClipLoader color="#fff" size={20} />
+            ) : (
+              <div className="flex justify-center items-center gap-1">
+                Salvar <MdCheck />
+              </div>
+            )}
+          </Button>
+        )}
       </div>
     </div>
   );
