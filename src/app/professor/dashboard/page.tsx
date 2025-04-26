@@ -1,6 +1,9 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
+
+import { Button } from "@/app/_components/ui/button";
 
 import { Discipline } from "@/types/discipline";
 import { Panel } from "./panel";
@@ -118,11 +121,13 @@ export default function ProfessorDashboard() {
         <div>
           <div className="flex justify-between items-center">
             <h1 className="text-lg font-extrabold py-6">Dashboard</h1>
-            <SelectAreaModalForm
-              session={session}
-              isOpen={isSelectAreaModalOpen}
-              setIsOpen={setIsSelectAreaModalOpen}
-            />
+            <div>
+              <SelectAreaModalForm
+                session={session}
+                isOpen={isSelectAreaModalOpen}
+                setIsOpen={setIsSelectAreaModalOpen}
+              />
+            </div>
           </div>
           <div className="flex flex-row justify-around gap-12">
             <Panel name="Avisos" messages={notifications} />
@@ -140,14 +145,20 @@ export default function ProfessorDashboard() {
             <h2 className="text-lg font-extrabold py-6 self-start">
               Suas Disciplinas
             </h2>
-            <SelectDayoffModalForm
-              session={session}
-              isOpen={isSelectDayoffModalOpen}
-              setIsOpen={setIsSelectDayoffModalOpen}
-              isLoading={getMyDayoff.isLoading}
-              isUpdate={getMyDayoff.data !== undefined}
-              data={getMyDayoff.data ?? undefined}
-            />
+            <div className="flex justify-center items-center space-x-2">
+              <SelectDayoffModalForm
+                session={session}
+                isOpen={isSelectDayoffModalOpen}
+                setIsOpen={setIsSelectDayoffModalOpen}
+                isLoading={getMyDayoff.isLoading}
+                isUpdate={getMyDayoff.data !== undefined}
+                data={getMyDayoff.data ?? undefined}
+              />
+
+              <Link href={"/professor/select-interest"}>
+                <Button>Ir para seleção de interesses</Button>
+              </Link>
+            </div>
           </div>
           <CoursesPanel
             courses={disciplinesPanelInfo}
