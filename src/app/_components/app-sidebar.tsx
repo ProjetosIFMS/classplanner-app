@@ -76,19 +76,7 @@ export function AppSidebar() {
     {
       icon: <BookOpen size={20} />,
       label: "Cursos",
-      path: "/course/list",
-      nested: [
-        {
-          icon: <List size={16} />,
-          label: "Todos os cursos",
-          path: "/course/list",
-        },
-        {
-          icon: <PlusCircle size={16} />,
-          label: "Criar Curso",
-          path: "/course/create",
-        },
-      ],
+      path: "/course",
     },
     {
       icon: <Users size={20} />,
