@@ -168,14 +168,6 @@ export const ClassgradeForm = ({
       >
         {(form) => (
           <>
-            <button
-              onClick={() => {
-                console.log(form.getValues());
-              }}
-            >
-              aaaa
-            </button>
-
             <div className="space-y-3">
               <div className="flex flex-row text-nowrap gap-3 items-center">
                 <div>
@@ -281,7 +273,16 @@ export const ClassgradeForm = ({
                 disciplines={getDisciplines.data ?? []}
                 pedagogicalProjects={pedagogicalProjects}
                 onSetCourse={(course) => {
-                  if (course) form.setValue("course_id", course.id);
+                  if (course) {
+                    form.reset();
+                  }
+                }}
+                onSetPedagogicalProject={(ppc) => {
+                  if (ppc) {
+                    form.reset();
+                    form.setValue("pedagogical_project_id", ppc.id);
+                    form.setValue("course_id", ppc.course_id);
+                  }
                 }}
                 renderBeforeDisciplines={() => {
                   const checkboxStyle =
