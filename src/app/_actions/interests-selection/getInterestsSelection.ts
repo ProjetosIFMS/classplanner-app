@@ -9,7 +9,7 @@ import { InterestsSelection } from "@/types/interests-selection";
 export async function getInterestsSelection(session: Session) {
   try {
     const res: AxiosResponse<InterestsSelection[]> = await api.get(
-      "/interests-selection",
+      "/interest-selection",
       {
         headers: {
           Authorization: `Bearer ${session}`,

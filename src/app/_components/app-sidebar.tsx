@@ -67,7 +67,7 @@ export function AppSidebar() {
   // Check if current path should exclude sidebar
   if (excludedPaths.includes(path)) return null;
 
-  const primaryNavItems = [
+  const primaryNavItems: primaryNavItemsProps[] = [
     {
       icon: <Home size={20} />,
       label: "Dashboard",
@@ -78,11 +78,13 @@ export function AppSidebar() {
       label: "Cursos",
       path: "/course",
     },
-    {
-      icon: <Users size={20} />,
-      label: "Turmas",
-      path: "/classgrade",
-    },
+    user?.role === "COORDINATOR"
+      ? {
+          icon: <Users size={20} />,
+          label: "Turmas",
+          path: "/classgrade",
+        }
+      : null,
     {
       icon: <Settings size={20} />,
       label: "Modalidades",
@@ -110,14 +112,16 @@ export function AppSidebar() {
         },
       ],
     },
-    {
-      icon: <Map size={20} />,
-      label: "Eixo",
-      path: "/coordinator/list-areas",
-    },
-  ];
+    user?.role === "COORDINATOR"
+      ? {
+          icon: <Map size={20} />,
+          label: "Eixo",
+          path: "/coordinator/list-areas",
+        }
+      : null,
+  ].filter((item) => item !== null);
 
-  const secondaryNavItems = [
+  const secondaryNavItems: primaryNavItemsProps[] = [
     { icon: <Settings size={20} />, label: "Configurações", path: "/settings" },
     { icon: <HelpCircle size={20} />, label: "Ajuda", path: "/help" },
   ];

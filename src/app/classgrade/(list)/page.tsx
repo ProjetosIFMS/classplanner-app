@@ -71,11 +71,11 @@ export default function ClassgradeList() {
         <div className="mt-6 flex-1">
           <Card className="w-full">
             <CardHeader />
-            <CardContent className="grid gap-8 grid-cols-1 lg:grid-cols-2">
+            <CardContent className="grid gap-8 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {getClassgrades.isLoading ||
               getCourses.isLoading ||
               getPPCs.isLoading ? (
-                <div className="flex items-center justify-center col-span-1 lg:col-span-2">
+                <div className="flex items-center justify-center col-span-full">
                   <ClipLoader size={64} />
                 </div>
               ) : (

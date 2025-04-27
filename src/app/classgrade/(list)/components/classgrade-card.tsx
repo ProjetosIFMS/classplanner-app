@@ -36,7 +36,7 @@ export function ClassgradeCard({
     <Card>
       <CardContent className="space-y-4">
         <CardHeader>
-          <CardTitle className="text-lg">
+          <CardTitle className="text-lg" title={courseName}>
             {courseName
               ?.split(" ")
               .map((word) =>
