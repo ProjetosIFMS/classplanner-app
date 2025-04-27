@@ -31,6 +31,8 @@ type FormCardProps<TFormValues extends FieldValues> = {
   width: "sm" | "md" | "lg" | "xl" | "2xl";
   isUpdate?: boolean;
   headerExtras?: ReactNode;
+  footerExtras?: ReactNode;
+  disabled?: boolean;
 };
 
 export const FormCard = <TFormValues extends FieldValues>({
@@ -43,6 +45,8 @@ export const FormCard = <TFormValues extends FieldValues>({
   width = "sm",
   isUpdate,
   headerExtras,
+  footerExtras,
+  disabled = false,
 }: FormCardProps<TFormValues>) => {
   const form = useForm<TFormValues>({
     resolver: zodResolver(schema),
@@ -70,7 +74,8 @@ export const FormCard = <TFormValues extends FieldValues>({
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="mt-5">
           <CardContent>{children(form)}</CardContent>
-          <CardFooter className="justify-end">
+          <CardFooter className="justify-between">
+            {footerExtras}
             <div className="flex justify-end gap-5 mt-6">
               {!isUpdate && (
                 <Button
@@ -84,7 +89,7 @@ export const FormCard = <TFormValues extends FieldValues>({
               )}
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting}
+                disabled={form.formState.isSubmitting || disabled}
                 variant={"default"}
               >
                 {form.formState.isSubmitting ? "Salvando..." : "Salvar"}

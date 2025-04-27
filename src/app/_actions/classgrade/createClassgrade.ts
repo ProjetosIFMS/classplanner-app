@@ -4,11 +4,10 @@ import api from "@/utils/axios-instance";
 
 export const createClassgrade = async (
   formData: ClassgradeValues,
-  session: Session,
+  session: Session
 ) => {
   try {
     const { period, ...data } = formData;
-    console.log(period);
     const res = await api.post("/classgrade", data, {
       headers: {
         Authorization: `Bearer ${session}`,
