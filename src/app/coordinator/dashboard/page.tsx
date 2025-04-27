@@ -3,19 +3,18 @@
 import React from "react";
 
 import { Panel } from "@/app/professor/dashboard/panel";
-import {
-  ProfessorAndDisciplinesTable,
-  type ProfessorAndDiscipline,
-} from "@/app/coordinator/dashboard/professors-and-disciplines-table";
 import { formatAuditLogMessage } from "@/lib/auditLogMessage";
 import { useGetMyAuditLogs } from "@/hooks/react-query/audit-logs";
 import { useAuth } from "@/app/_components/auth/AuthContext";
-import { useGetMyInterestsSelection } from "@/hooks/react-query/interests-selection";
+import { useGetAllInterestsSelection } from "@/hooks/react-query/interests-selection";
 import { useGetAllDisciplines } from "@/hooks/react-query/disciplines";
 import { useGetAllUsers } from "@/hooks/react-query/user";
 import { useGetAllCourses } from "@/hooks/react-query/courses";
 import { DataTable } from "@/app/_components/ui/data-table";
-import { createColumns } from "@/app/coordinator/dashboard/columns";
+import {
+  createColumns,
+  type ProfessorAndDiscipline,
+} from "@/app/coordinator/dashboard/columns";
 
 const mockedNotifications = [
   {
@@ -33,7 +32,7 @@ const mockedNotifications = [
   {
     title: "Existem conflitos em suas disciplinas",
     description: "1 hour ago",
-  },
+  }, 
   {
     title: "Existem conflitos em suas disciplinas",
     description: "1 hour ago",
@@ -50,21 +49,21 @@ export default function CoordinatorDashboard() {
 
   const { session } = useAuth();
   const getMyAuditLogs = useGetMyAuditLogs(session);
-  const getMyInterestsSelection = useGetMyInterestsSelection(session);
+  const getInterestsSelection = useGetAllInterestsSelection(session);
   const getAllDisciplines = useGetAllDisciplines(session);
   const getAllUsers = useGetAllUsers(session);
   const getAllCourses = useGetAllCourses(session);
 
   React.useEffect(() => {
     if (
-      (getMyInterestsSelection.data?.length ?? 0) > 0 &&
+      (getInterestsSelection.data?.length ?? 0) > 0 &&
       (getAllDisciplines.data?.length ?? 0) > 0 &&
       (getAllUsers.data?.length ?? 0) > 0 &&
       (getAllCourses.data?.length ?? 0) > 0
     ) {
       setProfessorsAndDisciplineData((): ProfessorAndDiscipline[] => {
         return (
-          getMyInterestsSelection.data
+          getInterestsSelection.data
             ?.filter(
               (interestSelection) => interestSelection.status !== "INACTIVE"
             )
@@ -93,7 +92,7 @@ export default function CoordinatorDashboard() {
       });
     }
   }, [
-    getMyInterestsSelection.data,
+    getInterestsSelection.data,
     getAllDisciplines.data,
     getAllUsers.data,
     getAllCourses.data,
@@ -129,7 +128,7 @@ export default function CoordinatorDashboard() {
                 data={professorsAndDisciplineData ?? []}
                 columns={columns}
                 isLoading={
-                  getMyInterestsSelection.isLoading ||
+                  getInterestsSelection.isLoading ||
                   getAllDisciplines.isLoading ||
                   getAllUsers.isLoading ||
                   getAllCourses.isLoading
