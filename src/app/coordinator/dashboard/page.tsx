@@ -14,6 +14,8 @@ import { useGetMyInterestsSelection } from "@/hooks/react-query/interests-select
 import { useGetAllDisciplines } from "@/hooks/react-query/disciplines";
 import { useGetAllUsers } from "@/hooks/react-query/user";
 import { useGetAllCourses } from "@/hooks/react-query/courses";
+import { DataTable } from "@/app/_components/ui/data-table";
+import { createColumns } from "@/app/coordinator/dashboard/columns";
 
 const mockedNotifications = [
   {
@@ -44,6 +46,7 @@ export default function CoordinatorDashboard() {
   ]);
   const [professorsAndDisciplineData, setProfessorsAndDisciplineData] =
     React.useState<ProfessorAndDiscipline[]>([]);
+  const columns = createColumns();
 
   const { session } = useAuth();
   const getMyAuditLogs = useGetMyAuditLogs(session);
@@ -121,15 +124,17 @@ export default function CoordinatorDashboard() {
             <h1 className="text-lg font-extrabold py-6">
               Professores & Disciplinas
             </h1>
-            <div className="flex flex-col items-center justify-center">
-              <ProfessorAndDisciplinesTable
-                data={professorsAndDisciplineData}
+            <div className="flex flex-col items-center justify-center bg-white dark:bg-gray-950 rounded-lg shadow p-6">
+              <DataTable
+                data={professorsAndDisciplineData ?? []}
+                columns={columns}
                 isLoading={
                   getMyInterestsSelection.isLoading ||
                   getAllDisciplines.isLoading ||
                   getAllUsers.isLoading ||
                   getAllCourses.isLoading
                 }
+                searchColumn="professorName"
               />
             </div>
           </div>
