@@ -38,7 +38,12 @@ export default function ListCourses() {
                 </div>
               ) : (
                 getCourses.data?.map((course, index) => (
-                  <CourseCard key={index} course={course} session={session} />
+                  <CourseCard
+                    key={index}
+                    course={course}
+                    session={session}
+                    userRole={user?.role ?? Role.PROFESSOR}
+                  />
                 ))
               )}
             </CardContent>

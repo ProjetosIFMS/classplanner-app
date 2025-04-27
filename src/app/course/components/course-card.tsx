@@ -15,13 +15,15 @@ import { BookOpen, Clock } from "lucide-react";
 import { UpdateCourseModalForm } from "@/app/course/(list)/components/update-course-modal-form";
 import { DeleteCourseModal } from "@/app/course/(list)/components/delete-course-modal";
 import { Session } from "@/types/session";
+import { Role } from "@/types/user";
 
 interface CourseCardProps {
   session: Session;
   course: Course;
+  userRole: Role;
 }
 
-export function CourseCard({ course, session }: CourseCardProps) {
+export function CourseCard({ course, session, userRole }: CourseCardProps) {
   return (
     <Card>
       <CardContent className="flex flex-col h-full">
@@ -49,8 +51,12 @@ export function CourseCard({ course, session }: CourseCardProps) {
             <CardFooter className="justify-between m-0 p-0 pt-4 px-6">
               <Button>Ver detalhes</Button>
               <div>
-                <UpdateCourseModalForm data={course} session={session} />
-                <DeleteCourseModal data={course} session={session} />
+                {userRole === Role.COORDINATOR && (
+                  <>
+                    <UpdateCourseModalForm data={course} session={session} />
+                    <DeleteCourseModal data={course} session={session} />
+                  </>
+                )}
               </div>
             </CardFooter>
           </div>

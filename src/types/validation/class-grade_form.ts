@@ -10,7 +10,7 @@ const classgradeDisciplineArray = z
   .array(classgradeDisciplineSchema)
   .min(
     1,
-    "Necessário a seleção de no mínimo uma disciplina para a criação de turma",
+    "Necessário a seleção de no mínimo uma disciplina para a criação de turma"
   );
 
 export const classgradeSchema = z.object({
@@ -29,7 +29,7 @@ export const classgradeSchema = z.object({
       {
         message: "End date must be after or the same as start date",
         path: ["to"],
-      },
+      }
     ),
   course_id: z.string({ message: "Selecione um curso válido" }).uuid(),
   semester: z.number({ message: "Insira um semestre válido" }),

@@ -40,6 +40,7 @@ import {
   DropdownMenuItem,
 } from "./ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Role } from "@/types/user";
 
 type Navbar = {
   label: string;
@@ -59,7 +60,7 @@ export function AppSidebar() {
   const path = usePathname();
   const router = useRouter();
   const isMobile = useIsMobile();
-  const isCoordinator = user?.role === "COORDINATOR";
+  const isCoordinator = user?.role === Role.COORDINATOR;
 
   // Excluded paths where sidebar shouldn't render
   const excludedPaths = ["/professor/select-area", "/auth/login"];
@@ -67,7 +68,7 @@ export function AppSidebar() {
   // Check if current path should exclude sidebar
   if (excludedPaths.includes(path)) return null;
 
-  const primaryNavItems = [
+  const primaryNavItems: primaryNavItemsProps[] = [
     {
       icon: <Home size={20} />,
       label: "Dashboard",
@@ -78,23 +79,13 @@ export function AppSidebar() {
       label: "Cursos",
       path: "/course",
     },
-    {
-      icon: <Users size={20} />,
-      label: "Turmas",
-      path: "/classgrade/list",
-      nested: [
-        {
-          icon: <List size={16} />,
-          label: "Todas as turmas",
-          path: "/classgrade/list",
-        },
-        {
-          icon: <PlusCircle size={16} />,
-          label: "Criar Turma",
-          path: "/classgrade/create",
-        },
-      ],
-    },
+    isCoordinator
+      ? {
+          icon: <Users size={20} />,
+          label: "Turmas",
+          path: "/classgrade",
+        }
+      : null,
     {
       icon: <Settings size={20} />,
       label: "Modalidades",
@@ -122,14 +113,16 @@ export function AppSidebar() {
         },
       ],
     },
-    {
-      icon: <Map size={20} />,
-      label: "Eixo",
-      path: "/coordinator/list-areas",
-    },
-  ];
+    isCoordinator
+      ? {
+          icon: <Map size={20} />,
+          label: "Eixo",
+          path: "/coordinator/list-areas",
+        }
+      : null,
+  ].filter((item) => item !== null);
 
-  const secondaryNavItems = [
+  const secondaryNavItems: primaryNavItemsProps[] = [
     { icon: <Settings size={20} />, label: "Configurações", path: "/settings" },
     { icon: <HelpCircle size={20} />, label: "Ajuda", path: "/help" },
   ];
