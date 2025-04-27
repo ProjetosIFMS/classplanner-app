@@ -12,13 +12,29 @@ type Routes = {
 };
 
 const protectedRoutes: Routes[] = [
-  { path: "/course/create", exact: true, roles: ["ADMIN"] },
-  { path: "/classgrade/create", exact: true, roles: ["ADMIN", "COORDINATOR"] },
-  { path: "/ppc/create", exact: true, roles: ["ADMIN", "COORDINATOR"] },
-  { path: "/professor", exact: false, roles: ["PROFESSOR"] },
-  { path: "/coordinator", exact: false, roles: ["COORDINATOR", "ADMIN"] },
-  { path: "/modality/create", exact: true, roles: ["COORDINATOR", "ADMIN"] },
-  { path: "/discipline/create", exact: true, roles: ["COORDINATOR"] },
+  { path: "/course/create", exact: true, roles: [Role["ADMIN"]] },
+  {
+    path: "/classgrade/create",
+    exact: true,
+    roles: [Role["ADMIN"], Role["COORDINATOR"]],
+  },
+  {
+    path: "/ppc/create",
+    exact: true,
+    roles: [Role["ADMIN"], Role["COORDINATOR"]],
+  },
+  { path: "/professor", exact: false, roles: [Role["PROFESSOR"]] },
+  {
+    path: "/coordinator",
+    exact: false,
+    roles: [Role["ADMIN"], Role["COORDINATOR"]],
+  },
+  {
+    path: "/modality/create",
+    exact: true,
+    roles: [Role["ADMIN"], Role["COORDINATOR"]],
+  },
+  { path: "/discipline/create", exact: true, roles: [Role["COORDINATOR"]] },
 ];
 
 export async function middleware(request: NextRequest) {
@@ -32,14 +48,13 @@ export async function middleware(request: NextRequest) {
     try {
       const access_token = request.nextUrl.searchParams.get("access_token");
 
-      const { role } = (await verifyAuth(access_token)) as { role: string };
-
       if (!access_token) {
         throw new Error("Access token not found");
       }
+      const { role } = (await verifyAuth(access_token)) as { role: string };
 
       const response = NextResponse.redirect(
-        new URL(`/${role.toLowerCase()}/dashboard`, request.url)
+        new URL(`/${role.toLowerCase()}/dashboard`, request.url),
       );
 
       setSession(response, access_token);
@@ -47,11 +62,11 @@ export async function middleware(request: NextRequest) {
       return response;
     } catch (error) {
       const response = NextResponse.redirect(
-        new URL("/auth/login", request.url)
+        new URL("/auth/login", request.url),
       );
       response.headers.set(
         "X-Error-Message",
-        encodeURIComponent(String(error))
+        encodeURIComponent(String(error)),
       );
       return response;
     }
@@ -72,7 +87,7 @@ export async function middleware(request: NextRequest) {
   }
 
   const routeConfig = protectedRoutes.find((route) =>
-    route.exact ? route.path === pathname : pathname.startsWith(route.path)
+    route.exact ? route.path === pathname : pathname.startsWith(route.path),
   );
 
   if (routeConfig && (!user.role || !routeConfig.roles.includes(user.role))) {

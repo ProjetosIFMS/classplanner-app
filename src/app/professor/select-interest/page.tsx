@@ -98,7 +98,9 @@ export default function SelectInterest() {
                                 if (checked) {
                                   setWorkload(
                                     (prev) =>
-                                      prev + discipline.theoreticalHours,
+                                      prev +
+                                      discipline.theoreticalHours +
+                                      discipline.practicalHours,
                                   );
                                   field.onChange([
                                     ...field.value,
@@ -107,7 +109,9 @@ export default function SelectInterest() {
                                 } else {
                                   setWorkload(
                                     (prev) =>
-                                      prev - discipline.theoreticalHours,
+                                      prev -
+                                      discipline.theoreticalHours +
+                                      discipline.practicalHours,
                                   );
                                   field.onChange(
                                     field.value?.filter(
