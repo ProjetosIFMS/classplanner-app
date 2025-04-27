@@ -16,6 +16,17 @@ export function useGetAllCourses(session: Session) {
   });
 }
 
+export function useGetCourseById(session: Session, course_id: string) {
+  return useQuery({
+    queryKey: ["GET", "course", course_id],
+    queryFn: async () => {
+      const courses = await getCourses(session);
+      return courses.find((course) => course.id === course_id) || null;
+    },
+    enabled: !!session,
+  });
+}
+
 export function usePostCourse(session: Session) {
   const queryClient = useQueryClient();
 
