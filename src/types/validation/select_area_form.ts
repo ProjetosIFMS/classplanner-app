@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const selectAreaSchema = z.object({
-  area: z
+  area_id: z
     .string({ message: "Selecione uma área" })
     .uuid({ message: "Formato inválido" }),
 });

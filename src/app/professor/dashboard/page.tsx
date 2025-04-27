@@ -1,9 +1,11 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
+
+import { Button } from "@/app/_components/ui/button";
 
 import { Discipline } from "@/types/discipline";
-import { DisciplinesPanel } from "./disciplines-panel";
 import { Panel } from "./panel";
 import { useAuth } from "@/app/_components/auth/AuthContext";
 import { useGetMyAuditLogs } from "@/hooks/react-query/audit-logs";
@@ -11,21 +13,36 @@ import { formatAuditLogMessage } from "@/lib/auditLogMessage";
 import { useGetMyInterestsSelection } from "@/hooks/react-query/interests-selection";
 import { useGetAllCourses } from "@/hooks/react-query/courses";
 import { useGetAllDisciplines } from "@/hooks/react-query/disciplines";
-import ClipLoader from "react-spinners/ClipLoader";
+import { SelectAreaModalForm } from "@/app/professor/components/select-area-modal-form";
+import { CoursesPanel } from "@/app/professor/dashboard/components/courses-panel";
+import { SelectDayoffModalForm } from "@/app/professor/components/select-dayoff-modal-form";
+import { useGetMyDayoff } from "@/hooks/react-query/dayoff";
 
 export default function ProfessorDashboard() {
-  const { session } = useAuth();
+  const [isSelectAreaModalOpen, setIsSelectAreaModalOpen] =
+    React.useState<boolean>(false);
+  const [isSelectDayoffModalOpen, setIsSelectDayoffModalOpen] =
+    React.useState<boolean>(false);
+
+  const { user, session } = useAuth();
   const getMyAuditLogs = useGetMyAuditLogs(session);
   const getMyInterestsSelection = useGetMyInterestsSelection(session);
   const getAllCourses = useGetAllCourses(session);
   const getAllDisciplines = useGetAllDisciplines(session);
+  const getMyDayoff = useGetMyDayoff(session);
 
   const [disciplinesPanelInfo, setDisciplinesPanelInfo] = React.useState<
     {
-      course: string;
+      course_name: string;
       disciplines: Discipline[];
     }[]
   >([]);
+
+  React.useEffect(() => {
+    if (user?.area_id === null) {
+      setIsSelectAreaModalOpen(true);
+    }
+  }, [user]);
 
   React.useEffect(() => {
     if (
@@ -58,7 +75,7 @@ export default function ProfessorDashboard() {
             );
 
             return {
-              course: course.name
+              course_name: course.name
                 .split(" ")
                 .map((word) => word[0])
                 .filter((letter) => letter === letter.toUpperCase())
@@ -102,7 +119,16 @@ export default function ProfessorDashboard() {
     <section>
       <div className="flex flex-col items-center justify-center ">
         <div>
-          <h1 className="text-lg font-extrabold py-6">Dashboard</h1>
+          <div className="flex justify-between items-center">
+            <h1 className="text-lg font-extrabold py-6">Dashboard</h1>
+            <div>
+              <SelectAreaModalForm
+                session={session}
+                isOpen={isSelectAreaModalOpen}
+                setIsOpen={setIsSelectAreaModalOpen}
+              />
+            </div>
+          </div>
           <div className="flex flex-row justify-around gap-12">
             <Panel name="Avisos" messages={notifications} />
             <Panel
@@ -115,26 +141,33 @@ export default function ProfessorDashboard() {
               loading={getMyAuditLogs.isLoading}
             />
           </div>
-          <h2 className="text-lg font-extrabold py-6 self-start">
-            Suas Disciplinas
-          </h2>
-          <div className="flex flex-row justify-between gap-16 mb-24 mx-8">
-            {getMyInterestsSelection.isLoading ||
-            getAllCourses.isLoading ||
-            getAllDisciplines.isLoading ? (
-              <div className="flex justify-center items-center w-full">
-                <ClipLoader />
-              </div>
-            ) : (
-              disciplinesPanelInfo.map((disciplinePanel, index) => (
-                <DisciplinesPanel
-                  key={index}
-                  course={disciplinePanel.course}
-                  disciplines={disciplinePanel.disciplines}
-                />
-              ))
-            )}
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-extrabold py-6 self-start">
+              Suas Disciplinas
+            </h2>
+            <div className="flex justify-center items-center space-x-2">
+              <SelectDayoffModalForm
+                session={session}
+                isOpen={isSelectDayoffModalOpen}
+                setIsOpen={setIsSelectDayoffModalOpen}
+                isLoading={getMyDayoff.isLoading}
+                isUpdate={getMyDayoff.data !== undefined}
+                data={getMyDayoff.data ?? undefined}
+              />
+
+              <Link href={"/professor/select-interest"}>
+                <Button>Ir para seleção de interesses</Button>
+              </Link>
+            </div>
           </div>
+          <CoursesPanel
+            courses={disciplinesPanelInfo}
+            isLoading={
+              getMyInterestsSelection.isLoading ||
+              getAllCourses.isLoading ||
+              getAllDisciplines.isLoading
+            }
+          />
         </div>
       </div>
     </section>

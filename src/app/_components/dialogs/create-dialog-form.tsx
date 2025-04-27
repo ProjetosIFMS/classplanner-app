@@ -51,6 +51,7 @@ export function CreateDialogForm<TFormValues extends FieldValues>({
 
             <DialogFooter>
               <Button
+                type="button"
                 disabled={isLoading}
                 onClick={() => setIsOpen(false)}
                 variant={"outline"}
