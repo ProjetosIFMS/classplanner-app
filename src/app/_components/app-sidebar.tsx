@@ -40,6 +40,7 @@ import {
   DropdownMenuItem,
 } from "./ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Role } from "@/types/user";
 
 type Navbar = {
   label: string;
@@ -59,7 +60,7 @@ export function AppSidebar() {
   const path = usePathname();
   const router = useRouter();
   const isMobile = useIsMobile();
-  const isCoordinator = user?.role === "COORDINATOR";
+  const isCoordinator = user?.role === Role.COORDINATOR;
 
   // Excluded paths where sidebar shouldn't render
   const excludedPaths = ["/professor/select-area", "/auth/login"];
@@ -78,7 +79,7 @@ export function AppSidebar() {
       label: "Cursos",
       path: "/course",
     },
-    user?.role === "COORDINATOR"
+    isCoordinator
       ? {
           icon: <Users size={20} />,
           label: "Turmas",
@@ -112,7 +113,7 @@ export function AppSidebar() {
         },
       ],
     },
-    user?.role === "COORDINATOR"
+    isCoordinator
       ? {
           icon: <Map size={20} />,
           label: "Eixo",
