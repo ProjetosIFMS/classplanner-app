@@ -81,19 +81,7 @@ export function AppSidebar() {
     {
       icon: <Users size={20} />,
       label: "Turmas",
-      path: "/classgrade/list",
-      nested: [
-        {
-          icon: <List size={16} />,
-          label: "Todas as turmas",
-          path: "/classgrade/list",
-        },
-        {
-          icon: <PlusCircle size={16} />,
-          label: "Criar Turma",
-          path: "/classgrade/create",
-        },
-      ],
+      path: "/classgrade",
     },
     {
       icon: <Settings size={20} />,
