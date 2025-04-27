@@ -89,3 +89,9 @@ export const getEnglishWeekday = (
   if (!portugueseDay) return undefined;
   return WEEKDAY[portugueseDay];
 };
+
+export function getPortugueseWeekday(englishDay: WEEKDAY): string | undefined {
+  const entries = Object.entries(WEEKDAY);
+  const found = entries.find(([, value]) => value === englishDay);
+  return found ? found[0] : undefined;
+}

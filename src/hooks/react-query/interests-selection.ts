@@ -21,7 +21,9 @@ export function usePostInterestsSelection(session: Session) {
     mutationFn: (data: z.infer<typeof professorInterestsSelectionSchema>) =>
       createInterestsSelection(data, session),
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["interest-selection"] });
+      queryClient.invalidateQueries({
+        queryKey: ["GET", "interest-selection"],
+      });
     },
   });
 }
