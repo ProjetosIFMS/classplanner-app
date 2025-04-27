@@ -1,5 +1,4 @@
 import React from "react";
-
 import {
   Dialog,
   DialogTrigger,
@@ -9,14 +8,8 @@ import {
   DialogClose,
 } from "@/app/_components/ui/dialog";
 import { Button } from "@/app/_components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardTitle,
-  CardHeader,
-} from "@/app/_components/ui/card";
-
 import { Classgrade } from "@/types/classgrade";
+import { Eye } from "lucide-react"; // Add this import
 
 interface ClassgradeDetailsModalProps {
   classgrade: Classgrade;
@@ -27,41 +20,53 @@ export function ClassgradeDetailsModal({
 }: ClassgradeDetailsModalProps) {
   return (
     <Dialog>
-      <DialogTrigger asChild onClick={() => console.log(classgrade)}>
-        <Button>Ver detalhes</Button>
+      <DialogTrigger asChild>
+        <Button
+          size="sm"
+          className="text-white hover:text-gray-900 hover:bg-gray-100"
+        >
+          <Eye className="h-4 w-4 mr-2" />
+          Detalhes
+        </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Disciplinas</DialogTitle>
+          <DialogTitle className="text-xl font-medium tracking-tight">
+            Disciplinas da Turma
+          </DialogTitle>
+          <p className="text-sm text-gray-500 mt-1">
+            Semestre {classgrade.semester} • {classgrade.year}
+          </p>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {classgrade.ClassGradeDiscipline?.length > 0 ? (
-            classgrade.ClassGradeDiscipline?.map((classGradeDiscipline) => {
-              return (
-                <Card key={classGradeDiscipline.Discipline.id} className="">
-                  <CardContent>
-                    <CardHeader className="">
-                      <CardTitle>
-                        {classGradeDiscipline.Discipline.name}
-                      </CardTitle>
-                    </CardHeader>
-                    <p title="Carga horária">
-                      C.H.: {classGradeDiscipline.Discipline.theoreticalHours}
-                    </p>
-                  </CardContent>
-                </Card>
-              );
-            })
-          ) : (
-            <p className="col-span-1 sm:col-span-2 lg:col-span-3 text-center">
-              Não há disciplinas para esta turma.
-            </p>
-          )}
-        </div>
+        {classgrade.ClassGradeDiscipline?.length > 0 ? (
+          <div className="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-2">
+            {classgrade.ClassGradeDiscipline.map((classGradeDiscipline) => (
+              <div
+                key={classGradeDiscipline.Discipline.id}
+                className="p-3 border border-gray-100 rounded-md hover:border-gray-200 transition-colors"
+              >
+                <h3 className="font-medium text-gray-800 mb-1">
+                  {classGradeDiscipline.Discipline.name}
+                </h3>
+                <div className="flex gap-4 text-sm text-gray-600">
+                  <span>
+                    {classGradeDiscipline.Discipline.theoreticalHours}h
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="py-12 flex items-center justify-center text-gray-400">
+            Não há disciplinas para esta turma.
+          </div>
+        )}
 
         <DialogClose asChild>
-          <Button>Fechar</Button>
+          <Button variant="outline" size="sm" className="mt-4 ml-auto">
+            Fechar
+          </Button>
         </DialogClose>
       </DialogContent>
     </Dialog>
