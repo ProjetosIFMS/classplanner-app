@@ -305,6 +305,7 @@ const DisciplineForm = ({
                           onValueChange={field.onChange}
                           value={field.value}
                           required
+                          disabled={form.getValues("course_id") === ""}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione um projeto" />
