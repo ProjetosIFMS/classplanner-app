@@ -2,6 +2,7 @@
 import { Button } from "./button";
 import {
   FieldValues,
+  SubmitErrorHandler,
   SubmitHandler,
   useForm,
   UseFormProps,
@@ -27,6 +28,7 @@ type FormCardProps<TFormValues extends FieldValues> = {
   schema: z.ZodType<TFormValues>;
   defaultValues: UseFormProps<TFormValues>["defaultValues"];
   onSubmit: SubmitHandler<TFormValues>;
+  onError?: SubmitErrorHandler<TFormValues>;
   children: (form: UseFormReturn<TFormValues>) => ReactNode;
   width: "sm" | "md" | "lg" | "xl" | "2xl";
   isUpdate?: boolean;
@@ -37,6 +39,7 @@ type FormCardProps<TFormValues extends FieldValues> = {
 
 export const FormCard = <TFormValues extends FieldValues>({
   onSubmit,
+  onError,
   title,
   description,
   children,
@@ -62,6 +65,14 @@ export const FormCard = <TFormValues extends FieldValues>({
     }
   };
 
+  const handleError: SubmitErrorHandler<TFormValues> = (data) => {
+    try {
+      onError?.(data);
+    } catch (err) {
+      throw err;
+    }
+  };
+
   return (
     <Card className={`w-full max-w-${width} mx-auto shadow-sm`}>
       <CardHeader className="border-b pb-2 pt-4 px-4">
@@ -72,7 +83,10 @@ export const FormCard = <TFormValues extends FieldValues>({
         <CardDescription className="text-xs">{description}</CardDescription>
       </CardHeader>
       <FormProvider {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="mt-5">
+        <form
+          onSubmit={form.handleSubmit(handleSubmit, handleError)}
+          className="mt-5"
+        >
           <CardContent>{children(form)}</CardContent>
           <CardFooter className="justify-between">
             {footerExtras}
