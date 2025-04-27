@@ -11,10 +11,7 @@ import { useGetAllDisciplines } from "@/hooks/react-query/disciplines";
 import { useGetAllUsers } from "@/hooks/react-query/user";
 import { useGetAllCourses } from "@/hooks/react-query/courses";
 import { DataTable } from "@/app/_components/ui/data-table";
-import {
-  createColumns,
-  type ProfessorAndDiscipline,
-} from "@/app/coordinator/dashboard/columns";
+import { createColumns } from "@/app/coordinator/dashboard/columns";
 
 const mockedNotifications = [
   {
