@@ -81,10 +81,9 @@ export function CreateDisciplineModalForm({
   }, [getModalities.data, form]);
 
   function onSubmit(formData: DisciplineValues) {
+    setIsOpen(false);
     postDiscipline.mutate(formData, {
-      onSuccess: () => {
-        setIsOpen(false);
-      },
+      onSuccess: () => {},
     });
   }
 
