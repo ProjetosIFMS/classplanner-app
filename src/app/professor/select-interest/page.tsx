@@ -51,7 +51,7 @@ export default function SelectInterest() {
           }
           return interestSelection.discipline_id;
         })
-        .filter((id): id is string => id !== null) || [],
+        .filter((id): id is string => id !== null) || []
     );
   }, [getMyInterestsSelection.data, form]);
 
@@ -85,6 +85,7 @@ export default function SelectInterest() {
                   pedagogicalProjects={pedagogicalProjects ?? []}
                   disciplines={disciplines.data ?? []}
                   workload={workload}
+                  showSubmitButton
                   renderDisciplineForm={(discipline) => (
                     <FormField
                       control={form.control}
@@ -100,7 +101,7 @@ export default function SelectInterest() {
                                     (prev) =>
                                       prev +
                                       discipline.theoreticalHours +
-                                      discipline.practicalHours,
+                                      discipline.practicalHours
                                   );
                                   field.onChange([
                                     ...field.value,
@@ -111,12 +112,12 @@ export default function SelectInterest() {
                                     (prev) =>
                                       prev -
                                       discipline.theoreticalHours +
-                                      discipline.practicalHours,
+                                      discipline.practicalHours
                                   );
                                   field.onChange(
                                     field.value?.filter(
-                                      (id) => id !== discipline.id,
-                                    ),
+                                      (id) => id !== discipline.id
+                                    )
                                   );
                                 }
                               }}
