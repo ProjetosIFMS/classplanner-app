@@ -21,10 +21,7 @@ export function ClassgradeDetailsModal({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          size="sm"
-          className="text-white hover:text-gray-900 hover:bg-gray-100"
-        >
+        <Button size="sm" className="text-white">
           <Eye className="h-4 w-4 mr-2" />
           Detalhes
         </Button>

@@ -1,8 +1,11 @@
 import React from "react";
+import { GraduationCap, BookOpen } from "lucide-react";
+
 import { Card, CardContent } from "@/app/_components/ui/card";
+import { Button } from "@/app/_components/ui/button";
+
 import { Classgrade } from "@/types/classgrade";
 import { ClassgradeDetailsModal } from "@/app/classgrade/(list)/components/classgrade-details-modal";
-import { GraduationCap, BookOpen } from "lucide-react";
 
 interface ClassgradeCardProps {
   classgrade: Classgrade;
@@ -19,7 +22,7 @@ export function ClassgradeCard({
   const courseAcronym = courseName
     ?.split(" ")
     .map((word) =>
-      word[0] && word[0] === word[0].toUpperCase() ? word[0] : "",
+      word[0] && word[0] === word[0].toUpperCase() ? word[0] : ""
     )
     .join("");
 
@@ -52,7 +55,6 @@ export function ClassgradeCard({
           </div>
         </div>
 
-        {/* Footer with action button */}
         <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex justify-end">
           <ClassgradeDetailsModal classgrade={classgrade} />
         </div>
