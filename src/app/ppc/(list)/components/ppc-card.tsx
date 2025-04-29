@@ -17,6 +17,8 @@ import { MdDescription, MdAccessTime } from "react-icons/md";
 import { UpdatePPCmodalForm } from "@/app/ppc/(list)/components/update-ppc-modal-form";
 import { DeletePPCmodal } from "@/app/ppc/(list)/components/delete-ppc-modal";
 import { Session } from "@/types/session";
+import { useAuth } from "@/app/_components/auth/AuthContext";
+import { Role } from "@/types/user";
 
 interface PPCcardProps {
   ppc: PPC;
@@ -27,6 +29,7 @@ interface PPCcardProps {
 
 export const PPCCard = memo(
   ({ ppc, index, session, isLoading = false }: PPCcardProps) => {
+    const { user } = useAuth();
     return (
       <Card key={ppc.id} className="overflow-hidden">
         <Accordion type="single" collapsible defaultValue={`item-${index}`}>
@@ -48,7 +51,7 @@ export const PPCCard = memo(
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-4">
               {isLoading || !isUUID(ppc.id) ? (
-                <div className="flex justify-center items-center pt-12">
+                <div className="flex justify-center items-center">
                   <ClipLoader size={64} />
                 </div>
               ) : (
@@ -73,8 +76,12 @@ export const PPCCard = memo(
                     </a>
 
                     <div>
-                      <UpdatePPCmodalForm data={ppc} session={session} />
-                      <DeletePPCmodal data={ppc} session={session} />
+                      {user?.role !== Role.PROFESSOR && (
+                        <>
+                          <UpdatePPCmodalForm data={ppc} session={session} />
+                          <DeletePPCmodal data={ppc} session={session} />
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>

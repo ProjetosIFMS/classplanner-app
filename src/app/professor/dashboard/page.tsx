@@ -8,7 +8,7 @@ import { Button } from "@/app/_components/ui/button";
 import { Discipline } from "@/types/discipline";
 import { Panel } from "./panel";
 import { useAuth } from "@/app/_components/auth/AuthContext";
-import { useGetMyAuditLogs } from "@/hooks/react-query/audit-logs";
+import { useGetMyAuditLogsInfinite } from "@/hooks/react-query/audit-logs";
 import { formatAuditLogMessage } from "@/lib/auditLogMessage";
 import { useGetMyInterestsSelection } from "@/hooks/react-query/interests-selection";
 import { useGetAllCourses } from "@/hooks/react-query/courses";
@@ -25,7 +25,7 @@ export default function ProfessorDashboard() {
     React.useState<boolean>(false);
 
   const { user, session } = useAuth();
-  const getMyAuditLogs = useGetMyAuditLogs(session);
+  const getMyAuditLogsInfinite = useGetMyAuditLogsInfinite(session);
   const getMyInterestsSelection = useGetMyInterestsSelection(session);
   const getAllCourses = useGetAllCourses(session);
   const getAllDisciplines = useGetAllDisciplines(session);
@@ -115,59 +115,49 @@ export default function ProfessorDashboard() {
     },
   ];
 
+  function next() {
+    getMyAuditLogsInfinite.fetchNextPage();
+  }
+
   return (
     <section>
-      <div className="flex flex-col items-center justify-center ">
+      <div className="flex flex-col items-center">
         <div>
-          <div className="flex justify-between items-center">
-            <h1 className="text-lg font-extrabold py-6">Dashboard</h1>
-            <div>
-              <SelectAreaModalForm
-                session={session}
-                isOpen={isSelectAreaModalOpen}
-                setIsOpen={setIsSelectAreaModalOpen}
-              />
-            </div>
-          </div>
-          <div className="flex flex-row justify-around gap-12">
-            <Panel name="Avisos" messages={notifications} />
+          <h1 className="text-lg font-extrabold py-6">Dashboard</h1>
+          <div className="justify-between gap-12 grid grid-cols-2">
+            <Panel
+              name="Avisos"
+              panelDescription={`Você tem ${notifications.length} avisos`}
+              messages={notifications}
+            />
             <Panel
               name="Histórico"
               messages={
-                getMyAuditLogs.data
-                  ? getMyAuditLogs.data.map((log) => formatAuditLogMessage(log))
+                getMyAuditLogsInfinite.data
+                  ? getMyAuditLogsInfinite.data?.pages.flatMap((page) => {
+                      return page.data.map(formatAuditLogMessage);
+                    })
                   : []
               }
-              loading={getMyAuditLogs.isLoading}
+              loading={getMyAuditLogsInfinite.isLoading}
+              hasMore={getMyAuditLogsInfinite.hasNextPage}
+              next={next}
+              panelDescription={`Você tem ${getMyAuditLogsInfinite.data?.pages[0].total} notificações`}
             />
           </div>
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-extrabold py-6 self-start">
-              Suas Disciplinas
-            </h2>
-            <div className="flex justify-center items-center space-x-2">
-              <SelectDayoffModalForm
-                session={session}
-                isOpen={isSelectDayoffModalOpen}
-                setIsOpen={setIsSelectDayoffModalOpen}
-                isLoading={getMyDayoff.isLoading}
-                isUpdate={getMyDayoff.data !== undefined}
-                data={getMyDayoff.data ?? undefined}
+          <div>
+            <h1 className="text-lg font-extrabold py-6">Suas disciplinas</h1>
+            <div className="flex flex-col items-center justify-center bg-white dark:bg-gray-950 rounded-lg shadow w-full">
+              <CoursesPanel
+                courses={disciplinesPanelInfo}
+                isLoading={
+                  getMyInterestsSelection.isLoading ||
+                  getAllCourses.isLoading ||
+                  getAllDisciplines.isLoading
+                }
               />
-
-              <Link href={"/professor/select-interest"}>
-                <Button>Ir para seleção de interesses</Button>
-              </Link>
             </div>
           </div>
-          <CoursesPanel
-            courses={disciplinesPanelInfo}
-            isLoading={
-              getMyInterestsSelection.isLoading ||
-              getAllCourses.isLoading ||
-              getAllDisciplines.isLoading
-            }
-          />
         </div>
       </div>
     </section>

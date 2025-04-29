@@ -4,7 +4,7 @@ import React from "react";
 
 import { Panel } from "@/app/professor/dashboard/panel";
 import { formatAuditLogMessage } from "@/lib/auditLogMessage";
-import { useGetMyAuditLogs } from "@/hooks/react-query/audit-logs";
+import { useGetMyAuditLogsInfinite } from "@/hooks/react-query/audit-logs";
 import { useAuth } from "@/app/_components/auth/AuthContext";
 import { useGetAllInterestsSelection } from "@/hooks/react-query/interests-selection";
 import { useGetAllDisciplines } from "@/hooks/react-query/disciplines";
@@ -47,7 +47,7 @@ export default function CoordinatorDashboard() {
   const columns = createColumns();
 
   const { session } = useAuth();
-  const getMyAuditLogs = useGetMyAuditLogs(session);
+  const getMyAuditLogsInfinite = useGetMyAuditLogsInfinite(session);
   const getInterestsSelection = useGetAllInterestsSelection(session);
   const getAllDisciplines = useGetAllDisciplines(session);
   const getAllUsers = useGetAllUsers(session);
@@ -97,12 +97,16 @@ export default function CoordinatorDashboard() {
     getAllCourses.data,
   ]);
 
+  function next() {
+    getMyAuditLogsInfinite.fetchNextPage();
+  }
+
   return (
     <section>
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center">
         <div>
           <h1 className="text-lg font-extrabold py-6">Dashboard</h1>
-          <div className="flex flex-row justify-around gap-12">
+          <div className="justify-between gap-12 grid grid-cols-2">
             <Panel
               name="Avisos"
               panelDescription={`Você tem ${notifications.length} avisos`}
@@ -111,11 +115,16 @@ export default function CoordinatorDashboard() {
             <Panel
               name="Histórico"
               messages={
-                getMyAuditLogs.data
-                  ? getMyAuditLogs.data.map((log) => formatAuditLogMessage(log))
+                getMyAuditLogsInfinite.data
+                  ? getMyAuditLogsInfinite.data?.pages.flatMap((page) => {
+                      return page.data.map(formatAuditLogMessage);
+                    })
                   : []
               }
-              loading={getMyAuditLogs.isLoading}
+              loading={getMyAuditLogsInfinite.isLoading}
+              hasMore={getMyAuditLogsInfinite.hasNextPage}
+              next={next}
+              panelDescription={`Você tem ${getMyAuditLogsInfinite.data?.pages[0].total} notificações`}
             />
           </div>
           <div>

@@ -70,8 +70,10 @@ export function usePatchArea(session: Session) {
 
       const previousAreas = queryClient.getQueryData<Area[]>(["areas"]) || [];
 
+      const tempId = `temp-${Date.now()}`;
+
       const updatedAreas = previousAreas.map((area) =>
-        area.id === area_id ? { ...area, ...formData } : area
+        area.id === area_id ? { ...area, ...formData, id: tempId } : area
       );
 
       queryClient.setQueryData<Area[]>(["areas"], updatedAreas);

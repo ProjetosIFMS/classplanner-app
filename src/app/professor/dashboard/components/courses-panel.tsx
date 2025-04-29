@@ -24,7 +24,7 @@ export function CoursesPanel({
   isLoading = false,
 }: CoursesPanelProps) {
   return (
-    <Card>
+    <Card className="border-none shadow-none">
       <CardContent>
         <CardHeader></CardHeader>
 
