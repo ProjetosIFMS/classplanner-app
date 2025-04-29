@@ -2,7 +2,6 @@
 
 import React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
 import { validate as isUUID } from "uuid";
 
 import { Button } from "@/app/_components/ui/button";
