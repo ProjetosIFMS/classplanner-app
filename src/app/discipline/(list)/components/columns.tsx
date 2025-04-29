@@ -116,7 +116,7 @@ export const createColumns = (
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="p-0 hover:bg-transparent"
           >
-            Carga Horária Total
+            CH Total
             <RenderSortingIcon column={column} />
           </Button>
         );
