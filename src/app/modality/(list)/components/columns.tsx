@@ -11,7 +11,7 @@ import { Modality } from "@/types/modality";
 import { UpdateModalityModalForm } from "@/app/modality/(list)/components/update-modality-modal-form";
 import { DeleteModalityModal } from "@/app/modality/(list)/components/delete-modality-modal";
 import ClipLoader from "react-spinners/ClipLoader";
-
+import { RenderSortingIcon } from "@/app/_components/table/render-sorting-icon";
 export const createColumns = (
   session: string | undefined
 ): ColumnDef<Modality>[] => {
@@ -26,7 +26,7 @@ export const createColumns = (
             className="p-0 hover:bg-transparent"
           >
             Nome
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <RenderSortingIcon column={column} />
           </Button>
         );
       },

@@ -3,6 +3,8 @@ import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 import { Button } from "@/app/_components/ui/button";
 
+import { RenderSortingIcon } from "@/app/_components/table/render-sorting-icon";
+
 export type ProfessorAndDiscipline = {
   professorName: string;
   disciplineName: string;
@@ -11,19 +13,6 @@ export type ProfessorAndDiscipline = {
 };
 
 export function createColumns(): ColumnDef<ProfessorAndDiscipline>[] {
-  function RenderSortingIcon({
-    column,
-  }: {
-    column: Column<ProfessorAndDiscipline, unknown>;
-  }) {
-    return (
-      {
-        asc: <ArrowUp />,
-        desc: <ArrowDown />,
-      }[column.getIsSorted() as string] ?? <ArrowUpDown />
-    );
-  }
-
   return [
     {
       accessorKey: "professorName",

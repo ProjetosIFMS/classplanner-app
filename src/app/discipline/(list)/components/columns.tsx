@@ -1,7 +1,6 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
 import React from "react";
 import { validate as isUUID } from "uuid";
 
@@ -11,6 +10,7 @@ import type { Discipline } from "@/types/discipline";
 import { UpdateDisciplineModalForm } from "@/app/discipline/(list)/components/update-discipline-modal-form";
 import { DeleteDisciplineModal } from "@/app/discipline/(list)/components/delete-discipline-modal";
 import ClipLoader from "react-spinners/ClipLoader";
+import { RenderSortingIcon } from "@/app/_components/table/render-sorting-icon";
 
 export const createColumns = (
   session: string | undefined
@@ -26,7 +26,7 @@ export const createColumns = (
             className="p-0 hover:bg-transparent"
           >
             COD.
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <RenderSortingIcon column={column} />
           </Button>
         );
       },
@@ -44,7 +44,7 @@ export const createColumns = (
             className="p-0 hover:bg-transparent"
           >
             Nome
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <RenderSortingIcon column={column} />
           </Button>
         );
       },
@@ -64,7 +64,7 @@ export const createColumns = (
             className="p-0 hover:bg-transparent"
           >
             Semestre
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <RenderSortingIcon column={column} />
           </Button>
         );
       },
@@ -84,9 +84,17 @@ export const createColumns = (
             className="p-0 hover:bg-transparent"
           >
             Carga Horária Total
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <RenderSortingIcon column={column} />
           </Button>
         );
+      },
+      accessorFn: (discipline) => {
+        const totalHours =
+          discipline?.practicalHours +
+          discipline?.theoreticalHours +
+          discipline?.extensionHours;
+
+        return totalHours;
       },
       cell: ({ row }) => {
         const discipline = row.original;
