@@ -99,19 +99,7 @@ export function AppSidebar() {
     {
       icon: <Folder size={20} />,
       label: "Projeto Pedagógico de Curso",
-      path: "/ppc/list",
-      nested: [
-        {
-          icon: <List size={16} />,
-          label: "Todos os PPCs",
-          path: "/ppc/list",
-        },
-        {
-          icon: <PlusCircle size={16} />,
-          label: "Criar PPC",
-          path: "/ppc/create",
-        },
-      ],
+      path: "/ppc",
     },
     isCoordinator
       ? {
