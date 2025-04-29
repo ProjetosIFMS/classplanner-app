@@ -40,6 +40,7 @@ export function CreateModalityModalForm({
   });
 
   function onSubmit(data: ModalityValues) {
+    setIsOpen(false);
     postModality.mutate(data, {
       onSuccess: () => {
         setIsOpen(false);
