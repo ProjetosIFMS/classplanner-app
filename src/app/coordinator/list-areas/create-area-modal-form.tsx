@@ -38,6 +38,9 @@ export function CreateAreaModalForm() {
     postArea.mutate(data, {
       onSuccess: () => {},
       onError: () => {},
+      onSettled: () => {
+        form.reset();
+      },
     });
   }
   return (
