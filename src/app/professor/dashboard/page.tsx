@@ -123,7 +123,16 @@ export default function ProfessorDashboard() {
     <section>
       <div className="flex flex-col items-center">
         <div>
-          <h1 className="text-lg font-extrabold py-6">Dashboard</h1>
+          <div className="flex justify-between items-center">
+            <h1 className="text-lg font-extrabold py-6">Dashboard</h1>
+            <div>
+              <SelectAreaModalForm
+                session={session}
+                isOpen={isSelectAreaModalOpen}
+                setIsOpen={setIsSelectAreaModalOpen}
+              />
+            </div>
+          </div>
           <div className="justify-between gap-12 grid grid-cols-2">
             <Panel
               name="Avisos"
@@ -146,7 +155,23 @@ export default function ProfessorDashboard() {
             />
           </div>
           <div>
-            <h1 className="text-lg font-extrabold py-6">Suas disciplinas</h1>
+            <div className="flex justify-between items-center">
+              <h1 className="text-lg font-extrabold py-6">Suas disciplinas</h1>
+              <div className="flex justify-center items-center space-x-4">
+                <SelectDayoffModalForm
+                  session={session}
+                  isOpen={isSelectDayoffModalOpen}
+                  setIsOpen={setIsSelectDayoffModalOpen}
+                  isLoading={getMyDayoff.isLoading}
+                  isUpdate={getMyDayoff.data !== undefined}
+                  data={getMyDayoff.data ?? undefined}
+                />
+
+                <Link href={"/professor/select-interest"}>
+                  <Button>Ir para seleção de interesses</Button>
+                </Link>
+              </div>
+            </div>
             <div className="flex flex-col items-center justify-center bg-white dark:bg-gray-950 rounded-lg shadow w-full">
               <CoursesPanel
                 courses={disciplinesPanelInfo}
