@@ -11,9 +11,13 @@ import { UpdateDisciplineModalForm } from "@/app/discipline/(list)/components/up
 import { DeleteDisciplineModal } from "@/app/discipline/(list)/components/delete-discipline-modal";
 import ClipLoader from "react-spinners/ClipLoader";
 import { RenderSortingIcon } from "@/app/_components/table/render-sorting-icon";
+import { useGetAllCourses } from "@/hooks/react-query/courses";
+import { Course } from "@/types/course";
+import { generateCourseAcronym } from "@/utils/generateCourseAcronym";
 
 export const createColumns = (
-  session: string | undefined
+  session: string | undefined,
+  courses: Course[]
 ): ColumnDef<Discipline>[] => {
   return [
     {
@@ -51,6 +55,29 @@ export const createColumns = (
       cell: ({ row }) => (
         <div className="max-w-[300px] truncate font-medium">
           {row.getValue("name")}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "course_id",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="p-0 hover:bg-transparent"
+          >
+            Nome
+            <RenderSortingIcon column={column} />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="max-w-[300px] truncate font-medium">
+          {generateCourseAcronym(
+            courses.find((course) => course.id == row.getValue("course_id"))
+              ?.name ?? ""
+          )}
         </div>
       ),
     },
