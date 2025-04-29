@@ -19,6 +19,7 @@ import { DeletePPCmodal } from "@/app/ppc/(list)/components/delete-ppc-modal";
 import { Session } from "@/types/session";
 import { useAuth } from "@/app/_components/auth/AuthContext";
 import { Role } from "@/types/user";
+import { generateCourseAcronym } from "@/utils/generateCourseAcronym";
 
 interface PPCcardProps {
   ppc: PPC;
@@ -31,6 +32,7 @@ interface PPCcardProps {
 export const PPCCard = memo(
   ({ ppc, index, session, courseName, isLoading = false }: PPCcardProps) => {
     const { user } = useAuth();
+    const courseAcronym = generateCourseAcronym(courseName ?? "");
     return (
       <Card key={ppc.id} className="overflow-hidden">
         <Accordion type="single" collapsible defaultValue={`item-${index}`}>
@@ -38,7 +40,7 @@ export const PPCCard = memo(
             <AccordionTrigger className="px-4 py-3 font-semibold hover:no-underline">
               <div className="flex justify-between items-center  gap-4">
                 <span>
-                  PPC {ppc.year} - {courseName}
+                  PPC {ppc.year} - {courseAcronym}
                 </span>
 
                 {ppc.status ? (

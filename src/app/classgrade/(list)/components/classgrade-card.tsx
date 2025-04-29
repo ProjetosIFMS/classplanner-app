@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/app/_components/ui/card";
 
 import { Classgrade } from "@/types/classgrade";
 import { ClassgradeDetailsModal } from "@/app/classgrade/(list)/components/classgrade-details-modal";
+import { generateCourseAcronym } from "@/utils/generateCourseAcronym";
 
 interface ClassgradeCardProps {
   classgrade: Classgrade;
@@ -18,12 +19,7 @@ export function ClassgradeCard({
   courseName,
 }: ClassgradeCardProps) {
   // Generate acronym from course name
-  const courseAcronym = courseName
-    ?.split(" ")
-    .map((word) =>
-      word[0] && word[0] === word[0].toUpperCase() ? word[0] : ""
-    )
-    .join("");
+  const courseAcronym = generateCourseAcronym(courseName ?? "");
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow duration-300">
