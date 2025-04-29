@@ -5,13 +5,6 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { Button } from "@/app/_components/ui/button";
 import { Card } from "@/app/_components/ui/card";
 import {
-  DialogHeader,
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-} from "@/app/_components/ui/dialog";
-import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
@@ -21,7 +14,6 @@ import {
 import { PPC } from "@/types/ppc";
 import { memo } from "react";
 import { MdDescription, MdAccessTime } from "react-icons/md";
-import { FrownIcon } from "lucide-react";
 import { UpdatePPCmodalForm } from "@/app/ppc/(list)/components/update-ppc-modal-form";
 import { DeletePPCmodal } from "@/app/ppc/(list)/components/delete-ppc-modal";
 import { Session } from "@/types/session";
@@ -40,7 +32,7 @@ export const PPCCard = memo(
         <Accordion type="single" collapsible defaultValue={`item-${index}`}>
           <AccordionItem value={`item-${index}`} className="border-b-0">
             <AccordionTrigger className="px-4 py-3 font-semibold hover:no-underline">
-              <div className="flex items-center gap-2">
+              <div className="flex justify-between items-center  gap-4">
                 <span>PPC {ppc.year}</span>
 
                 {ppc.status ? (
@@ -61,43 +53,6 @@ export const PPCCard = memo(
                 </div>
               ) : (
                 <div className="flex flex-col gap-4">
-                  <Dialog>
-                    <DialogTrigger asChild color="transparent">
-                      <Button
-                        variant="outline"
-                        className="flex items-center gap-2 w-fit"
-                      >
-                        <MdDescription className="text-primary" />
-                        Visualizar documento
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent
-                      className={`${ppc.documentUrl ? "sm:max-w-[1150px] sm:max-h-[1000px]" : "sm:max-w-[500px]"}`}
-                    >
-                      <DialogHeader>
-                        <DialogTitle>Visualização do documento</DialogTitle>
-                      </DialogHeader>
-                      {ppc.documentUrl ? (
-                        <iframe
-                          src={ppc.documentUrl}
-                          width="100%"
-                          height="900px"
-                          style={{ border: "none" }}
-                          className="rounded-lg"
-                        />
-                      ) : (
-                        <div className="flex flex-col gap-5 items-center justify-center h-full text-gray-500">
-                          <FrownIcon className="w-48 h-48"></FrownIcon>
-                          <p className="">
-                            Nenhum documento disponível para visualização. Por
-                            favor, faça o upload de um documento para
-                            visualizar.
-                          </p>
-                        </div>
-                      )}
-                    </DialogContent>
-                  </Dialog>
-
                   <div className="flex flex-col gap-4 mt-2">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MdAccessTime size={16} />
@@ -109,9 +64,18 @@ export const PPCCard = memo(
                     </div>
                   </div>
 
-                  <div className="flex justify-end gap-2 mt-2">
-                    <UpdatePPCmodalForm data={ppc} session={session} />
-                    <DeletePPCmodal data={ppc} session={session} />
+                  <div className="flex justify-end gap-2">
+                    <a target="_blank" href={ppc.documentUrl ?? "#"}>
+                      <Button className="flex items-center gap-2 w-fit">
+                        <MdDescription />
+                        Documento
+                      </Button>
+                    </a>
+
+                    <div>
+                      <UpdatePPCmodalForm data={ppc} session={session} />
+                      <DeletePPCmodal data={ppc} session={session} />
+                    </div>
                   </div>
                 </div>
               )}
