@@ -34,17 +34,17 @@ export default function ListPpc() {
           <Card className="w-full">
             <CardHeader />
             <CardContent className="grid gap-8 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {getPPCs.isLoading || getPPCs.isLoading ? (
+              {getPPCs.isLoading ? (
                 <div className="flex items-center justify-center col-span-full">
                   <ClipLoader size={64} />
                 </div>
-              ) : (
+              ) : getPPCs.data && getPPCs.data.length > 0 ? (
                 getPPCs.data?.map((ppc, index) => (
                   <PPCCard
                     key={ppc.id}
                     courseName={
                       getAllCourses.data?.find(
-                        (course) => course.id === ppc.course_id,
+                        (course) => course.id === ppc.course_id
                       )?.name
                     }
                     index={index}
@@ -52,6 +52,10 @@ export default function ListPpc() {
                     session={session}
                   />
                 ))
+              ) : (
+                <div className="flex items-center justify-center col-span-full">
+                  <p className="text-lg text-gray-500">Nenhum PPC encontrado</p>
+                </div>
               )}
             </CardContent>
             <CardFooter />
