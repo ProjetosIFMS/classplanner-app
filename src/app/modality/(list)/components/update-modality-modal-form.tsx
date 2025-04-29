@@ -41,6 +41,7 @@ export function UpdateModalityModalForm({
   });
 
   function onSubmit(formData: ModalityValues) {
+    setIsOpen(false);
     patchModality.mutate(
       { data: formData, modality_id: data.id },
       {
