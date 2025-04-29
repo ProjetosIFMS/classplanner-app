@@ -2,7 +2,6 @@ import React from "react";
 import { GraduationCap, BookOpen } from "lucide-react";
 
 import { Card, CardContent } from "@/app/_components/ui/card";
-import { Button } from "@/app/_components/ui/button";
 
 import { Classgrade } from "@/types/classgrade";
 import { ClassgradeDetailsModal } from "@/app/classgrade/(list)/components/classgrade-details-modal";

@@ -12,6 +12,7 @@ import { useGetAllUsers } from "@/hooks/react-query/user";
 import { useGetAllCourses } from "@/hooks/react-query/courses";
 import { DataTable } from "@/app/_components/ui/data-table";
 import { createColumns } from "@/app/coordinator/dashboard/columns";
+import { ProfessorAndDiscipline } from "@/app/coordinator/dashboard/columns";
 
 const mockedNotifications = [
   {
@@ -29,7 +30,7 @@ const mockedNotifications = [
   {
     title: "Existem conflitos em suas disciplinas",
     description: "1 hour ago",
-  }, 
+  },
   {
     title: "Existem conflitos em suas disciplinas",
     description: "1 hour ago",
@@ -37,6 +38,7 @@ const mockedNotifications = [
 ];
 
 export default function CoordinatorDashboard() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [notifications, setNotifications] = React.useState(() => [
     ...mockedNotifications,
   ]);

@@ -7,6 +7,7 @@ export const createClassgrade = async (
   session: Session
 ) => {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { period, ...data } = formData;
     const res = await api.post("/classgrade", data, {
       headers: {

@@ -54,7 +54,7 @@ export const RelocationUsersModal = ({
     getAreaById(session, areaId).then((data) => {
       setArea(data);
     });
-  }, [areaId]);
+  }, [areaId, session]);
 
   const handleRelocation = async () => {
     if (Object.values(selectedUsers).some((v) => !v)) return;

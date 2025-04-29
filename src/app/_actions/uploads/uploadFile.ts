@@ -10,7 +10,7 @@ type DocumentUrl = string;
 export const uploadFile = async (
   file: File,
   ppc_id: string,
-  session: Session,
+  session: Session
 ): Promise<DocumentUrl> => {
   try {
     const formData = new FormData();
@@ -24,6 +24,9 @@ export const uploadFile = async (
       },
     });
 
+    if (!res.data.documentUrl) {
+      throw new Error("Document URL is missing from the response");
+    }
     return res.data.documentUrl;
   } catch (err) {
     throw err;
