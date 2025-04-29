@@ -25,10 +25,11 @@ interface PPCcardProps {
   index: number;
   session: Session;
   isLoading?: boolean;
+  courseName?: string;
 }
 
 export const PPCCard = memo(
-  ({ ppc, index, session, isLoading = false }: PPCcardProps) => {
+  ({ ppc, index, session, courseName, isLoading = false }: PPCcardProps) => {
     const { user } = useAuth();
     return (
       <Card key={ppc.id} className="overflow-hidden">
@@ -36,7 +37,9 @@ export const PPCCard = memo(
           <AccordionItem value={`item-${index}`} className="border-b-0">
             <AccordionTrigger className="px-4 py-3 font-semibold hover:no-underline">
               <div className="flex justify-between items-center  gap-4">
-                <span>PPC {ppc.year}</span>
+                <span>
+                  PPC {ppc.year} - {courseName}
+                </span>
 
                 {ppc.status ? (
                   <p className="bg-green-50 text-green-700 border-green-200">
@@ -91,7 +94,7 @@ export const PPCCard = memo(
         </Accordion>
       </Card>
     );
-  }
+  },
 );
 
 PPCCard.displayName = "PPCCard";

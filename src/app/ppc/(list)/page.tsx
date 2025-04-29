@@ -12,11 +12,13 @@ import { useGetAllPPC } from "@/hooks/react-query/ppc";
 import { CreatePPCmodalForm } from "@/app/ppc/(list)/components/create-ppc-modal-form";
 import ClipLoader from "react-spinners/ClipLoader";
 import { PPCCard } from "@/app/ppc/(list)/components/ppc-card";
+import { useGetAllCourses } from "@/hooks/react-query/courses";
 
 export default function ListPpc() {
   const { session, user } = useAuth();
 
   const getPPCs = useGetAllPPC(session);
+  const getAllCourses = useGetAllCourses(session);
 
   return (
     <section className="min-h-screen flex flex-col">
@@ -40,6 +42,11 @@ export default function ListPpc() {
                 getPPCs.data?.map((ppc, index) => (
                   <PPCCard
                     key={ppc.id}
+                    courseName={
+                      getAllCourses.data?.find(
+                        (course) => course.id === ppc.course_id,
+                      )?.name
+                    }
                     index={index}
                     ppc={ppc}
                     session={session}
