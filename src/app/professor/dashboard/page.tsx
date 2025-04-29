@@ -151,7 +151,14 @@ export default function ProfessorDashboard() {
               loading={getMyAuditLogsInfinite.isLoading}
               hasMore={getMyAuditLogsInfinite.hasNextPage}
               next={next}
-              panelDescription={`Você tem ${getMyAuditLogsInfinite.data?.pages[0].total} notificações`}
+              panelDescription={
+                getMyAuditLogsInfinite.isLoading
+                  ? ""
+                  : getMyAuditLogsInfinite.data &&
+                      getMyAuditLogsInfinite.data.pages.length > 0
+                    ? `Você tem ${getMyAuditLogsInfinite.data.pages[0].total} notificações`
+                    : ""
+              }
             />
           </div>
           <div>

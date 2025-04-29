@@ -72,7 +72,10 @@ export const PPCCard = memo(
 
                   <div className="flex justify-end gap-2">
                     <a target="_blank" href={ppc.documentUrl ?? "#"}>
-                      <Button className="flex items-center gap-2 w-fit">
+                      <Button
+                        className="flex items-center gap-2 w-fit"
+                        disabled={!ppc.documentUrl}
+                      >
                         <MdDescription />
                         Documento
                       </Button>

@@ -38,7 +38,7 @@ export const Panel = ({
   next = () => {},
 }: PanelProps) => {
   return (
-    <Card className="">
+    <Card className="flex flex-col justify-between">
       <CardHeader>
         <CardTitle className="text-xl">{name}</CardTitle>
         {panelDescription && (
@@ -52,11 +52,17 @@ export const Panel = ({
           <CardContent className="flex justify-center items-center ">
             <ClipLoader size={64} color="#000" />
           </CardContent>
+          <CardFooter />
         </>
       ) : (
         <>
           <CardContent className="">
             <ScrollArea className="h-[350px]">
+              {messages.length === 0 && (
+                <div className="flex h-[350px] justify-center items-center w-full">
+                  <p>Não há notificações</p>
+                </div>
+              )}
               {messages &&
                 messages.map((message, index) => (
                   <div
