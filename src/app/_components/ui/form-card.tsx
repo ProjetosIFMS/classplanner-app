@@ -48,7 +48,7 @@ export const FormCard = <TFormValues extends FieldValues>({
   width = "sm",
   isUpdate,
   headerExtras,
-  footerExtras,
+  footerExtras = <div />,
   disabled = false,
 }: FormCardProps<TFormValues>) => {
   const form = useForm<TFormValues>({
@@ -90,7 +90,7 @@ export const FormCard = <TFormValues extends FieldValues>({
           <CardContent>{children(form)}</CardContent>
           <CardFooter className="justify-between">
             {footerExtras}
-            <div className="flex justify-end gap-5 mt-6">
+            <div className="flex justify-center items-center gap-5">
               {!isUpdate && (
                 <Button
                   type="button"
