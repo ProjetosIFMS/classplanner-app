@@ -6,7 +6,7 @@ export default function CreateArea() {
       <div className="flex-1 flex items-center justify-center">
         <AreaForm
           title="Crie uma nova área"
-          description="Preencha os detalhes para à criação de uma nova área"
+          description="Preencha os detalhes para a criação de uma nova área"
         />
       </div>
     </section>
