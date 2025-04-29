@@ -72,14 +72,20 @@ export const createColumns = (
           </Button>
         );
       },
-      cell: ({ row }) => (
-        <div className="max-w-[300px] truncate font-medium">
-          {generateCourseAcronym(
-            courses.find((course) => course.id == row.getValue("course_id"))
-              ?.name ?? ""
-          )}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const courseName =
+          courses.find((course) => course.id == row.getValue("course_id"))
+            ?.name ?? "";
+
+        return (
+          <div
+            className="max-w-[300px] truncate font-medium"
+            title={courseName}
+          >
+            {generateCourseAcronym(courseName)}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "semester",
