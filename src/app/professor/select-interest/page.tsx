@@ -111,7 +111,7 @@ export default function SelectInterest() {
                                   setWorkload(
                                     (prev) =>
                                       prev -
-                                      discipline.theoreticalHours +
+                                      discipline.theoreticalHours -
                                       discipline.practicalHours
                                   );
                                   field.onChange(
