@@ -98,7 +98,7 @@ export default function SelectDiscipline() {
                                   (prev) =>
                                     prev +
                                     discipline.theoreticalHours +
-                                    discipline.practicalHours,
+                                    discipline.practicalHours
                                 );
                                 setIsAnyDisciplineChecked(true);
                                 field.onChange([
@@ -108,14 +108,14 @@ export default function SelectDiscipline() {
                               } else {
                                 field.onChange(
                                   field.value.filter(
-                                    (item) => item.id !== discipline.id,
-                                  ),
+                                    (item) => item.id !== discipline.id
+                                  )
                                 );
                                 setTotalWorkload(
                                   (prev) =>
                                     prev -
-                                    discipline.theoreticalHours +
-                                    discipline.practicalHours,
+                                    discipline.theoreticalHours -
+                                    discipline.practicalHours
                                 );
                               }
                             }}

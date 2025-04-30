@@ -1,10 +1,17 @@
 import { getMyAuditLogs } from "@/app/_actions/audit-log/getMyAuditLogs";
 import { Session } from "@/types/session";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-export function useGetMyAuditLogs(session: Session, maxListSize?: number) {
-  return useQuery({
-    queryKey: ["GET", "audit-logs"],
-    queryFn: () => getMyAuditLogs(session, maxListSize),
+export function useGetMyAuditLogsInfinite(session: Session) {
+  return useInfiniteQuery({
+    queryKey: ["GET", "audit-log"],
+    queryFn: ({ pageParam }) => getMyAuditLogs(session, pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      if (lastPage?.data.length === 0) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
   });
 }

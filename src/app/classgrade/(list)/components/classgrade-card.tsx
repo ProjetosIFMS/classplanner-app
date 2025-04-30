@@ -1,8 +1,11 @@
 import React from "react";
+import { GraduationCap, BookOpen } from "lucide-react";
+
 import { Card, CardContent } from "@/app/_components/ui/card";
+
 import { Classgrade } from "@/types/classgrade";
 import { ClassgradeDetailsModal } from "@/app/classgrade/(list)/components/classgrade-details-modal";
-import { GraduationCap, BookOpen } from "lucide-react";
+import { generateCourseAcronym } from "@/utils/generateCourseAcronym";
 
 interface ClassgradeCardProps {
   classgrade: Classgrade;
@@ -16,12 +19,7 @@ export function ClassgradeCard({
   courseName,
 }: ClassgradeCardProps) {
   // Generate acronym from course name
-  const courseAcronym = courseName
-    ?.split(" ")
-    .map((word) =>
-      word[0] && word[0] === word[0].toUpperCase() ? word[0] : "",
-    )
-    .join("");
+  const courseAcronym = generateCourseAcronym(courseName ?? "");
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow duration-300">
@@ -52,7 +50,6 @@ export function ClassgradeCard({
           </div>
         </div>
 
-        {/* Footer with action button */}
         <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex justify-end">
           <ClassgradeDetailsModal classgrade={classgrade} />
         </div>

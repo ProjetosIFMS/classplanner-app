@@ -1,7 +1,8 @@
-import { ColumnDef, Column } from "@tanstack/react-table";
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { ColumnDef } from "@tanstack/react-table";
 
 import { Button } from "@/app/_components/ui/button";
+
+import { RenderSortingIcon } from "@/app/_components/table/render-sorting-icon";
 
 export type ProfessorAndDiscipline = {
   professorName: string;
@@ -11,19 +12,6 @@ export type ProfessorAndDiscipline = {
 };
 
 export function createColumns(): ColumnDef<ProfessorAndDiscipline>[] {
-  function RenderSortingIcon({
-    column,
-  }: {
-    column: Column<ProfessorAndDiscipline, unknown>;
-  }) {
-    return (
-      {
-        asc: <ArrowUp />,
-        desc: <ArrowDown />,
-      }[column.getIsSorted() as string] ?? <ArrowUpDown />
-    );
-  }
-
   return [
     {
       accessorKey: "professorName",

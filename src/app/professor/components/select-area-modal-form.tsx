@@ -16,7 +16,6 @@ import {
   SelectContent,
   SelectValue,
 } from "@/app/_components/ui/select";
-import { Button } from "@/app/_components/ui/button";
 
 import { UpdateDialogForm } from "@/app/_components/dialogs/update-dialog-form";
 import { usePatchSelectArea } from "@/hooks/react-query/professor/select-area";
@@ -61,7 +60,7 @@ export function SelectAreaModalForm({
       title="Selecione seu eixo"
       description=""
       onSubmit={onSubmit}
-      trigger={<Button>Alterar meu eixo</Button>}
+      trigger={<div></div>}
       isLoading={patchSelectArea.isPending}
     >
       <FormField

@@ -1,7 +1,6 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
 import React from "react";
 import { validate as isUUID } from "uuid";
 
@@ -11,9 +10,14 @@ import type { Discipline } from "@/types/discipline";
 import { UpdateDisciplineModalForm } from "@/app/discipline/(list)/components/update-discipline-modal-form";
 import { DeleteDisciplineModal } from "@/app/discipline/(list)/components/delete-discipline-modal";
 import ClipLoader from "react-spinners/ClipLoader";
+import { RenderSortingIcon } from "@/app/_components/table/render-sorting-icon";
+import { useGetAllCourses } from "@/hooks/react-query/courses";
+import { Course } from "@/types/course";
+import { generateCourseAcronym } from "@/utils/generateCourseAcronym";
 
 export const createColumns = (
-  session: string | undefined
+  session: string | undefined,
+  courses: Course[]
 ): ColumnDef<Discipline>[] => {
   return [
     {
@@ -26,7 +30,7 @@ export const createColumns = (
             className="p-0 hover:bg-transparent"
           >
             COD.
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <RenderSortingIcon column={column} />
           </Button>
         );
       },
@@ -44,7 +48,7 @@ export const createColumns = (
             className="p-0 hover:bg-transparent"
           >
             Nome
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <RenderSortingIcon column={column} />
           </Button>
         );
       },
@@ -53,6 +57,35 @@ export const createColumns = (
           {row.getValue("name")}
         </div>
       ),
+    },
+    {
+      accessorKey: "course_id",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="p-0 hover:bg-transparent"
+          >
+            Nome
+            <RenderSortingIcon column={column} />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const courseName =
+          courses.find((course) => course.id == row.getValue("course_id"))
+            ?.name ?? "";
+
+        return (
+          <div
+            className="max-w-[300px] truncate font-medium"
+            title={courseName}
+          >
+            {generateCourseAcronym(courseName)}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "semester",
@@ -64,7 +97,7 @@ export const createColumns = (
             className="p-0 hover:bg-transparent"
           >
             Semestre
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <RenderSortingIcon column={column} />
           </Button>
         );
       },
@@ -83,10 +116,18 @@ export const createColumns = (
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="p-0 hover:bg-transparent"
           >
-            Carga Horária Total
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            CH Total
+            <RenderSortingIcon column={column} />
           </Button>
         );
+      },
+      accessorFn: (discipline) => {
+        const totalHours =
+          discipline?.practicalHours +
+          discipline?.theoreticalHours +
+          discipline?.extensionHours;
+
+        return totalHours;
       },
       cell: ({ row }) => {
         const discipline = row.original;

@@ -16,7 +16,7 @@ export default function UnauthorizedPage() {
     }, 3000);
 
     return () => clearTimeout(redirectTimer);
-  }, [router, user]);
+  }, [router, userRole]);
 
   return (
     <div className="min-h-screen min-w-screen bg-gray-50 flex items-center justify-center p-4">

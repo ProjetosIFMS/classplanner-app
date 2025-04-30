@@ -24,7 +24,7 @@ export function CoursesPanel({
   isLoading = false,
 }: CoursesPanelProps) {
   return (
-    <Card>
+    <Card className="border-none shadow-none">
       <CardContent>
         <CardHeader></CardHeader>
 
@@ -39,7 +39,7 @@ export function CoursesPanel({
             ))
           ) : (
             <p className="col-span-1 md:col-span-2 lg:col-span-3 text-center text-xl">
-              Não há disciplinas relacionadas à você
+              Não há disciplinas relacionadas a você
             </p>
           )}
         </div>

@@ -27,8 +27,6 @@ import {
   GraduationCap,
   Folder,
   Map,
-  List,
-  PlusCircle,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { UserAvatar } from "./ui/userAvatar";
@@ -99,19 +97,7 @@ export function AppSidebar() {
     {
       icon: <Folder size={20} />,
       label: "Projeto Pedagógico de Curso",
-      path: "/ppc/list",
-      nested: [
-        {
-          icon: <List size={16} />,
-          label: "Todos os PPCs",
-          path: "/ppc/list",
-        },
-        {
-          icon: <PlusCircle size={16} />,
-          label: "Criar PPC",
-          path: "/ppc/create",
-        },
-      ],
+      path: "/ppc",
     },
     isCoordinator
       ? {
@@ -145,7 +131,7 @@ export function AppSidebar() {
         {isCoordinator && item.nested ? (
           <DropdownMenu>
             <DropdownMenuTrigger className="w-full">
-              <div className="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors duration-200 bg-primary/10 text-primary font-medium text-start">
+              <div className="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors duration-200 bg-primary/10 text-primary font-medium text-start ">
                 <div className="text-primary">{item.icon}</div>
                 <Label className="font-medium cursor-pointer">
                   {item.label}
@@ -169,7 +155,7 @@ export function AppSidebar() {
           </DropdownMenu>
         ) : (
           <SidebarMenuItem
-            className="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors duration-200 bg-primary/10 text-primary font-medium"
+            className="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors duration-200 hover:bg-primary/10 text-primary font-medium"
             onClick={() => handleNavigation(item.path)}
           >
             <div className="text-primary">{item.icon}</div>

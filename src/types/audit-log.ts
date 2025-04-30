@@ -15,3 +15,10 @@ export type AuditLog = {
   user_id?: string;
   User?: User;
 };
+
+export type AuditLogPagination = {
+  data: AuditLog[];
+  total: number;
+  page: number;
+  pageSize: number;
+};

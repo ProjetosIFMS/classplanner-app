@@ -1,24 +1,24 @@
-import { AuditLog } from "@/types/audit-log";
+import { AuditLogPagination } from "@/types/audit-log";
 import { Session } from "@/types/session";
 import api from "@/utils/axios-instance";
 import { AxiosResponse } from "axios";
 
 export async function getMyAuditLogs(
   session: Session,
-  maxListSize?: number
-): Promise<AuditLog[]> {
+  page: number = 1,
+  pageSize: number = 10
+): Promise<AuditLogPagination> {
   try {
-    const res: AxiosResponse<AuditLog[]> = await api.get<AuditLog[]>(
-      "/audit-log/me",
-      {
+    const res: AxiosResponse<AuditLogPagination> =
+      await api.get<AuditLogPagination>("/audit-log/me", {
         headers: {
           Authorization: `Bearer ${session}`,
         },
         params: {
-          maxListSize: maxListSize ?? 5,
+          page: page,
+          pageSize: pageSize,
         },
-      }
-    );
+      });
 
     return res.data;
   } catch (err) {
