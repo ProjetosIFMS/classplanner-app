@@ -53,5 +53,8 @@ pids
 *.pid
 *.seed
 
+*.env
+.env.development
+
 # Next artifacts
 .next/
