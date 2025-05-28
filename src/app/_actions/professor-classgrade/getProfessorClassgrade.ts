@@ -1,3 +1,4 @@
+"use server"
 import { ProfessorClassgrade } from "@/types/professor-classgrade";
 import { Session } from "@/types/session";
 import api from "@/utils/axios-instance";

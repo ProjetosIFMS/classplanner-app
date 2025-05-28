@@ -1,3 +1,4 @@
+"use server";
 import { AuditLogPagination } from "@/types/audit-log";
 import { Session } from "@/types/session";
 import api from "@/utils/axios-instance";
@@ -13,6 +14,7 @@ export async function getMyAuditLogs(
       await api.get<AuditLogPagination>("/audit-log/me", {
         headers: {
           Authorization: `Bearer ${session}`,
+          
         },
         params: {
           page: page,

@@ -1,3 +1,4 @@
+"use server"
 import { Session } from "@/types/session";
 import { User } from "@/types/user";
 import api from "@/utils/axios-instance";

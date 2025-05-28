@@ -1,3 +1,4 @@
+"use server"
 import { InterestsSelection } from "@/types/interests-selection";
 import { Session } from "@/types/session";
 import api from "@/utils/axios-instance";

@@ -1,3 +1,4 @@
+'use server'
 import { Modality } from "@/types/modality";
 import { Session } from "@/types/session";
 import api from "@/utils/axios-instance";
