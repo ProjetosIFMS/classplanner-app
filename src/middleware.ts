@@ -47,10 +47,10 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname === "/auth/callback") {
     try {
       const access_token = request.nextUrl.searchParams.get("access_token");
-
       if (!access_token) {
         throw new Error("Access token not found");
       }
+
       const { role } = (await verifyAuth(access_token)) as { role: string };
 
       const response = NextResponse.redirect(
@@ -61,6 +61,7 @@ export async function middleware(request: NextRequest) {
 
       return response;
     } catch (error) {
+      console.log("Error during authentication callback:", error);
       const response = NextResponse.redirect(
         new URL("/auth/login", request.url),
       );

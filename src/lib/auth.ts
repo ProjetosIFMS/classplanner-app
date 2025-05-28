@@ -18,6 +18,7 @@ export async function verifyAuth(token: string): Promise<User | null> {
       picture: payload.picture as string,
     };
   } catch (err) {
+    console.log(err)
     throw err;
   }
 }

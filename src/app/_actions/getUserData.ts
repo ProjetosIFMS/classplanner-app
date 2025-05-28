@@ -1,23 +1,23 @@
 "use server";
 
+import { Session } from "@/types/session";
 import { User } from "@/types/user";
 import api from "@/utils/axios-instance";
 import { AxiosResponse } from "axios";
 
 export const getUserData = async (
-  access_token: string | undefined,
+  session: Session,
 ): Promise<User | null> => {
-  if (!access_token) {
+  if (!session) {
     return null;
   }
 
   try {
     const response: AxiosResponse<User> = await api.get("/google/me", {
       headers: {
-        Authorization: `Bearer ${access_token}`,
+        Authorization: `Bearer ${session}`,
       },
     });
-
     return response.data;
   } catch (error) {
     throw error;
